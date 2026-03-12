@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}NDR Launch — Admin{% endblock %}
+{% block content %}
+<div class="admin-layout">
+  {% if not authenticated %}
+  <div class="login-card">
+    <div class="login-title">Admin access</div>
+    {% if error %}
+    <div class="login-error">{{ error }}</div>
+    {% endif %}
+    <form method="POST">
+      <input type="password" name="password" class="text-input" placeholder="Password" autofocus>
+      <button type="submit" class="admin-submit-btn">Sign in</button>
+    </form>
+  </div>
+  {% else %}
+  <div class="admin-header">
+    <h1 class="page-title">Admin</h1>
+    <a href="/admin/logout" class="logout-link">Sign out</a>
+  </div>
+
+  <div class="admin-grid">
+
+    <!-- Meeting history -->
+    <div class="admin-card">
+      <div class="admin-card-title">Meeting history database</div>
+      <div class="admin-meta">
+        <span class="meta-value">{{ total_meetings | default(0) | int | format_number }}</span>
+        <span class="meta-label">rows stored</span>
+      </div>
+
+      <div class="upload-type-toggle">
+        <label class="toggle-opt">
+          <input type="radio" name="upload_type" value="incremental" checked>
+          <span>Incremental update</span>
+        </label>
+        <label class="toggle-opt">
+          <input type="radio" name="upload_type" value="full">
+          <span>Full refresh</span>
+        </label>
+      </div>
+
+      <div class="admin-upload-zone" id="meetings-zone">
+        <div class="upload-icon">↑</div>
+        <div class="upload-hint">Drop meeting history file here or <label for="meetings-file" class="inline-link">browse</label></div>
+        <div class="upload-formats">.xlsx or .xls</div>
+        <input type="file" id="meetings-file" accept=".xlsx,.xls" hidden>
+      </div>
+
+      <div id="meetings-preview" class="preview-box hidden"></div>
+
+      <button class="admin-action-btn" id="confirm-meetings-btn" disabled>
+        Confirm upload
+      </button>
+
+      <div id="meetings-result" class="result-msg hidden"></div>
+    </div>
+
+    <!-- Taxonomy -->
+    <div class="admin-card">
+      <div class="admin-card-title">CDF taxonomy</div>
+      <div class="admin-card-sub">Update the CDF values used in pickers and AI analysis</div>
+
+      <div class="admin-upload-zone" id="taxonomy-zone">
+        <div class="upload-icon">↑</div>
+        <div class="upload-hint">Drop taxonomy Excel here or <label for="taxonomy-file" class="inline-link">browse</label></div>
+        <div class="upload-formats">3-column format: Field Type · Value · Description</div>
+        <input type="file" id="taxonomy-file" accept=".xlsx,.xls" hidden>
+      </div>
+
+      <button class="admin-action-btn" id="upload-taxonomy-btn" disabled>
+        Upload taxonomy
+      </button>
+
+      <div id="taxonomy-result" class="result-msg hidden"></div>
+    </div>
+
+  </div>
+
+  <!-- Upload log -->
+  {% if upload_log %}
+  <div class="log-section">
+    <div class="log-title">Upload history</div>
+    <table class="log-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>File</th>
+          <th>Added</th>
+          <th>Updated</th>
+          <th>Skipped</th>
+          <th>Total rows</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in upload_log %}
+        <tr>
+          <td>{{ row.uploaded_at.strftime('%Y-%m-%d %H:%M') if row.uploaded_at else '—' }}</td>
+          <td><span class="type-badge {{ row.upload_type }}">{{ row.upload_type }}</span></td>
+          <td>{{ row.filename or '—' }}</td>
+          <td>{{ row.rows_added | default(0) }}</td>
+          <td>{{ row.rows_updated | default(0) }}</td>
+          <td>{{ row.rows_skipped | default(0) }}</td>
+          <td>{{ row.total_rows_after | default(0) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='admin.js') }}"></script>
+{% endblock %}

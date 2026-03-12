@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}NDR Launch{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-mark"></span>
+      <span class="logo-text">NDR Launch</span>
+    </div>
+    <nav class="header-nav">
+      <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Filter</a>
+      <a href="/admin" class="nav-link {% if request.path == '/admin' %}active{% endif %}">Admin</a>
+    </nav>
+  </div>
+</header>
+<main class="main-content">
+  {% block content %}{% endblock %}
+</main>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
