@@ -287,7 +287,7 @@ def run():
 
     # Save for download
     file_id  = str(uuid.uuid4())
-    filename = f'{company_name} - Relevant Contacts.xlsx'
+    filename = f'{subject_symbol or company_name} Contacts Mapping.xlsx'
     with open(os.path.join(TEMP_DIR, f'{file_id}.xlsx'), 'wb') as f:
         f.write(excel_bytes)
     session['download_id']   = file_id
