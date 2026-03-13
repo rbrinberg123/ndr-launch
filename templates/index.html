@@ -2,56 +2,57 @@
 {% block title %}NDR Launch — Contact Filter{% endblock %}
 {% block content %}
 <div class="page-layout">
+
+  <!-- ── Sidebar ── -->
   <aside class="sidebar">
+
     <div class="sidebar-section">
       <div class="section-label">Files</div>
 
-      <div class="file-upload-row" id="row-contacts">
+      <div class="file-upload-row">
         <div class="file-info">
           <span class="file-dot required"></span>
-          <div>
-            <div class="file-name">Contacts w CDFs</div>
-            <div class="file-sub">BD Advanced export · required</div>
-          </div>
+          <div><div class="file-name">Contacts w CDFs</div><div class="file-sub">BD Advanced · required</div></div>
         </div>
         <label class="upload-btn" for="input-contacts">Choose</label>
         <input type="file" id="input-contacts" accept=".xlsx,.xls" hidden>
         <div class="file-status" id="status-contacts"></div>
       </div>
 
-      <div class="file-upload-row" id="row-ownership">
+      <div class="file-upload-row">
         <div class="file-info">
           <span class="file-dot optional"></span>
-          <div>
-            <div class="file-name">Ownership.xlsx</div>
-            <div class="file-sub">Shares data · optional</div>
-          </div>
+          <div><div class="file-name">Activities.xlsx</div><div class="file-sub">Meeting history · optional</div></div>
+        </div>
+        <label class="upload-btn" for="input-activities">Choose</label>
+        <input type="file" id="input-activities" accept=".xlsx,.xls" hidden>
+        <div class="file-status" id="status-activities"></div>
+      </div>
+
+      <div class="file-upload-row">
+        <div class="file-info">
+          <span class="file-dot optional"></span>
+          <div><div class="file-name">Ownership.xlsx</div><div class="file-sub">Shares data · optional</div></div>
         </div>
         <label class="upload-btn" for="input-ownership">Choose</label>
         <input type="file" id="input-ownership" accept=".xlsx,.xls" hidden>
         <div class="file-status" id="status-ownership"></div>
       </div>
 
-      <div class="file-upload-row" id="row-fund">
+      <div class="file-upload-row">
         <div class="file-info">
           <span class="file-dot optional"></span>
-          <div>
-            <div class="file-name">Fund-Level Ownership</div>
-            <div class="file-sub">Fund detail · optional</div>
-          </div>
+          <div><div class="file-name">Fund-Level Ownership</div><div class="file-sub">Fund detail · optional</div></div>
         </div>
         <label class="upload-btn" for="input-fund">Choose</label>
         <input type="file" id="input-fund" accept=".xlsx,.xls" hidden>
         <div class="file-status" id="status-fund"></div>
       </div>
 
-      <div class="file-upload-row" id="row-docs">
+      <div class="file-upload-row">
         <div class="file-info">
           <span class="file-dot optional"></span>
-          <div>
-            <div class="file-name">Company docs</div>
-            <div class="file-sub">10-K, deck, etc. · AI analysis</div>
-          </div>
+          <div><div class="file-name">Company docs</div><div class="file-sub">10-K, deck · AI analysis</div></div>
         </div>
         <label class="upload-btn" for="input-docs">Choose</label>
         <input type="file" id="input-docs" accept=".pdf,.xlsx,.xls,.txt,.docx" multiple hidden>
@@ -59,37 +60,57 @@
       </div>
     </div>
 
+    <!-- Company -->
     <div class="sidebar-section">
       <div class="section-label">Company</div>
       <div class="field-row">
         <label class="field-label">Name</label>
         <input type="text" id="company-name" class="text-input" placeholder="e.g. Acme Corp">
       </div>
-      <div class="field-row">
-        <label class="field-label">Ticker</label>
-        <input type="text" id="ticker" class="text-input ticker-input" placeholder="e.g. ACME"
-               style="text-transform:uppercase">
+      <div class="field-row" id="symbol-row" style="display:none">
+        <label class="field-label">Subject ticker</label>
+        <div id="symbol-select-wrap"></div>
       </div>
     </div>
 
+    <!-- Hedge funds -->
     <div class="sidebar-section">
       <div class="section-label">Hedge funds</div>
       <div class="radio-stack">
-        <label class="radio-row">
-          <input type="radio" name="hf_treatment" value="include">
-          <span class="radio-custom"></span>
-          <span class="radio-label">Include in main results</span>
-        </label>
-        <label class="radio-row">
-          <input type="radio" name="hf_treatment" value="separate" checked>
-          <span class="radio-custom"></span>
-          <span class="radio-label">Move to separate HFs sheet</span>
-        </label>
-        <label class="radio-row">
-          <input type="radio" name="hf_treatment" value="low_turnover">
-          <span class="radio-custom"></span>
-          <span class="radio-label">Low-turnover only in main</span>
-        </label>
+        <label class="radio-row"><input type="radio" name="hf_treatment" value="include"><span class="radio-custom"></span><span class="radio-label">Include in main results</span></label>
+        <label class="radio-row"><input type="radio" name="hf_treatment" value="separate" checked><span class="radio-custom"></span><span class="radio-label">Move to HFs sheet</span></label>
+        <label class="radio-row"><input type="radio" name="hf_treatment" value="low_turnover"><span class="radio-custom"></span><span class="radio-label">Low-turnover only in main</span></label>
+      </div>
+    </div>
+
+    <!-- NDR routing -->
+    <div class="sidebar-section">
+      <div class="section-label">NDR routing</div>
+      <div class="radio-stack">
+        <label class="radio-row"><input type="radio" name="routing_mode" value="virtual" checked><span class="radio-custom"></span><span class="radio-label">Virtual (single sheet)</span></label>
+        <label class="radio-row"><input type="radio" name="routing_mode" value="cities"><span class="radio-custom"></span><span class="radio-label">Split by city</span></label>
+      </div>
+      <div id="city-picker" class="city-picker hidden">
+        <div class="city-picker-hint">Select 1–4 cities</div>
+        <div class="city-grid">
+          {% for tab_name, ic_value in display_cities %}
+          <label class="city-opt">
+            <input type="checkbox" name="selected_cities" value="{{ tab_name.lower() }}" class="city-check">
+            <span>{{ tab_name }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Meeting history exclusion -->
+    <div class="sidebar-section">
+      <div class="section-label">Meeting history</div>
+      <div class="radio-stack">
+        <label class="radio-row"><input type="radio" name="meeting_exclusion" value="include_all" checked><span class="radio-custom"></span><span class="radio-label">Include all</span></label>
+        <label class="radio-row"><input type="radio" name="meeting_exclusion" value="exclude_l12m"><span class="radio-custom"></span><span class="radio-label">Exclude last 12 months</span></label>
+        <label class="radio-row"><input type="radio" name="meeting_exclusion" value="exclude_l24m"><span class="radio-custom"></span><span class="radio-label">Exclude last 24 months</span></label>
+        <label class="radio-row"><input type="radio" name="meeting_exclusion" value="exclude_all"><span class="radio-custom"></span><span class="radio-label">Exclude all prior meetings</span></label>
       </div>
     </div>
 
@@ -99,6 +120,7 @@
     </button>
   </aside>
 
+  <!-- ── Main panel ── -->
   <div class="main-panel">
     <div class="cdf-header">
       <h1 class="page-title">CDF criteria</h1>
@@ -110,12 +132,12 @@
 
     <div id="ai-banner" class="ai-banner hidden">
       <span class="ai-icon-sm">✦</span>
-      <span id="ai-banner-text">AI is analyzing your documents…</span>
+      <span id="ai-banner-text">Analyzing documents…</span>
       <div class="ai-loader" id="ai-loader"></div>
     </div>
 
     <div class="cdf-grid">
-      <div class="cdf-card" id="card-industry">
+      <div class="cdf-card">
         <div class="cdf-card-header">
           <span class="cdf-card-title">Industry focus</span>
           <span class="cdf-count" id="count-industry">0 selected</span>
@@ -123,8 +145,7 @@
         <input type="text" class="search-input" placeholder="Search…" data-target="industry">
         <div class="cdf-list" id="list-industry"></div>
       </div>
-
-      <div class="cdf-card" id="card-style">
+      <div class="cdf-card">
         <div class="cdf-card-header">
           <span class="cdf-card-title">Investment style</span>
           <span class="cdf-count" id="count-style">0 selected</span>
@@ -132,16 +153,14 @@
         <input type="text" class="search-input" placeholder="Search…" data-target="style">
         <div class="cdf-list" id="list-style"></div>
       </div>
-
-      <div class="cdf-card" id="card-mcap">
+      <div class="cdf-card">
         <div class="cdf-card-header">
           <span class="cdf-card-title">Market cap</span>
           <span class="cdf-count" id="count-mcap">0 selected</span>
         </div>
         <div class="cdf-list" id="list-mcap"></div>
       </div>
-
-      <div class="cdf-card" id="card-geo">
+      <div class="cdf-card">
         <div class="cdf-card-header">
           <span class="cdf-card-title">Geography</span>
           <span class="cdf-count" id="count-geo">0 selected</span>
@@ -151,47 +170,16 @@
       </div>
     </div>
 
-    <!-- Results panel (hidden until run) -->
+    <!-- Results -->
     <div id="results-panel" class="results-panel hidden">
       <div class="results-header">
         <h2 class="results-title">Results</h2>
         <div class="results-actions">
-          <a href="/download" class="download-btn" id="download-btn">
-            ↓ Download Excel
-          </a>
-          <a href="#" class="sharepoint-btn hidden" id="sharepoint-btn" target="_blank">
-            ↗ Open in SharePoint
-          </a>
+          <a href="/download" class="download-btn" id="download-btn">↓ Download Excel</a>
+          <a href="#" class="sharepoint-btn hidden" id="sharepoint-btn" target="_blank">↗ Open in SharePoint</a>
         </div>
       </div>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Source contacts</div>
-          <div class="stat-value" id="stat-source">—</div>
-        </div>
-        <div class="stat-card highlight">
-          <div class="stat-label">Matched contacts</div>
-          <div class="stat-value" id="stat-matched">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Hedge funds</div>
-          <div class="stat-value" id="stat-hf">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">DNC</div>
-          <div class="stat-value" id="stat-dnc">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Check before call</div>
-          <div class="stat-value" id="stat-check">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Quant</div>
-          <div class="stat-value" id="stat-quant">—</div>
-        </div>
-      </div>
-
+      <div class="stats-grid" id="stats-grid"></div>
       <div class="breakdown-section">
         <div class="breakdown-label">Criteria matched</div>
         <div class="breakdown-bars" id="breakdown-bars"></div>
@@ -206,7 +194,7 @@
 </div>
 
 <script>
-  window.TAXONOMY = {{ taxonomy_json | safe }};
+  window.TAXONOMY      = {{ taxonomy_json | safe }};
   window.SP_CONFIGURED = {{ 'true' if sp_configured else 'false' }};
 </script>
 {% endblock %}

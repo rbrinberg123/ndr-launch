@@ -5,18 +5,13 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app --workers 2 --timeout 120
     envVars:
-      - key: FLASK_ENV
-        value: production
       - key: SECRET_KEY
         generateValue: true
-      - key: ADMIN_PASSWORD
-        sync: false
       - key: ANTHROPIC_API_KEY
         sync: false
-      - key: DATABASE_URL
-        fromDatabase:
-          name: ndr-meetings-db
-          property: connectionString
+      - key: ADMIN_PASSWORD
+        sync: false
+      # SharePoint (optional — leave blank to skip)
       - key: AZURE_TENANT_ID
         sync: false
       - key: AZURE_CLIENT_ID
@@ -27,8 +22,3 @@ services:
         sync: false
       - key: SHAREPOINT_FOLDER
         value: /NDR Launch
-
-databases:
-  - name: ndr-meetings-db
-    plan: free
-    databaseName: ndr_meetings

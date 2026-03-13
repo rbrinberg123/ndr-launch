@@ -17,13 +17,11 @@
     </div>
     <nav class="header-nav">
       <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Filter</a>
-      <a href="/admin" class="nav-link {% if request.path == '/admin' %}active{% endif %}">Admin</a>
+      <a href="/admin" class="nav-link {% if '/admin' in request.path %}active{% endif %}">Admin</a>
     </nav>
   </div>
 </header>
-<main class="main-content">
-  {% block content %}{% endblock %}
-</main>
+<main class="main-content">{% block content %}{% endblock %}</main>
 <script src="{{ url_for('static', filename='app.js') }}"></script>
 {% block scripts %}{% endblock %}
 </body>
