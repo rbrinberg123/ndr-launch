@@ -489,11 +489,17 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     city_dfs = {}
     if city_selections:
         remaining = main_df.copy()
+        ic_col = remaining['Contact Investment Center'].fillna('').str.lower()
         for tab_name, ic_value in city_selections:
             ic_lower = ic_value.lower()
-            mask = remaining['Contact Investment Center'].fillna('').str.lower().str.contains(ic_lower, regex=False)
+            # Try full match first, then first segment before '/' for flexibility
+            mask = ic_col.str.contains(ic_lower, regex=False)
+            if mask.sum() == 0:
+                first_segment = ic_lower.split('/')[0].strip()
+                mask = ic_col.str.contains(first_segment, regex=False)
             city_dfs[tab_name] = remaining[mask].copy()
             remaining = remaining[~mask].copy()
+            ic_col = remaining['Contact Investment Center'].fillna('').str.lower()
         city_dfs['Virtual'] = remaining
         main_df = None
 
