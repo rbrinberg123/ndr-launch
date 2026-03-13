@@ -174,6 +174,7 @@ def index():
 
 
 @app.route('/api/get-symbols', methods=['POST'])
+@app.route('/api/detect-symbols', methods=['POST'])
 def get_symbols():
     f = request.files.get('activities')
     if not f or f.filename == '':
