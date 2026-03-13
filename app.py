@@ -231,12 +231,12 @@ def run():
     city_selections = None
     if routing_mode == 'cities':
         selected_cities = request.form.getlist('selected_cities')
+        app.logger.info(f'City routing: mode={routing_mode}, selected={selected_cities}')
         city_selections = []
         for city_key in selected_cities:
             ck = city_key.strip().lower()
             ic = CITY_IC_MAP.get(ck)
             if not ic:
-                # Try to find by display name
                 for tab_name, ic_val in DISPLAY_CITIES:
                     if tab_name.lower() == ck:
                         ic = ic_val
@@ -244,6 +244,7 @@ def run():
                         break
             if ic:
                 city_selections.append((city_key.title() if city_key == city_key.lower() else city_key, ic))
+        app.logger.info(f'city_selections built: {city_selections}')
 
     # Load files
     try:
