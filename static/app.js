@@ -183,7 +183,9 @@ bindFile('input-activities', 'status-activities', async (file) => {
         const o = document.createElement('option'); o.value = s; o.textContent = s; sel.appendChild(o);
       });
       if (data.symbols.length === 1) sel.value = data.symbols[0];
-      row.classList.remove('hidden');
+      row.style.display = 'block';
+    } else {
+      row.style.display = 'none';
     }
   } catch {}
 });
