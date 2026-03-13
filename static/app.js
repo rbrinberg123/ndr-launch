@@ -214,7 +214,8 @@ function updateRunButton() {
 document.querySelectorAll('input[name="city_mode"]').forEach(r => {
   r.addEventListener('change', () => {
     const show = r.value === 'cities' && r.checked;
-    document.getElementById('city-inputs')?.classList.toggle('hidden', !show);
+    const el = document.getElementById('city-inputs');
+    if (el) el.style.display = show ? 'block' : 'none';
   });
 });
 

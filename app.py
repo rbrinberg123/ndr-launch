@@ -224,7 +224,7 @@ def run():
     meeting_exclusion = request.form.get('meeting_exclusion', 'include_all')
     company_name      = request.form.get('company_name', 'Company').strip() or 'Company'
     subject_symbol    = request.form.get('subject_symbol', '').strip().upper()
-    routing_mode      = request.form.get('routing_mode', 'virtual')
+    routing_mode      = request.form.get('city_mode', 'virtual')
 
     # Parse city selections
     city_selections = None
@@ -322,10 +322,27 @@ def run():
             except Exception:
                 pass
 
+    # Build city_counts and main_count for JS
+    excluded_sheets = {'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded'}
+    if results['has_city_routing']:
+        city_counts = {k: v for k, v in sheet_counts.items() if k not in excluded_sheets}
+        main_count  = sum(city_counts.values())
+    else:
+        city_counts = {}
+        main_count  = sheet_counts.get('Contacts', 0)
+
     return jsonify({
         'total_source':    results['total_source'],
         'total_matched':   results['total_matched'],
         'sheet_counts':    sheet_counts,
+        'city_counts':     city_counts,
+        'main_count':      main_count,
+        'hf_count':        sheet_counts.get('HFs', 0),
+        'dnc_count':       sheet_counts.get('DNC', 0),
+        'check_count':     sheet_counts.get('Check', 0),
+        'quant_count':     sheet_counts.get('Quant', 0),
+        'activist_count':  sheet_counts.get('Activist', 0),
+        'excluded_count':  sheet_counts.get('Excluded', 0),
         'match_breakdown': match_breakdown,
         'sharepoint_url':  sharepoint_url,
         'filename':        filename,
