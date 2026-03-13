@@ -20,7 +20,7 @@ def analyze_documents(file_data, taxonomy=None):
     content.append({'type':'text','text':'Analyze and return JSON only.'})
     r = requests.post('https://api.anthropic.com/v1/messages',
         headers={'x-api-key':api_key,'anthropic-version':'2023-06-01','content-type':'application/json'},
-        json={'model':'claude-sonnet-4-5','max_tokens':2000,'system':SYSTEM,
+        json={'model':'claude-sonnet-4-6','max_tokens':2000,'system':SYSTEM,
               'messages':[{'role':'user','content':content}]}, timeout=60)
     r.raise_for_status()
     text = r.json()['content'][0]['text'].strip().strip('`')
