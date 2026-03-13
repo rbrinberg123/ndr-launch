@@ -1,4 +1,5 @@
-import os, json, base64, requests
+import os, json, base64
+import anthropic
 
 SYSTEM = """You are an expert investor relations analyst. Given company documents, recommend conservative
 CDF filter values. Return ONLY valid JSON, no markdown, no preamble.
@@ -9,6 +10,7 @@ Market Cap: <$500M->Micro/Small; $500M-$2.5B->Small/Mid; $2.5B-$10B->Mid/Large; 
 def analyze_documents(file_data, taxonomy=None):
     api_key = os.environ.get('ANTHROPIC_API_KEY')
     if not api_key: return {'error': 'API key not configured'}
+    client = anthropic.Anthropic(api_key=api_key)
     content = []
     for f in file_data:
         mt = f.get('type','')
@@ -18,11 +20,12 @@ def analyze_documents(file_data, taxonomy=None):
         else:
             content.append({'type':'text','text':f"File: {f['name']}\n\n{f['data'].decode('utf-8','ignore')[:40000]}"})
     content.append({'type':'text','text':'Analyze and return JSON only.'})
-    r = requests.post('https://api.anthropic.com/v1/messages',
-        headers={'x-api-key':api_key,'anthropic-version':'2023-06-01','content-type':'application/json'},
-        json={'model':'claude-sonnet-4-6','max_tokens':2000,'system':SYSTEM,
-              'messages':[{'role':'user','content':content}]}, timeout=60)
-    r.raise_for_status()
-    text = r.json()['content'][0]['text'].strip().strip('`')
+    response = client.messages.create(
+        model='claude-sonnet-4-6',
+        max_tokens=2000,
+        system=SYSTEM,
+        messages=[{'role':'user','content':content}]
+    )
+    text = response.content[0].text.strip().strip('`')
     if text.startswith('json'): text = text[4:]
     return json.loads(text.strip())
