@@ -250,8 +250,8 @@ async function runFilter() {
   const cityMode = document.querySelector('input[name="city_mode"]:checked')?.value || 'virtual';
   fd.append('city_mode', cityMode);
   if (cityMode === 'cities') {
-    document.querySelectorAll('.city-field').forEach(inp => {
-      if (inp.value.trim()) fd.append('cities', inp.value.trim());
+    document.querySelectorAll('input[name="selected_cities"]:checked').forEach(inp => {
+      fd.append('cities', inp.value.trim());
     });
   }
 
