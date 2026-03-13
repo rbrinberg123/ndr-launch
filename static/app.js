@@ -254,7 +254,7 @@ async function runFilter() {
   fd.append('city_mode', cityMode);
   if (cityMode === 'cities') {
     document.querySelectorAll('input[name="selected_cities"]:checked').forEach(inp => {
-      fd.append('cities', inp.value.trim());
+      fd.append('selected_cities', inp.value.trim());
     });
   }
 
