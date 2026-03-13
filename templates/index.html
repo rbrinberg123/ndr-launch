@@ -60,16 +60,16 @@
       </div>
     </div>
 
-    <!-- Company -->
-    <div class="sidebar-section">
-      <div class="section-label">Company</div>
+    <!-- Hidden company name (kept for filename) -->
+    <input type="hidden" id="company-name" value="Contacts">
+
+    <!-- Ticker selection — shown automatically when Activities.xlsx is uploaded -->
+    <div id="symbol-row" class="sidebar-section" style="display:none">
+      <div class="section-label">Subject ticker</div>
       <div class="field-row">
-        <label class="field-label">Name</label>
-        <input type="text" id="company-name" class="text-input" placeholder="e.g. Acme Corp">
-      </div>
-      <div class="field-row" id="symbol-row" style="display:none">
-        <label class="field-label">Subject ticker</label>
-        <div id="symbol-select-wrap"></div>
+        <select id="symbol-select" class="text-input" style="width:100%">
+          <option value="">Select ticker…</option>
+        </select>
       </div>
     </div>
 
