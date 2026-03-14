@@ -37,6 +37,7 @@ FINAL_COLS = [
     'Primary Institution Type', 'Activist', 'Contact Investment Center',
     'L12M', 'Total', '3rd Party', 'Rose & Co',
     'Match Criteria', 'Match Count', 'Source',
+    'Exclusion Reason',
 ]
 
 
@@ -457,12 +458,15 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         eaum_vals = pd.to_numeric(main_df['EAUM ($mm)'], errors='coerce')
         below_mask = eaum_vals.notna() & (eaum_vals < eaum_min)
         too_small_df = main_df[below_mask].copy()
+        too_small_df['Exclusion Reason'] = f'EAUM below ${eaum_min:,.0f}M minimum'
         main_df = main_df[~below_mask].copy()
 
     # HF split
     hf_df = pd.DataFrame()
     if hf_treatment == 'separate':
         hf_df, main_df = split_df(main_df, lambda r: r.get('Primary Institution Type') == 'Hedge Fund')
+        if not hf_df.empty:
+            hf_df['Exclusion Reason'] = 'Hedge Fund (separated)'
     elif hf_treatment == 'low_turnover':
         def hf_high_turn(r):
             if r.get('Primary Institution Type') != 'Hedge Fund':
@@ -472,12 +476,22 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             except Exception:
                 return False
         hf_df, main_df = split_df(main_df, hf_high_turn)
+        if not hf_df.empty:
+            hf_df['Exclusion Reason'] = 'Hedge Fund with T/O > 100%'
 
     # DNC split
     dnc_df,      main_df = split_df(main_df, is_dnc)
+    if not dnc_df.empty:
+        dnc_df['Exclusion Reason'] = 'Do Not Call'
     check_df,    main_df = split_df(main_df, is_check)
+    if not check_df.empty:
+        check_df['Exclusion Reason'] = 'Check before calling'
     quant_df,    main_df = split_df(main_df, is_quant)
+    if not quant_df.empty:
+        quant_df['Exclusion Reason'] = 'Quant'
     activist_df, main_df = split_df(main_df, is_activist)
+    if not activist_df.empty:
+        activist_df['Exclusion Reason'] = 'Frequent activist'
 
     # Meeting history exclusion
     excluded_df = pd.DataFrame()
@@ -486,13 +500,18 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             cutoff = pd.Timestamp.today() - pd.DateOffset(months=12)
             exc_mask = main_df['Specifically with Co.'].apply(
                 lambda d: pd.notna(d) and pd.Timestamp(d) >= cutoff)
+            exc_reason = 'Met with company in last 12 months'
         elif meeting_exclusion == 'exclude_l24m':
             cutoff = pd.Timestamp.today() - pd.DateOffset(months=24)
             exc_mask = main_df['Specifically with Co.'].apply(
                 lambda d: pd.notna(d) and pd.Timestamp(d) >= cutoff)
+            exc_reason = 'Met with company in last 24 months'
         else:  # exclude_all
             exc_mask = main_df['Specifically with Co.'].apply(pd.notna)
+            exc_reason = 'Prior meeting with company'
         excluded_df = main_df[exc_mask].copy()
+        if not excluded_df.empty:
+            excluded_df['Exclusion Reason'] = exc_reason
         main_df     = main_df[~exc_mask].copy()
 
     # City routing
