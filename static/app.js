@@ -257,6 +257,7 @@ async function runFilter() {
     fd.append('subject_symbols', inp.value);
   });
   fd.append('hf_treatment',      document.querySelector('input[name="hf_treatment"]:checked')?.value || 'separate');
+  fd.append('eaum_min',          document.getElementById('eaum-min')?.value || '');
   fd.append('meeting_exclusion', document.querySelector('input[name="meeting_exclusion"]:checked')?.value || 'include_all');
 
   const cityMode = document.querySelector('input[name="city_mode"]:checked')?.value || 'virtual';
@@ -317,6 +318,7 @@ function renderResults(data) {
     ['Check', data.check_count],
     ['Quant', data.quant_count],
     ['Activist', data.activist_count],
+    ['Too Small', data.too_small_count],
     ['Excluded', data.excluded_count],
   ];
   subs.forEach(([label, val]) => { if (val > 0) stats.push({ label, value: val }); });
