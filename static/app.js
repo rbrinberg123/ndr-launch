@@ -176,13 +176,20 @@ bindFile('input-activities', 'status-activities', async (file) => {
     const r    = await fetch('/api/detect-symbols', { method: 'POST', body: fd });
     const data = await r.json();
     const row  = document.getElementById('symbol-row');
-    const sel  = document.getElementById('symbol-select');
+    const grid = document.getElementById('symbol-grid');
     if (data.symbols?.length) {
-      sel.innerHTML = '<option value="">Select ticker…</option>';
+      grid.innerHTML = '';
       data.symbols.forEach(s => {
-        const o = document.createElement('option'); o.value = s; o.textContent = s; sel.appendChild(o);
+        const label = document.createElement('label');
+        label.className = 'city-opt';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox'; cb.name = 'subject_symbols'; cb.value = s; cb.className = 'city-check';
+        if (data.symbols.length === 1) cb.checked = true;
+        const span = document.createElement('span');
+        span.textContent = s;
+        label.appendChild(cb); label.appendChild(span);
+        grid.appendChild(label);
       });
-      if (data.symbols.length === 1) sel.value = data.symbols[0];
       row.style.display = 'block';
     } else {
       row.style.display = 'none';
@@ -246,7 +253,9 @@ async function runFilter() {
   if (actsFile) fd.append('activities', actsFile);
 
   fd.append('company_name',      document.getElementById('company-name')?.value || 'Company');
-  fd.append('subject_symbol',    document.getElementById('symbol-select')?.value || '');
+  document.querySelectorAll('input[name="subject_symbols"]:checked').forEach(inp => {
+    fd.append('subject_symbols', inp.value);
+  });
   fd.append('hf_treatment',      document.querySelector('input[name="hf_treatment"]:checked')?.value || 'separate');
   fd.append('meeting_exclusion', document.querySelector('input[name="meeting_exclusion"]:checked')?.value || 'include_all');
 
