@@ -353,7 +353,8 @@ def sort_frame(frame):
 
 def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                criteria, hf_treatment, meeting_exclusion,
-               city_selections, subject_symbols, company_name):
+               city_selections, subject_symbols, company_name,
+               eaum_min=None):
     df = contacts_df.copy()
 
     # Ownership lookup
@@ -449,6 +450,11 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             filtered[col] = None
 
     main_df = filtered.copy()
+
+    # EAUM minimum filter — exclude contacts below threshold
+    if eaum_min is not None and 'EAUM ($mm)' in main_df.columns:
+        eaum_vals = pd.to_numeric(main_df['EAUM ($mm)'], errors='coerce')
+        main_df = main_df[eaum_vals.isna() | (eaum_vals >= eaum_min)].copy()
 
     # HF split
     hf_df = pd.DataFrame()

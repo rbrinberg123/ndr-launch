@@ -222,6 +222,8 @@ def run():
     }
 
     hf_treatment      = request.form.get('hf_treatment', 'separate')
+    eaum_min_raw      = request.form.get('eaum_min', '').strip()
+    eaum_min          = float(eaum_min_raw) if eaum_min_raw else None
     meeting_exclusion = request.form.get('meeting_exclusion', 'include_all')
     company_name      = request.form.get('company_name', 'Company').strip() or 'Company'
     subject_symbols   = [s.strip().upper() for s in request.form.getlist('subject_symbols') if s.strip()]
@@ -277,7 +279,8 @@ def run():
         results = run_filter(
             contacts_df, ownership_df, fund_df, acts_named,
             criteria, hf_treatment, meeting_exclusion,
-            city_selections, subject_symbols, company_name
+            city_selections, subject_symbols, company_name,
+            eaum_min=eaum_min
         )
     except Exception as e:
         return jsonify({'error': f'Filter error: {e}'}), 500
