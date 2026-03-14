@@ -317,7 +317,7 @@ def run():
 
     # Match breakdown (main/city sheets only)
     main_frames = {k: v for k, v in frames.items()
-                   if k not in ('HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded')
+                   if k not in ('Too Small', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded')
                    and v is not None and len(v) > 0}
     combined = pd.concat(list(main_frames.values()), ignore_index=True) if main_frames else pd.DataFrame()
     match_breakdown = {}
@@ -329,7 +329,7 @@ def run():
                 pass
 
     # Build city_counts and main_count for JS
-    excluded_sheets = {'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded'}
+    excluded_sheets = {'Too Small', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded'}
     if results['has_city_routing']:
         city_counts = {k: v for k, v in sheet_counts.items() if k not in excluded_sheets}
         main_count  = sum(city_counts.values())
@@ -348,6 +348,7 @@ def run():
         'check_count':     sheet_counts.get('Check', 0),
         'quant_count':     sheet_counts.get('Quant', 0),
         'activist_count':  sheet_counts.get('Activist', 0),
+        'too_small_count': sheet_counts.get('Too Small', 0),
         'excluded_count':  sheet_counts.get('Excluded', 0),
         'match_breakdown': match_breakdown,
         'sharepoint_url':  sharepoint_url,

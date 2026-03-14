@@ -451,10 +451,13 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
 
     main_df = filtered.copy()
 
-    # EAUM minimum filter — exclude contacts below threshold
+    # EAUM minimum filter — move contacts below threshold to "Too Small" tab
+    too_small_df = pd.DataFrame()
     if eaum_min is not None and 'EAUM ($mm)' in main_df.columns:
         eaum_vals = pd.to_numeric(main_df['EAUM ($mm)'], errors='coerce')
-        main_df = main_df[eaum_vals.isna() | (eaum_vals >= eaum_min)].copy()
+        below_mask = eaum_vals.notna() & (eaum_vals < eaum_min)
+        too_small_df = main_df[below_mask].copy()
+        main_df = main_df[~below_mask].copy()
 
     # HF split
     hf_df = pd.DataFrame()
@@ -518,6 +521,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     else:
         frames_to_process['Contacts'] = sort_frame(reorder(main_df))
 
+    frames_to_process['Too Small'] = sort_frame(reorder(too_small_df))
     frames_to_process['HFs']      = sort_frame(reorder(hf_df))
     frames_to_process['DNC']      = sort_frame(reorder(dnc_df))
     frames_to_process['Check']    = sort_frame(reorder(check_df))
@@ -526,7 +530,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     frames_to_process['Excluded'] = sort_frame(reorder(excluded_df))
 
     total_matched = sum(len(v) for k, v in frames_to_process.items()
-                        if k not in ('HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded')
+                        if k not in ('Too Small', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded')
                         and v is not None)
 
     return {
