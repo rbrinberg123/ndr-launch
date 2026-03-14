@@ -187,11 +187,12 @@ def build_inv_center(city, state, country):
 
 # ── Activities enrichment ─────────────────────────────────────────────────────
 
-def load_activities(acts_df, subject_symbol):
+def load_activities(acts_df, subject_symbols):
     acts_df = acts_df.copy()
     acts_df['Date'] = pd.to_datetime(acts_df['Date'], errors='coerce')
+    upper_symbols = {s.upper() for s in subject_symbols} if isinstance(subject_symbols, list) else {subject_symbols.upper()}
     acts = acts_df[
-        acts_df['Symbols'].fillna('').str.strip().str.upper() == subject_symbol.upper()
+        acts_df['Symbols'].fillna('').str.strip().str.upper().isin(upper_symbols)
     ].copy()
     acts['_fname'] = acts['External Participant First Name'].fillna('').str.strip().str.lower()
     acts['_lname'] = acts['External Participant Last Name'].fillna('').str.strip().str.lower()
@@ -352,7 +353,7 @@ def sort_frame(frame):
 
 def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                criteria, hf_treatment, meeting_exclusion,
-               city_selections, subject_symbol, company_name):
+               city_selections, subject_symbols, company_name):
     df = contacts_df.copy()
 
     # Ownership lookup

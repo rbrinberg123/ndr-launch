@@ -224,7 +224,7 @@ def run():
     hf_treatment      = request.form.get('hf_treatment', 'separate')
     meeting_exclusion = request.form.get('meeting_exclusion', 'include_all')
     company_name      = request.form.get('company_name', 'Company').strip() or 'Company'
-    subject_symbol    = request.form.get('subject_symbol', '').strip().upper()
+    subject_symbols   = [s.strip().upper() for s in request.form.getlist('subject_symbols') if s.strip()]
     routing_mode      = request.form.get('city_mode', 'virtual')
 
     # Parse city selections
@@ -266,10 +266,10 @@ def run():
         except Exception:
             pass
 
-    if activities_file and activities_file.filename and subject_symbol:
+    if activities_file and activities_file.filename and subject_symbols:
         try:
             acts_df = pd.read_excel(io.BytesIO(activities_file.read()), header=1)
-            acts_named = load_activities(acts_df, subject_symbol)
+            acts_named = load_activities(acts_df, subject_symbols)
         except Exception:
             pass
 
@@ -277,7 +277,7 @@ def run():
         results = run_filter(
             contacts_df, ownership_df, fund_df, acts_named,
             criteria, hf_treatment, meeting_exclusion,
-            city_selections, subject_symbol, company_name
+            city_selections, subject_symbols, company_name
         )
     except Exception as e:
         return jsonify({'error': f'Filter error: {e}'}), 500
@@ -289,7 +289,8 @@ def run():
 
     # Save for download
     file_id  = str(uuid.uuid4())
-    filename = f'{subject_symbol or company_name} Contacts Mapping.xlsx'
+    symbol_label = ' '.join(subject_symbols) if subject_symbols else company_name
+    filename = f'{symbol_label} Contacts Mapping.xlsx'
     with open(os.path.join(TEMP_DIR, f'{file_id}.xlsx'), 'wb') as f:
         f.write(excel_bytes)
     session['download_id']   = file_id
