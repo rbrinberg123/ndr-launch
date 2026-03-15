@@ -10,11 +10,14 @@ from modules.filter import run_filter, load_activities
 from modules.sharepoint import SharePointClient
 from modules.ai_analysis import analyze_documents
 from modules.excel_output import generate_excel
+from modules.meetings import MeetingsDB
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'change-this-in-production')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin')
 TEMP_DIR       = tempfile.mkdtemp()
+DATABASE_URL   = os.environ.get('DATABASE_URL')
+meetings_db    = MeetingsDB(DATABASE_URL) if DATABASE_URL else None
 
 # City name → Investment Center mapping (mirrors skill Step 0-B2)
 CITY_IC_MAP = {
@@ -388,6 +391,44 @@ def admin():
 def admin_logout():
     session.pop('admin', None)
     return redirect(url_for('admin'))
+
+
+@app.route('/api/admin/preview-meetings', methods=['POST'])
+def preview_meetings():
+    if not session.get('admin'):
+        return jsonify({'error': 'Unauthorized'}), 401
+    if not meetings_db:
+        return jsonify({'error': 'Database not configured'}), 500
+    f = request.files.get('meetings_file')
+    if not f:
+        return jsonify({'error': 'No file provided'}), 400
+    try:
+        df = pd.read_excel(io.BytesIO(f.read()))
+        result = meetings_db.preview_incremental(df)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/admin/upload-meetings', methods=['POST'])
+def upload_meetings():
+    if not session.get('admin'):
+        return jsonify({'error': 'Unauthorized'}), 401
+    if not meetings_db:
+        return jsonify({'error': 'Database not configured'}), 500
+    f = request.files.get('meetings_file')
+    if not f:
+        return jsonify({'error': 'No file provided'}), 400
+    upload_type = request.form.get('upload_type', 'incremental')
+    try:
+        df = pd.read_excel(io.BytesIO(f.read()))
+        if upload_type == 'full':
+            result = meetings_db.upload_full(df, filename=f.filename)
+        else:
+            result = meetings_db.upload_incremental(df, filename=f.filename)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/api/admin/upload-taxonomy', methods=['POST'])
