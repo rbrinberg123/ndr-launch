@@ -267,6 +267,7 @@ def build_activity_only_contacts(acts_named, df_contact_keys, cutoff_l12m):
         state   = best_value(person_rows, 'State/Province')
         country = best_value(person_rows, 'Country/Territory')
 
+        style = best_value(person_rows, 'CDF (Contact): Investment Style')
         rows.append({
             'First Name':       ar['External Participant First Name'],
             'Last Name':        ar['External Participant Last Name'],
@@ -282,9 +283,10 @@ def build_activity_only_contacts(acts_named, df_contact_keys, cutoff_l12m):
             'EAUM ($mm)':       eaum_mm,
             'AUM ($mm)':        ata_mm,
             'T/O %':            to_pct,
+            'Primary Institution Type': 'Hedge Fund' if style == 'Alternative' else None,
             'Industry':         best_value(person_rows, 'CDF (Contact): Industry Focus'),
             'Geo':              best_value(person_rows, 'CDF (Contact): Geography'),
-            'Style':            best_value(person_rows, 'CDF (Contact): Investment Style'),
+            'Style':            style,
             'Mkt. Cap':         best_value(person_rows, 'CDF (Contact): Market Cap.'),
             'CDF (Contact): Do Not Call':       best_value(person_rows, 'CDF (Contact): Do Not Call'),
             'CDF (Contact): Is Quant?':         best_value(person_rows, 'CDF (Contact): Is Quant?'),
@@ -409,6 +411,18 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     cutoff_l12m = pd.Timestamp.today() - pd.DateOffset(months=12)
     if acts_named is not None and len(acts_named) > 0:
         df = compute_activity_cols(df, acts_named, cutoff_l12m)
+
+        # Override institution type to Hedge Fund for contacts whose Style is
+        # Alternative in the activities file
+        style_col = 'CDF (Contact): Investment Style'
+        if style_col in acts_named.columns:
+            alt_keys = set()
+            for _, ar in acts_named.iterrows():
+                if str(ar.get(style_col, '') or '').strip() == 'Alternative':
+                    alt_keys.add((ar['_fname'], ar['_lname']))
+            if alt_keys:
+                mask = df.apply(lambda r: (r['_fname'], r['_lname']) in alt_keys, axis=1)
+                df.loc[mask, 'Primary Institution Type'] = 'Hedge Fund'
 
     # Derive Contact Investment Center for main contacts
     def build_ic_row(row):

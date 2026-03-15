@@ -143,6 +143,7 @@ def build_activity_only_contacts(df, acts_named, subject_symbol):
         ata  = best(pr, 'Reported Total Assets')
         turn = best(pr, 'Turnover')
         city = best(pr, 'City'); state = best(pr, 'State/Province'); country = best(pr, 'Country/Territory')
+        style = best(pr, 'CDF (Contact): Investment Style')
         rows.append({
             'First Name': best(pr,'External Participant First Name'),
             'Last Name':  best(pr,'External Participant Last Name'),
@@ -155,9 +156,10 @@ def build_activity_only_contacts(df, acts_named, subject_symbol):
             'EAUM ($mm)': round(eaum/1_000_000) if eaum and pd.notna(eaum) else None,
             'AUM ($mm)':  round(ata /1_000_000) if ata  and pd.notna(ata)  else None,
             'T/O %': round(float(turn)*100,1)   if turn and pd.notna(turn) else None,
+            'Primary Institution Type': 'Hedge Fund' if style == 'Alternative' else None,
             'Industry': best(pr,'CDF (Contact): Industry Focus'),
             'Geo':      best(pr,'CDF (Contact): Geography'),
-            'Style':    best(pr,'CDF (Contact): Investment Style'),
+            'Style':    style,
             'Mkt. Cap': best(pr,'CDF (Contact): Market Cap.'),
             'CDF (Contact): Do Not Call':       best(pr,'CDF (Contact): Do Not Call'),
             'CDF (Contact): Is Quant?':         best(pr,'CDF (Contact): Is Quant?'),
