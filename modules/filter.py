@@ -468,7 +468,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             if r.get('Primary Institution Type') != 'Hedge Fund':
                 return False
             try:
-                return float(r.get('T/O %', 0) or 0) > 100
+                return float(r.get('T/O %', 0) or 0) > 1
             except Exception:
                 return False
         hf_df, main_df = split_df(main_df, hf_high_turn)
