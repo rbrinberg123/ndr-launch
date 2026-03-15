@@ -9,9 +9,6 @@ MCAP_MAP = {
     'Mega':  'Mega',
 }
 
-US_ONLY_GEO  = {'North America', 'North America (US-listed only)'}
-GLOBAL_EX_US = '*Global (ex US)'
-GLOBAL       = '*Global'
 GENERALIST   = {'*Generalist'}
 
 RENAME_MAP = {
@@ -54,9 +51,7 @@ def check_geo(contact_geo_vals, target_geo_set):
         return 'neutral'
     if contact_geo_vals is None:
         return 'neutral'
-    if contact_geo_vals & US_ONLY_GEO:
-        return 'match'
-    if GLOBAL in contact_geo_vals and GLOBAL_EX_US not in contact_geo_vals:
+    if contact_geo_vals & target_geo_set:
         return 'match'
     return 'exclude'
 
@@ -553,9 +548,15 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                         and v is not None)
 
     return {
-        'frames':          frames_to_process,
-        'city_selections': city_selections,
-        'total_source':    len(contacts_df),
-        'total_matched':   total_matched,
-        'has_city_routing': bool(city_dfs),
+        'frames':            frames_to_process,
+        'city_selections':   city_selections,
+        'total_source':      len(contacts_df),
+        'total_matched':     total_matched,
+        'has_city_routing':  bool(city_dfs),
+        'criteria':          criteria,
+        'hf_treatment':      hf_treatment,
+        'meeting_exclusion': meeting_exclusion,
+        'eaum_min':          eaum_min,
+        'subject_symbols':   subject_symbols,
+        'company_name':      company_name,
     }
