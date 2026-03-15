@@ -10,14 +10,19 @@ from modules.filter import run_filter, load_activities
 from modules.sharepoint import SharePointClient
 from modules.ai_analysis import analyze_documents
 from modules.excel_output import generate_excel
-from modules.meetings import MeetingsDB
-
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'change-this-in-production')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin')
 TEMP_DIR       = tempfile.mkdtemp()
-DATABASE_URL   = os.environ.get('DATABASE_URL')
-meetings_db    = MeetingsDB(DATABASE_URL) if DATABASE_URL else None
+
+def _init_meetings_db():
+    url = os.environ.get('DATABASE_URL')
+    if not url:
+        return None
+    from modules.meetings import MeetingsDB
+    return MeetingsDB(url)
+
+meetings_db = _init_meetings_db()
 
 # City name → Investment Center mapping (mirrors skill Step 0-B2)
 CITY_IC_MAP = {
