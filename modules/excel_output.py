@@ -75,6 +75,128 @@ def _format_sheet(ws):
         ws.auto_filter.ref = f"A1:{get_column_letter(ws.max_column)}1"
 
 
+MCAP_DISPLAY = {
+    '****Micro': 'Micro', '***Small': 'Small', '**Mid': 'Mid',
+    '*Large': 'Large', 'Mega': 'Mega',
+}
+
+HF_LABELS = {
+    'separate': 'Separate into HFs tab',
+    'low_turnover': 'Include low-turnover HFs only (T/O ≤ 100%)',
+    'include': 'Include all',
+}
+
+MEETING_LABELS = {
+    'include_all': 'Include all contacts',
+    'exclude_l12m': 'Exclude contacts met in last 12 months',
+    'exclude_l24m': 'Exclude contacts met in last 24 months',
+    'exclude_all': 'Exclude all contacts with prior meetings',
+}
+
+SECTION_FILL = PatternFill('solid', start_color='2E75B6')
+SECTION_FONT = Font(name='Arial', bold=True, color='FFFFFF', size=11)
+LABEL_FONT   = Font(name='Arial', bold=True, size=10, color='1F3864')
+VALUE_FONT   = Font(name='Arial', size=10)
+
+
+def _build_criteria_sheet(wb, results):
+    ws = wb.create_sheet('Criteria', 0)
+    ws.column_dimensions['A'].width = 28
+    ws.column_dimensions['B'].width = 60
+
+    criteria          = results.get('criteria') or {}
+    city_selections   = results.get('city_selections') or []
+    has_city          = results.get('has_city_routing', False)
+    hf_treatment      = results.get('hf_treatment', 'separate')
+    meeting_exclusion = results.get('meeting_exclusion', 'include_all')
+    eaum_min          = results.get('eaum_min')
+    subject_symbols   = results.get('subject_symbols') or []
+    company_name      = results.get('company_name', 'Company')
+    frames            = results.get('frames', {})
+
+    row = 1
+
+    def write_section(title):
+        nonlocal row
+        ws.cell(row=row, column=1, value=title).font = SECTION_FONT
+        ws.cell(row=row, column=1).fill = SECTION_FILL
+        ws.cell(row=row, column=2).fill = SECTION_FILL
+        ws.row_dimensions[row].height = 22
+        row += 1
+
+    def write_row(label, value):
+        nonlocal row
+        c1 = ws.cell(row=row, column=1, value=label)
+        c1.font = LABEL_FONT
+        c1.alignment = LEFT
+        c2 = ws.cell(row=row, column=2, value=value)
+        c2.font = VALUE_FONT
+        c2.alignment = LEFT
+        row += 1
+
+    def write_blank():
+        nonlocal row
+        row += 1
+
+    # ── Company / Tickers
+    write_section('Company / Tickers')
+    write_row('Company Name', company_name)
+    if subject_symbols:
+        write_row('Tickers', ', '.join(subject_symbols))
+
+    write_blank()
+
+    # ── CDF Criteria
+    write_section('CDF Criteria')
+    industry = criteria.get('industry')
+    style    = criteria.get('style')
+    mcap     = criteria.get('mcap')
+    geo      = criteria.get('geo')
+
+    write_row('Industry Focus', ', '.join(sorted(industry)) if industry else '(all)')
+    write_row('Investment Style', ', '.join(sorted(style)) if style else '(all)')
+    if mcap:
+        display_mcap = sorted(MCAP_DISPLAY.get(v, v) for v in mcap)
+        write_row('Market Cap', ', '.join(display_mcap))
+    else:
+        write_row('Market Cap', '(all)')
+    write_row('Geography', ', '.join(sorted(geo)) if geo else '(all)')
+
+    write_blank()
+
+    # ── Routing
+    write_section('Routing')
+    if has_city and city_selections:
+        write_row('Mode', 'City routing')
+        city_names = [name for name, _ in city_selections]
+        write_row('Cities', ', '.join(city_names))
+    else:
+        write_row('Mode', 'Virtual (single list)')
+
+    write_blank()
+
+    # ── Exclusion Settings
+    write_section('Exclusion Settings')
+    write_row('Hedge Fund Treatment', HF_LABELS.get(hf_treatment, hf_treatment))
+    write_row('Meeting Exclusion', MEETING_LABELS.get(meeting_exclusion, meeting_exclusion))
+    if eaum_min is not None:
+        write_row('EAUM Minimum', f'${eaum_min:,.0f}M')
+    else:
+        write_row('EAUM Minimum', '(none)')
+
+    write_blank()
+
+    # ── Sheet Summary
+    write_section('Sheet Summary')
+    excluded_keys = {'Too Small', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded'}
+    for k, v in frames.items():
+        if v is not None and len(v) > 0:
+            label = f'{k} (excluded)' if k in excluded_keys else k
+            write_row(label, f'{len(v):,} contacts')
+
+    ws.sheet_properties.tabColor = '2E75B6'
+
+
 def generate_excel(results, company_name):
     frames         = results['frames']
     city_selections = results.get('city_selections') or []
@@ -94,7 +216,7 @@ def generate_excel(results, company_name):
         if 'Contacts' in frames and frames['Contacts'] is not None and len(frames['Contacts']) > 0:
             sheet_order.append('Contacts')
 
-    for extra in ['HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded']:
+    for extra in ['HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded', 'Too Small']:
         if extra in frames and frames[extra] is not None and len(frames[extra]) > 0:
             sheet_order.append(extra)
 
@@ -112,6 +234,9 @@ def generate_excel(results, company_name):
     wb = load_workbook(output)
     for sheet_name in wb.sheetnames:
         _format_sheet(wb[sheet_name])
+
+    # Add Criteria tab as the first sheet
+    _build_criteria_sheet(wb, results)
 
     final = io.BytesIO()
     wb.save(final)
