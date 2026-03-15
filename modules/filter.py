@@ -388,9 +388,10 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     # Rename columns
     df.rename(columns=RENAME_MAP, inplace=True)
 
-    # Rename T/O %
+    # Rename T/O % and convert from raw number to percentage
     for old in ['Account Equity % Portfolio Turnover', 'Account Equity % T/O']:
         if old in df.columns:
+            df[old] = pd.to_numeric(df[old], errors='coerce') / 100
             df.rename(columns={old: 'T/O %'}, inplace=True)
             break
 
