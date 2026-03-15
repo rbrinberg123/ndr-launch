@@ -9,9 +9,6 @@ MCAP_MAP = {
     'Mega':  'Mega',
 }
 
-US_ONLY_GEO  = {'North America', 'North America (US-listed only)'}
-GLOBAL_EX_US = '*Global (ex US)'
-GLOBAL       = '*Global'
 GENERALIST   = {'*Generalist'}
 
 RENAME_MAP = {
@@ -54,9 +51,7 @@ def check_geo(contact_geo_vals, target_geo_set):
         return 'neutral'
     if contact_geo_vals is None:
         return 'neutral'
-    if contact_geo_vals & US_ONLY_GEO:
-        return 'match'
-    if GLOBAL in contact_geo_vals and GLOBAL_EX_US not in contact_geo_vals:
+    if contact_geo_vals & target_geo_set:
         return 'match'
     return 'exclude'
 
