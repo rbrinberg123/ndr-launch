@@ -24,7 +24,7 @@ RENAME_MAP = {
 FINAL_COLS = [
     'First Name', 'Last Name', 'CRM Account Name', 'Job Function',
     'Phone', 'Email', 'Coverage',
-    'Out1', 'Out2', 'Status', 'Notes', 'Contact Notes',
+    'Out1', 'Out2', 'Status', 'CRM Notes',
     'Shares', 'As of', 'Last Meeting',
     'Specifically with Co.', 'Anyone at Inst. with Co',
     'Industry', 'Geo', 'Style', 'Mkt. Cap',
@@ -485,9 +485,16 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             filtered = pd.concat([filtered, mdf_new], ignore_index=True, sort=False)
 
     # Add placeholder columns
-    for col in ['Out1', 'Out2', 'Status', 'Notes', 'Contact Notes', 'As of', 'Last Meeting']:
+    for col in ['Out1', 'Out2', 'Status', 'As of', 'Last Meeting']:
         if col not in filtered.columns:
             filtered[col] = None
+
+    # Combine Notes and Contact Notes into CRM Notes
+    notes = filtered['Notes'].fillna('') if 'Notes' in filtered.columns else ''
+    contact_notes = filtered['Contact Notes'].fillna('') if 'Contact Notes' in filtered.columns else ''
+    combined = (notes.str.cat(contact_notes, sep=' | ')
+                .str.strip(' | ').str.replace(r'^\| | \|$', '', regex=True).str.strip())
+    filtered['CRM Notes'] = combined.replace('', None)
 
     main_df = filtered.copy()
 

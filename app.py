@@ -263,6 +263,7 @@ def run():
     # Load files
     try:
         contacts_df = pd.read_excel(io.BytesIO(contacts_file.read()), header=2)
+        contacts_df = contacts_df.drop_duplicates()
     except Exception as e:
         return jsonify({'error': f'Could not read contacts file: {e}'}), 400
 

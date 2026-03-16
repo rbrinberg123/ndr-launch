@@ -2,7 +2,7 @@ import io
 import re
 import pandas as pd
 from openpyxl import load_workbook
-from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side, Protection
 from openpyxl.utils import get_column_letter
 
 HEADER_FILL = PatternFill('solid', start_color='1F3864')
@@ -45,6 +45,8 @@ def _format_sheet(ws):
         cell.border    = Border(bottom=Side(style='medium', color='FFFFFF'))
     ws.row_dimensions[1].height = 20
 
+    readonly_cols = {i for i, h in enumerate(headers, start=1) if h == 'CRM Notes'}
+
     for row_idx in range(2, ws.max_row + 1):
         fill = ALT_FILL if row_idx % 2 == 0 else NO_FILL
         for col_idx, header in enumerate(headers, start=1):
@@ -52,6 +54,7 @@ def _format_sheet(ws):
             cell.font   = BODY_FONT
             cell.fill   = fill
             cell.border = THIN
+            cell.protection = Protection(locked=col_idx in readonly_cols)
             if header in NUMERIC_COLS:
                 cell.alignment = CENTER
                 if header == 'T/O %':
@@ -83,6 +86,11 @@ def _format_sheet(ws):
     ws.freeze_panes = 'A2'
     if ws.max_column > 0:
         ws.auto_filter.ref = f"A1:{get_column_letter(ws.max_column)}1"
+
+    if readonly_cols:
+        ws.protection.sheet = True
+        ws.protection.sort = False
+        ws.protection.autoFilter = False
 
 
 MCAP_DISPLAY = {
