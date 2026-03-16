@@ -55,7 +55,7 @@ def _format_sheet(ws):
             if header in NUMERIC_COLS:
                 cell.alignment = CENTER
                 if header == 'T/O %':
-                    cell.number_format = '#,##0.0'
+                    cell.number_format = '0.0%'
                 elif header in ('EAUM ($mm)', 'AUM ($mm)'):
                     cell.number_format = '#,##0'
                 else:
@@ -110,7 +110,7 @@ VALUE_FONT   = Font(name='Arial', size=10)
 
 
 def _build_criteria_sheet(wb, results, safe_names=None):
-    ws = wb.create_sheet('Criteria', 0)
+    ws = wb.create_sheet('Summary', 0)
     ws.column_dimensions['A'].width = 28
     ws.column_dimensions['B'].width = 60
 
@@ -264,7 +264,7 @@ def generate_excel(results, company_name):
     for sheet_name in wb.sheetnames:
         _format_sheet(wb[sheet_name])
 
-    # Add Criteria tab as the first sheet
+    # Add Summary tab as the first sheet
     _build_criteria_sheet(wb, results, safe_names)
 
     final = io.BytesIO()
