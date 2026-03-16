@@ -6,8 +6,258 @@
       "state": "NY"
     },
     {
+      "investment_center": "Albany NY",
+      "city": "Troy",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Schenectady",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Latham",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Colonie",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Guilderland",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Delmar",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Bethlehem",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Clifton Park",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Halfmoon",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Niskayuna",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "East Greenbush",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Rensselaer",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Loudonville",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Voorheesville",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Menands",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Cohoes",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Watervliet",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Malta",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Saratoga Springs",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Ballston Spa",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Albany NY",
+      "city": "Glenmont",
+      "state": "NY"
+    },
+    {
       "investment_center": "Atlanta GA",
       "city": "Atlanta",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Sandy Springs",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Buckhead",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Brookhaven",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Dunwoody",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Roswell",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Alpharetta",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Johns Creek",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Milton",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Marietta",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Vinings",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Smyrna",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Kennesaw",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Mableton",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "East Cobb",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Peachtree Corners",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Norcross",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Duluth",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Suwanee",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Decatur",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Avondale Estates",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Tucker",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Chamblee",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Doraville",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "College Park",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Hapeville",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Douglasville",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Woodstock",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Canton",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Peachtree City",
       "state": "GA"
     },
     {
@@ -16,8 +266,173 @@
       "state": "TX"
     },
     {
+      "investment_center": "Austin TX",
+      "city": "West Lake Hills",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Rollingwood",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Bee Cave",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Lakeway",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Dripping Springs",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Cedar Park",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Leander",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Round Rock",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Georgetown",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Pflugerville",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Buda",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Kyle",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Sunset Valley",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Manor",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Hutto",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Liberty Hill",
+      "state": "TX"
+    },
+    {
       "investment_center": "Baltimore MD",
       "city": "Baltimore",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Towson",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Timonium",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Lutherville",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Hunt Valley",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Cockeysville",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Owings Mills",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Pikesville",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Ellicott City",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Columbia",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Catonsville",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Roland Park",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Mount Washington",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Annapolis",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Severna Park",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Glen Burnie",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Bel Air",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Frederick",
       "state": "MD"
     },
     {
@@ -26,8 +441,188 @@
       "state": "MA"
     },
     {
+      "investment_center": "Boston MA",
+      "city": "Cambridge",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Brookline",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Newton",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Wellesley",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Weston",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Needham",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Dedham",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Belmont",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Watertown",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Arlington",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Lexington",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Concord",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Lincoln",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Winchester",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Woburn",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Burlington",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Waltham",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Somerville",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Medford",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Milton",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Hingham",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Quincy",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Cohasset",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Andover",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "North Andover",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Chestnut Hill",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "South Boston",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Charlestown",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Back Bay",
+      "state": "MA"
+    },
+    {
       "investment_center": "Calgary",
       "city": "Calgary",
+      "state": "AB"
+    },
+    {
+      "investment_center": "Calgary",
+      "city": "Airdrie",
+      "state": "AB"
+    },
+    {
+      "investment_center": "Calgary",
+      "city": "Cochrane",
+      "state": "AB"
+    },
+    {
+      "investment_center": "Calgary",
+      "city": "Chestermere",
+      "state": "AB"
+    },
+    {
+      "investment_center": "Calgary",
+      "city": "Okotoks",
+      "state": "AB"
+    },
+    {
+      "investment_center": "Calgary",
+      "city": "High River",
+      "state": "AB"
+    },
+    {
+      "investment_center": "Calgary",
+      "city": "Canmore",
+      "state": "AB"
+    },
+    {
+      "investment_center": "Calgary",
+      "city": "Strathmore",
       "state": "AB"
     },
     {
@@ -36,8 +631,238 @@
       "state": "NC"
     },
     {
+      "investment_center": "Charlotte NC",
+      "city": "Davidson",
+      "state": "NC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Cornelius",
+      "state": "NC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Huntersville",
+      "state": "NC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Matthews",
+      "state": "NC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Mint Hill",
+      "state": "NC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Pineville",
+      "state": "NC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Ballantyne",
+      "state": "NC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Fort Mill",
+      "state": "SC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Tega Cay",
+      "state": "SC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Rock Hill",
+      "state": "SC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Belmont",
+      "state": "NC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Gastonia",
+      "state": "NC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Concord",
+      "state": "NC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Kannapolis",
+      "state": "NC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Mooresville",
+      "state": "NC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Waxhaw",
+      "state": "NC"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Weddington",
+      "state": "NC"
+    },
+    {
       "investment_center": "Chicago IL",
       "city": "Chicago",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Evanston",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Wilmette",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Kenilworth",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Winnetka",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Glencoe",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Northbrook",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Deerfield",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Highland Park",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Lake Forest",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Lake Bluff",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Glenview",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Northfield",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Skokie",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Park Ridge",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Rosemont",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Oak Brook",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Hinsdale",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Western Springs",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "La Grange",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Elmhurst",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Naperville",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Downers Grove",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Schaumburg",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Barrington",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Lincolnshire",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Bannockburn",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Riverwoods",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Chicago Loop",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "River North",
       "state": "IL"
     },
     {
@@ -46,13 +871,258 @@
       "state": "OH"
     },
     {
+      "investment_center": "Cincinnati OH",
+      "city": "Blue Ash",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Montgomery",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Indian Hill",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Madeira",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Mason",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "West Chester",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Mariemont",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Terrace Park",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Loveland",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Hyde Park",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Anderson Township",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Kenwood",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Fort Thomas",
+      "state": "KY"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Fort Mitchell",
+      "state": "KY"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Covington",
+      "state": "KY"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Newport",
+      "state": "KY"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Crestview Hills",
+      "state": "KY"
+    },
+    {
       "investment_center": "Cleveland OH",
       "city": "Cleveland",
       "state": "OH"
     },
     {
+      "investment_center": "Cleveland OH",
+      "city": "Shaker Heights",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Beachwood",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Pepper Pike",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Hunting Valley",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Gates Mills",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Chagrin Falls",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Moreland Hills",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Mayfield Heights",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Lyndhurst",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "University Heights",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Cleveland Heights",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Rocky River",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Westlake",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Bay Village",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Lakewood",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Independence",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Hudson",
+      "state": "OH"
+    },
+    {
       "investment_center": "Columbus OH",
       "city": "Columbus",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "Dublin",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "Upper Arlington",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "Bexley",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "New Albany",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "Worthington",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "Westerville",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "Grandview Heights",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "Hilliard",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "Powell",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "Gahanna",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "Canal Winchester",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "Pickerington",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "Reynoldsburg",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "German Village",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "Short North",
       "state": "OH"
     },
     {
@@ -66,8 +1136,198 @@
       "state": "TX"
     },
     {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Highland Park",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "University Park",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Plano",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Frisco",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "McKinney",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Allen",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Southlake",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Westlake",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Colleyville",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Grapevine",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Flower Mound",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Coppell",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Irving",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Las Colinas",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Addison",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Richardson",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Park Cities",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Arlington",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Keller",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Trophy Club",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Prosper",
+      "state": "TX"
+    },
+    {
       "investment_center": "Denver CO",
       "city": "Denver",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Cherry Hills Village",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Greenwood Village",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Englewood",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Littleton",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Centennial",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Highlands Ranch",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Lone Tree",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Parker",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Castle Rock",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Boulder",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Louisville",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Lafayette",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Westminster",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Broomfield",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Arvada",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Golden",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Lakewood",
       "state": "CO"
     },
     {
@@ -76,8 +1336,143 @@
       "state": "MI"
     },
     {
+      "investment_center": "Detroit MI",
+      "city": "Birmingham",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Bloomfield Hills",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Bloomfield Township",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Troy",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Royal Oak",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Grosse Pointe",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Grosse Pointe Farms",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Grosse Pointe Park",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Grosse Pointe Woods",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Northville",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Novi",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Farmington Hills",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "West Bloomfield",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Rochester",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Rochester Hills",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Plymouth",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Ann Arbor",
+      "state": "MI"
+    },
+    {
       "investment_center": "Hamilton",
       "city": "Hamilton",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Hamilton",
+      "city": "Burlington",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Hamilton",
+      "city": "Oakville",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Hamilton",
+      "city": "Grimsby",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Hamilton",
+      "city": "Stoney Creek",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Hamilton",
+      "city": "Dundas",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Hamilton",
+      "city": "Ancaster",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Hamilton",
+      "city": "Waterdown",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Hamilton",
+      "city": "Milton",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Hamilton",
+      "city": "St. Catharines",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Hamilton",
+      "city": "Niagara-on-the-Lake",
       "state": "ON"
     },
     {
@@ -86,8 +1481,173 @@
       "state": "CT"
     },
     {
+      "investment_center": "Hartford CT",
+      "city": "West Hartford",
+      "state": "CT"
+    },
+    {
+      "investment_center": "Hartford CT",
+      "city": "Avon",
+      "state": "CT"
+    },
+    {
+      "investment_center": "Hartford CT",
+      "city": "Farmington",
+      "state": "CT"
+    },
+    {
+      "investment_center": "Hartford CT",
+      "city": "Simsbury",
+      "state": "CT"
+    },
+    {
+      "investment_center": "Hartford CT",
+      "city": "Glastonbury",
+      "state": "CT"
+    },
+    {
+      "investment_center": "Hartford CT",
+      "city": "Wethersfield",
+      "state": "CT"
+    },
+    {
+      "investment_center": "Hartford CT",
+      "city": "Rocky Hill",
+      "state": "CT"
+    },
+    {
+      "investment_center": "Hartford CT",
+      "city": "Newington",
+      "state": "CT"
+    },
+    {
+      "investment_center": "Hartford CT",
+      "city": "Bloomfield",
+      "state": "CT"
+    },
+    {
+      "investment_center": "Hartford CT",
+      "city": "Windsor",
+      "state": "CT"
+    },
+    {
+      "investment_center": "Hartford CT",
+      "city": "South Windsor",
+      "state": "CT"
+    },
+    {
+      "investment_center": "Hartford CT",
+      "city": "Manchester",
+      "state": "CT"
+    },
+    {
+      "investment_center": "Hartford CT",
+      "city": "New Britain",
+      "state": "CT"
+    },
+    {
+      "investment_center": "Hartford CT",
+      "city": "Middletown",
+      "state": "CT"
+    },
+    {
       "investment_center": "Houston TX",
       "city": "Houston",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "River Oaks",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "West University Place",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Bellaire",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Southside Place",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Memorial",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Piney Point Village",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Hunters Creek Village",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Bunker Hill Village",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Hedwig Village",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Spring Valley Village",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "The Woodlands",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Sugar Land",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Katy",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Pearland",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Missouri City",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Kingwood",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Friendswood",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "League City",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Tomball",
       "state": "TX"
     },
     {
@@ -96,13 +1656,203 @@
       "state": "IN"
     },
     {
+      "investment_center": "Indianapolis IN",
+      "city": "Carmel",
+      "state": "IN"
+    },
+    {
+      "investment_center": "Indianapolis IN",
+      "city": "Zionsville",
+      "state": "IN"
+    },
+    {
+      "investment_center": "Indianapolis IN",
+      "city": "Fishers",
+      "state": "IN"
+    },
+    {
+      "investment_center": "Indianapolis IN",
+      "city": "Noblesville",
+      "state": "IN"
+    },
+    {
+      "investment_center": "Indianapolis IN",
+      "city": "Westfield",
+      "state": "IN"
+    },
+    {
+      "investment_center": "Indianapolis IN",
+      "city": "Meridian Hills",
+      "state": "IN"
+    },
+    {
+      "investment_center": "Indianapolis IN",
+      "city": "Williams Creek",
+      "state": "IN"
+    },
+    {
+      "investment_center": "Indianapolis IN",
+      "city": "Speedway",
+      "state": "IN"
+    },
+    {
+      "investment_center": "Indianapolis IN",
+      "city": "Greenwood",
+      "state": "IN"
+    },
+    {
+      "investment_center": "Indianapolis IN",
+      "city": "Plainfield",
+      "state": "IN"
+    },
+    {
+      "investment_center": "Indianapolis IN",
+      "city": "Brownsburg",
+      "state": "IN"
+    },
+    {
+      "investment_center": "Indianapolis IN",
+      "city": "Avon",
+      "state": "IN"
+    },
+    {
       "investment_center": "Jacksonville FL",
       "city": "Jacksonville",
       "state": "FL"
     },
     {
+      "investment_center": "Jacksonville FL",
+      "city": "Ponte Vedra Beach",
+      "state": "FL"
+    },
+    {
+      "investment_center": "Jacksonville FL",
+      "city": "Jacksonville Beach",
+      "state": "FL"
+    },
+    {
+      "investment_center": "Jacksonville FL",
+      "city": "Neptune Beach",
+      "state": "FL"
+    },
+    {
+      "investment_center": "Jacksonville FL",
+      "city": "Atlantic Beach",
+      "state": "FL"
+    },
+    {
+      "investment_center": "Jacksonville FL",
+      "city": "St. Johns",
+      "state": "FL"
+    },
+    {
+      "investment_center": "Jacksonville FL",
+      "city": "Nocatee",
+      "state": "FL"
+    },
+    {
+      "investment_center": "Jacksonville FL",
+      "city": "St. Augustine",
+      "state": "FL"
+    },
+    {
+      "investment_center": "Jacksonville FL",
+      "city": "Orange Park",
+      "state": "FL"
+    },
+    {
+      "investment_center": "Jacksonville FL",
+      "city": "Fleming Island",
+      "state": "FL"
+    },
+    {
+      "investment_center": "Jacksonville FL",
+      "city": "Fernandina Beach",
+      "state": "FL"
+    },
+    {
+      "investment_center": "Jacksonville FL",
+      "city": "Amelia Island",
+      "state": "FL"
+    },
+    {
       "investment_center": "Kansas City MO",
       "city": "Kansas City",
+      "state": "MO"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Overland Park",
+      "state": "KS"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Leawood",
+      "state": "KS"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Prairie Village",
+      "state": "KS"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Mission Hills",
+      "state": "KS"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Fairway",
+      "state": "KS"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Mission Woods",
+      "state": "KS"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Westwood",
+      "state": "KS"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Lenexa",
+      "state": "KS"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Olathe",
+      "state": "KS"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Shawnee",
+      "state": "KS"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Lee's Summit",
+      "state": "MO"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Parkville",
+      "state": "MO"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Liberty",
+      "state": "MO"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "North Kansas City",
+      "state": "MO"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Brookside",
       "state": "MO"
     },
     {
@@ -116,9 +1866,194 @@
       "state": "CA"
     },
     {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "San Marino",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "South Pasadena",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "La Canada Flintridge",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Altadena",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Sierra Madre",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Arcadia",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Monrovia",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Beverly Hills",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Santa Monica",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "West Hollywood",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Brentwood",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Pacific Palisades",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Culver City",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Manhattan Beach",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Hermosa Beach",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Redondo Beach",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "El Segundo",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Palos Verdes Estates",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Rancho Palos Verdes",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Rolling Hills",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Rolling Hills Estates",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Torrance",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Malibu",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Glendale",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Burbank",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "San Gabriel",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Alhambra",
+      "state": "CA"
+    },
+    {
       "investment_center": "Memphis TN",
       "city": "Memphis",
       "state": "TN"
+    },
+    {
+      "investment_center": "Memphis TN",
+      "city": "Germantown",
+      "state": "TN"
+    },
+    {
+      "investment_center": "Memphis TN",
+      "city": "Collierville",
+      "state": "TN"
+    },
+    {
+      "investment_center": "Memphis TN",
+      "city": "Bartlett",
+      "state": "TN"
+    },
+    {
+      "investment_center": "Memphis TN",
+      "city": "Lakeland",
+      "state": "TN"
+    },
+    {
+      "investment_center": "Memphis TN",
+      "city": "Arlington",
+      "state": "TN"
+    },
+    {
+      "investment_center": "Memphis TN",
+      "city": "Cordova",
+      "state": "TN"
+    },
+    {
+      "investment_center": "Memphis TN",
+      "city": "East Memphis",
+      "state": "TN"
+    },
+    {
+      "investment_center": "Memphis TN",
+      "city": "Olive Branch",
+      "state": "MS"
+    },
+    {
+      "investment_center": "Memphis TN",
+      "city": "Southaven",
+      "state": "MS"
+    },
+    {
+      "investment_center": "Memphis TN",
+      "city": "Hernando",
+      "state": "MS"
     },
     {
       "investment_center": "Milwaukee/Madison WI",
@@ -128,6 +2063,81 @@
     {
       "investment_center": "Milwaukee/Madison WI",
       "city": "Madison",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Wauwatosa",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Brookfield",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Elm Grove",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Whitefish Bay",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Shorewood",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Fox Point",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Bayside",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Mequon",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Cedarburg",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Middleton",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Fitchburg",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Shorewood Hills",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Maple Bluff",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Sun Prairie",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Verona",
       "state": "WI"
     },
     {
@@ -141,8 +2151,158 @@
       "state": "MN"
     },
     {
-      "investment_center": "Montr\u00e9al",
-      "city": "Montr\u00e9al",
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Edina",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Wayzata",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Minnetonka",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Plymouth",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Golden Valley",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "St. Louis Park",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Bloomington",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Eden Prairie",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Maple Grove",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Woodbury",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Eagan",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Mendota Heights",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Deephaven",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Orono",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Excelsior",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Prior Lake",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "North Oaks",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Montréal",
+      "city": "Montreal",
+      "state": "QC"
+    },
+    {
+      "investment_center": "Montréal",
+      "city": "Westmount",
+      "state": "QC"
+    },
+    {
+      "investment_center": "Montréal",
+      "city": "Mount Royal",
+      "state": "QC"
+    },
+    {
+      "investment_center": "Montréal",
+      "city": "Outremont",
+      "state": "QC"
+    },
+    {
+      "investment_center": "Montréal",
+      "city": "Laval",
+      "state": "QC"
+    },
+    {
+      "investment_center": "Montréal",
+      "city": "Longueuil",
+      "state": "QC"
+    },
+    {
+      "investment_center": "Montréal",
+      "city": "Brossard",
+      "state": "QC"
+    },
+    {
+      "investment_center": "Montréal",
+      "city": "Saint-Lambert",
+      "state": "QC"
+    },
+    {
+      "investment_center": "Montréal",
+      "city": "Beaconsfield",
+      "state": "QC"
+    },
+    {
+      "investment_center": "Montréal",
+      "city": "Kirkland",
+      "state": "QC"
+    },
+    {
+      "investment_center": "Montréal",
+      "city": "Dorval",
+      "state": "QC"
+    },
+    {
+      "investment_center": "Montréal",
+      "city": "Pointe-Claire",
+      "state": "QC"
+    },
+    {
+      "investment_center": "Montréal",
+      "city": "Boucherville",
+      "state": "QC"
+    },
+    {
+      "investment_center": "Montréal",
+      "city": "Blainville",
       "state": "QC"
     },
     {
@@ -151,13 +2311,423 @@
       "state": "LA"
     },
     {
+      "investment_center": "New Orleans LA",
+      "city": "Metairie",
+      "state": "LA"
+    },
+    {
+      "investment_center": "New Orleans LA",
+      "city": "Kenner",
+      "state": "LA"
+    },
+    {
+      "investment_center": "New Orleans LA",
+      "city": "Mandeville",
+      "state": "LA"
+    },
+    {
+      "investment_center": "New Orleans LA",
+      "city": "Covington",
+      "state": "LA"
+    },
+    {
+      "investment_center": "New Orleans LA",
+      "city": "Madisonville",
+      "state": "LA"
+    },
+    {
+      "investment_center": "New Orleans LA",
+      "city": "Harahan",
+      "state": "LA"
+    },
+    {
+      "investment_center": "New Orleans LA",
+      "city": "River Ridge",
+      "state": "LA"
+    },
+    {
+      "investment_center": "New Orleans LA",
+      "city": "Gretna",
+      "state": "LA"
+    },
+    {
+      "investment_center": "New Orleans LA",
+      "city": "Marrero",
+      "state": "LA"
+    },
+    {
+      "investment_center": "New Orleans LA",
+      "city": "Uptown New Orleans",
+      "state": "LA"
+    },
+    {
+      "investment_center": "New Orleans LA",
+      "city": "Lakeview",
+      "state": "LA"
+    },
+    {
       "investment_center": "New York/Southern CT/Northern NJ",
       "city": "New York",
       "state": "NY"
     },
     {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Manhattan",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Brooklyn",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Queens",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Bronx",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Staten Island",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "White Plains",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Rye",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Harrison",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Purchase",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Scarsdale",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Bronxville",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Larchmont",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Mamaroneck",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Tarrytown",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Irvington",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Dobbs Ferry",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Sleepy Hollow",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Armonk",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Chappaqua",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Old Greenwich",
+      "state": "CT"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Greenwich",
+      "state": "CT"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Cos Cob",
+      "state": "CT"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Riverside",
+      "state": "CT"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Stamford",
+      "state": "CT"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Darien",
+      "state": "CT"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "New Canaan",
+      "state": "CT"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Norwalk",
+      "state": "CT"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Westport",
+      "state": "CT"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Wilton",
+      "state": "CT"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Fairfield",
+      "state": "CT"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Southport",
+      "state": "CT"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Jersey City",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Hoboken",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Weehawken",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Edgewater",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Fort Lee",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Englewood Cliffs",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Tenafly",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Alpine",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Montclair",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Glen Ridge",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Short Hills",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Millburn",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Summit",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Maplewood",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Madison",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Chatham",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Morristown",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Livingston",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Westfield",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Princeton",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Newark",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Roslyn",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Manhasset",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Great Neck",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Old Westbury",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Garden City",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Jericho",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Syosset",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Melville",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Huntington",
+      "state": "NY"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "Port Washington",
+      "state": "NY"
+    },
+    {
       "investment_center": "Omaha NE",
       "city": "Omaha",
+      "state": "NE"
+    },
+    {
+      "investment_center": "Omaha NE",
+      "city": "Elkhorn",
+      "state": "NE"
+    },
+    {
+      "investment_center": "Omaha NE",
+      "city": "Papillion",
+      "state": "NE"
+    },
+    {
+      "investment_center": "Omaha NE",
+      "city": "La Vista",
+      "state": "NE"
+    },
+    {
+      "investment_center": "Omaha NE",
+      "city": "Bellevue",
+      "state": "NE"
+    },
+    {
+      "investment_center": "Omaha NE",
+      "city": "Gretna",
+      "state": "NE"
+    },
+    {
+      "investment_center": "Omaha NE",
+      "city": "Bennington",
+      "state": "NE"
+    },
+    {
+      "investment_center": "Omaha NE",
+      "city": "Ralston",
+      "state": "NE"
+    },
+    {
+      "investment_center": "Omaha NE",
+      "city": "Council Bluffs",
+      "state": "IA"
+    },
+    {
+      "investment_center": "Omaha NE",
+      "city": "Lincoln",
       "state": "NE"
     },
     {
@@ -171,8 +2741,208 @@
       "state": "DE"
     },
     {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Bala Cynwyd",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Wynnewood",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Ardmore",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Haverford",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Bryn Mawr",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Villanova",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Radnor",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Wayne",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Devon",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Berwyn",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Paoli",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Malvern",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Conshohocken",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Blue Bell",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "King of Prussia",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "West Chester",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Doylestown",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Media",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Newtown Square",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Chestnut Hill",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Princeton",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Cherry Hill",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Moorestown",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Haddonfield",
+      "state": "NJ"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Greenville",
+      "state": "DE"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Newark",
+      "state": "DE"
+    },
+    {
       "investment_center": "Phoenix AZ",
       "city": "Phoenix",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Scottsdale",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Paradise Valley",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Tempe",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Mesa",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Chandler",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Gilbert",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Glendale",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Peoria",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Cave Creek",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Carefree",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Fountain Hills",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Queen Creek",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Arcadia",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Biltmore",
       "state": "AZ"
     },
     {
@@ -181,8 +2951,123 @@
       "state": "PA"
     },
     {
+      "investment_center": "Pittsburgh PA",
+      "city": "Mt. Lebanon",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Pittsburgh PA",
+      "city": "Upper St. Clair",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Pittsburgh PA",
+      "city": "Sewickley",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Pittsburgh PA",
+      "city": "Fox Chapel",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Pittsburgh PA",
+      "city": "Aspinwall",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Pittsburgh PA",
+      "city": "Shadyside",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Pittsburgh PA",
+      "city": "Squirrel Hill",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Pittsburgh PA",
+      "city": "Wexford",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Pittsburgh PA",
+      "city": "Cranberry Township",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Pittsburgh PA",
+      "city": "Ross Township",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Pittsburgh PA",
+      "city": "Moon Township",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Pittsburgh PA",
+      "city": "Monroeville",
+      "state": "PA"
+    },
+    {
       "investment_center": "Portland OR",
       "city": "Portland",
+      "state": "OR"
+    },
+    {
+      "investment_center": "Portland OR",
+      "city": "Lake Oswego",
+      "state": "OR"
+    },
+    {
+      "investment_center": "Portland OR",
+      "city": "West Linn",
+      "state": "OR"
+    },
+    {
+      "investment_center": "Portland OR",
+      "city": "Beaverton",
+      "state": "OR"
+    },
+    {
+      "investment_center": "Portland OR",
+      "city": "Tigard",
+      "state": "OR"
+    },
+    {
+      "investment_center": "Portland OR",
+      "city": "Tualatin",
+      "state": "OR"
+    },
+    {
+      "investment_center": "Portland OR",
+      "city": "Happy Valley",
+      "state": "OR"
+    },
+    {
+      "investment_center": "Portland OR",
+      "city": "Wilsonville",
+      "state": "OR"
+    },
+    {
+      "investment_center": "Portland OR",
+      "city": "Vancouver",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Portland OR",
+      "city": "Camas",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Portland OR",
+      "city": "Hillsboro",
+      "state": "OR"
+    },
+    {
+      "investment_center": "Portland OR",
+      "city": "Sherwood",
       "state": "OR"
     },
     {
@@ -191,8 +3076,108 @@
       "state": "RI"
     },
     {
+      "investment_center": "Providence RI",
+      "city": "Cranston",
+      "state": "RI"
+    },
+    {
+      "investment_center": "Providence RI",
+      "city": "Warwick",
+      "state": "RI"
+    },
+    {
+      "investment_center": "Providence RI",
+      "city": "East Providence",
+      "state": "RI"
+    },
+    {
+      "investment_center": "Providence RI",
+      "city": "Barrington",
+      "state": "RI"
+    },
+    {
+      "investment_center": "Providence RI",
+      "city": "Riverside",
+      "state": "RI"
+    },
+    {
+      "investment_center": "Providence RI",
+      "city": "Bristol",
+      "state": "RI"
+    },
+    {
+      "investment_center": "Providence RI",
+      "city": "Newport",
+      "state": "RI"
+    },
+    {
+      "investment_center": "Providence RI",
+      "city": "Lincoln",
+      "state": "RI"
+    },
+    {
+      "investment_center": "Providence RI",
+      "city": "Cumberland",
+      "state": "RI"
+    },
+    {
+      "investment_center": "Providence RI",
+      "city": "Seekonk",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Providence RI",
+      "city": "Attleboro",
+      "state": "MA"
+    },
+    {
       "investment_center": "Richmond VA",
       "city": "Richmond",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Richmond VA",
+      "city": "Short Pump",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Richmond VA",
+      "city": "Glen Allen",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Richmond VA",
+      "city": "Henrico",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Richmond VA",
+      "city": "Midlothian",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Richmond VA",
+      "city": "Bon Air",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Richmond VA",
+      "city": "Mechanicsville",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Richmond VA",
+      "city": "Chesterfield",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Richmond VA",
+      "city": "Ashland",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Richmond VA",
+      "city": "Tuckahoe",
       "state": "VA"
     },
     {
@@ -201,8 +3186,128 @@
       "state": "TX"
     },
     {
+      "investment_center": "San Antonio TX",
+      "city": "Alamo Heights",
+      "state": "TX"
+    },
+    {
+      "investment_center": "San Antonio TX",
+      "city": "Olmos Park",
+      "state": "TX"
+    },
+    {
+      "investment_center": "San Antonio TX",
+      "city": "Terrell Hills",
+      "state": "TX"
+    },
+    {
+      "investment_center": "San Antonio TX",
+      "city": "Shavano Park",
+      "state": "TX"
+    },
+    {
+      "investment_center": "San Antonio TX",
+      "city": "Hill Country Village",
+      "state": "TX"
+    },
+    {
+      "investment_center": "San Antonio TX",
+      "city": "Castle Hills",
+      "state": "TX"
+    },
+    {
+      "investment_center": "San Antonio TX",
+      "city": "Stone Oak",
+      "state": "TX"
+    },
+    {
+      "investment_center": "San Antonio TX",
+      "city": "Boerne",
+      "state": "TX"
+    },
+    {
+      "investment_center": "San Antonio TX",
+      "city": "Fair Oaks Ranch",
+      "state": "TX"
+    },
+    {
+      "investment_center": "San Antonio TX",
+      "city": "Helotes",
+      "state": "TX"
+    },
+    {
+      "investment_center": "San Antonio TX",
+      "city": "New Braunfels",
+      "state": "TX"
+    },
+    {
       "investment_center": "San Diego CA",
       "city": "San Diego",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Diego CA",
+      "city": "La Jolla",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Diego CA",
+      "city": "Del Mar",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Diego CA",
+      "city": "Solana Beach",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Diego CA",
+      "city": "Rancho Santa Fe",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Diego CA",
+      "city": "Encinitas",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Diego CA",
+      "city": "Carlsbad",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Diego CA",
+      "city": "Coronado",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Diego CA",
+      "city": "Poway",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Diego CA",
+      "city": "Carmel Valley",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Diego CA",
+      "city": "Scripps Ranch",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Diego CA",
+      "city": "Escondido",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Diego CA",
+      "city": "Oceanside",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Diego CA",
+      "city": "Mission Hills",
       "state": "CA"
     },
     {
@@ -212,12 +3317,277 @@
     },
     {
       "investment_center": "San Francisco/San Jose CA",
+      "city": "Oakland",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Berkeley",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Emeryville",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Alameda",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Piedmont",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Orinda",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Lafayette",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Walnut Creek",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Danville",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Sausalito",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Mill Valley",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Tiburon",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Larkspur",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Corte Madera",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Daly City",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "South San Francisco",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Burlingame",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Hillsborough",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "San Mateo",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Belmont",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "San Carlos",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Redwood City",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Menlo Park",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Atherton",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Palo Alto",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Los Altos",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Los Altos Hills",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Mountain View",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Sunnyvale",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Santa Clara",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Cupertino",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Saratoga",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Campbell",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
       "city": "San Jose",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Los Gatos",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Woodside",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Portola Valley",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Foster City",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "Pleasanton",
       "state": "CA"
     },
     {
       "investment_center": "Seattle WA",
       "city": "Seattle",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Bellevue",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Kirkland",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Redmond",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Mercer Island",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Medina",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Clyde Hill",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Yarrow Point",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Hunts Point",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Sammamish",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Issaquah",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Newcastle",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Bothell",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Woodinville",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Bainbridge Island",
+      "state": "WA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Edmonds",
       "state": "WA"
     },
     {
@@ -227,7 +3597,117 @@
     },
     {
       "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Miami Beach",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Coral Gables",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Coconut Grove",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Key Biscayne",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Aventura",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Bal Harbour",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Surfside",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Sunny Isles Beach",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Fort Lauderdale",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Las Olas",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Boca Raton",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Delray Beach",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "West Palm Beach",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Palm Beach",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Palm Beach Gardens",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Jupiter",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Naples",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Bonita Springs",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
       "city": "Orlando",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Winter Park",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Windermere",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Lake Nona",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Maitland",
       "state": "FL"
     },
     {
@@ -237,7 +3717,42 @@
     },
     {
       "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
-      "city": "Fort Lauderdale",
+      "city": "St. Petersburg",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Clearwater",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Belleair",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Sarasota",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Lakewood Ranch",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Coral Springs",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Parkland",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Wellington",
       "state": "FL"
     },
     {
@@ -246,8 +3761,148 @@
       "state": "MO"
     },
     {
+      "investment_center": "St. Louis MO",
+      "city": "Clayton",
+      "state": "MO"
+    },
+    {
+      "investment_center": "St. Louis MO",
+      "city": "Ladue",
+      "state": "MO"
+    },
+    {
+      "investment_center": "St. Louis MO",
+      "city": "Frontenac",
+      "state": "MO"
+    },
+    {
+      "investment_center": "St. Louis MO",
+      "city": "Town and Country",
+      "state": "MO"
+    },
+    {
+      "investment_center": "St. Louis MO",
+      "city": "Creve Coeur",
+      "state": "MO"
+    },
+    {
+      "investment_center": "St. Louis MO",
+      "city": "Chesterfield",
+      "state": "MO"
+    },
+    {
+      "investment_center": "St. Louis MO",
+      "city": "Kirkwood",
+      "state": "MO"
+    },
+    {
+      "investment_center": "St. Louis MO",
+      "city": "Webster Groves",
+      "state": "MO"
+    },
+    {
+      "investment_center": "St. Louis MO",
+      "city": "Des Peres",
+      "state": "MO"
+    },
+    {
+      "investment_center": "St. Louis MO",
+      "city": "Richmond Heights",
+      "state": "MO"
+    },
+    {
+      "investment_center": "St. Louis MO",
+      "city": "University City",
+      "state": "MO"
+    },
+    {
+      "investment_center": "St. Louis MO",
+      "city": "Clayton-Tamm",
+      "state": "MO"
+    },
+    {
       "investment_center": "Toronto",
       "city": "Toronto",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Mississauga",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Oakville",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Burlington",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Etobicoke",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Vaughan",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Richmond Hill",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Markham",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Thornhill",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "North York",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Scarborough",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Pickering",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Ajax",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Whitby",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Aurora",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Newmarket",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "King City",
       "state": "ON"
     },
     {
@@ -256,13 +3911,238 @@
       "state": "BC"
     },
     {
+      "investment_center": "Vancouver",
+      "city": "West Vancouver",
+      "state": "BC"
+    },
+    {
+      "investment_center": "Vancouver",
+      "city": "North Vancouver",
+      "state": "BC"
+    },
+    {
+      "investment_center": "Vancouver",
+      "city": "Burnaby",
+      "state": "BC"
+    },
+    {
+      "investment_center": "Vancouver",
+      "city": "Richmond",
+      "state": "BC"
+    },
+    {
+      "investment_center": "Vancouver",
+      "city": "Surrey",
+      "state": "BC"
+    },
+    {
+      "investment_center": "Vancouver",
+      "city": "Coquitlam",
+      "state": "BC"
+    },
+    {
+      "investment_center": "Vancouver",
+      "city": "Port Moody",
+      "state": "BC"
+    },
+    {
+      "investment_center": "Vancouver",
+      "city": "White Rock",
+      "state": "BC"
+    },
+    {
+      "investment_center": "Vancouver",
+      "city": "Delta",
+      "state": "BC"
+    },
+    {
+      "investment_center": "Vancouver",
+      "city": "New Westminster",
+      "state": "BC"
+    },
+    {
+      "investment_center": "Vancouver",
+      "city": "West Point Grey",
+      "state": "BC"
+    },
+    {
+      "investment_center": "Vancouver",
+      "city": "Kitsilano",
+      "state": "BC"
+    },
+    {
       "investment_center": "Washington DC/Northern VA/Suburban MD",
       "city": "Washington",
       "state": "DC"
     },
     {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Georgetown",
+      "state": "DC"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Arlington",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Alexandria",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "McLean",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Tysons",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Vienna",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Falls Church",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Reston",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Herndon",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Great Falls",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Fairfax",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Fairfax Station",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Burke",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Springfield",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Ashburn",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Leesburg",
+      "state": "VA"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Bethesda",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Chevy Chase",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Potomac",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "North Bethesda",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Rockville",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Kensington",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Silver Spring",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Gaithersburg",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Cabin John",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Washington Navy Yard",
+      "state": "DC"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Dupont Circle",
+      "state": "DC"
+    },
+    {
       "investment_center": "Winnipeg",
       "city": "Winnipeg",
+      "state": "MB"
+    },
+    {
+      "investment_center": "Winnipeg",
+      "city": "Headingley",
+      "state": "MB"
+    },
+    {
+      "investment_center": "Winnipeg",
+      "city": "East St. Paul",
+      "state": "MB"
+    },
+    {
+      "investment_center": "Winnipeg",
+      "city": "West St. Paul",
+      "state": "MB"
+    },
+    {
+      "investment_center": "Winnipeg",
+      "city": "St. Andrews",
+      "state": "MB"
+    },
+    {
+      "investment_center": "Winnipeg",
+      "city": "Stonewall",
+      "state": "MB"
+    },
+    {
+      "investment_center": "Winnipeg",
+      "city": "Selkirk",
       "state": "MB"
     }
   ]
