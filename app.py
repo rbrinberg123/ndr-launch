@@ -24,63 +24,57 @@ def _init_meetings_db():
 
 meetings_db = _init_meetings_db()
 
-# City name → Investment Center mapping (mirrors skill Step 0-B2)
+# ── City map ──────────────────────────────────────────────────────────────────
+
+CITY_MAP_PATH = os.path.join(os.path.dirname(__file__), 'city_map.json')
+
+def load_city_map():
+    if os.path.exists(CITY_MAP_PATH):
+        try:
+            with open(CITY_MAP_PATH) as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {'mappings': []}
+
+def save_city_map(data):
+    with open(CITY_MAP_PATH, 'w') as f:
+        json.dump(data, f, indent=2)
+
+def _build_display_cities():
+    """One entry per unique investment center, alphabetical."""
+    cm = load_city_map()
+    ics = sorted({m['investment_center'] for m in cm.get('mappings', [])})
+    return [(ic, ic) for ic in ics]
+
+DISPLAY_CITIES = _build_display_cities()
+
+# Shorthand resolution map — preserves all legacy shorthands
 CITY_IC_MAP = {
-    'new york': 'New York/Southern CT/Northern NJ',
     'ny': 'New York/Southern CT/Northern NJ',
     'nyc': 'New York/Southern CT/Northern NJ',
-    'boston': 'Boston MA',
-    'chicago': 'Chicago IL',
-    'philadelphia': 'Philadelphia PA/Wilmington DE',
-    'philly': 'Philadelphia PA/Wilmington DE',
-    'san francisco': 'San Francisco/San Jose CA',
+    'new york': 'New York/Southern CT/Northern NJ',
     'sf': 'San Francisco/San Jose CA',
-    'los angeles': 'Los Angeles/Pasadena CA',
+    'san francisco': 'San Francisco/San Jose CA',
     'la': 'Los Angeles/Pasadena CA',
+    'los angeles': 'Los Angeles/Pasadena CA',
+    'philly': 'Philadelphia PA/Wilmington DE',
+    'philadelphia': 'Philadelphia PA/Wilmington DE',
     'dallas': 'Dallas/Ft. Worth TX',
     'houston': 'Houston TX',
+    'boston': 'Boston MA',
+    'chicago': 'Chicago IL',
     'minneapolis': 'Minneapolis/St. Paul MN',
     'florida': 'South Florida/Orlando FL/Tampa-St.Pete FL',
     'miami': 'South Florida/Orlando FL/Tampa-St.Pete FL',
     'south florida': 'South Florida/Orlando FL/Tampa-St.Pete FL',
-    'london': 'London',
-    'paris': 'Paris',
-    'amsterdam': 'Amsterdam',
-    'tokyo': 'Tokyo',
-    'hong kong': 'Hong Kong',
     'toronto': 'Toronto',
     'columbus': 'Columbus OH',
     'kansas city': 'Kansas City MO',
     'san antonio': 'San Antonio TX',
-    'denver': 'Denver',
-    'atlanta': 'Atlanta',
-    'nashville': 'Nashville',
+    'denver': 'Denver CO',
+    'atlanta': 'Atlanta GA',
 }
-
-DISPLAY_CITIES = [
-    ('New York',       'New York/Southern CT/Northern NJ'),
-    ('Boston',         'Boston MA'),
-    ('Chicago',        'Chicago IL'),
-    ('Philadelphia',   'Philadelphia PA/Wilmington DE'),
-    ('San Francisco',  'San Francisco/San Jose CA'),
-    ('Los Angeles',    'Los Angeles/Pasadena CA'),
-    ('Dallas',         'Dallas/Ft. Worth TX'),
-    ('Houston',        'Houston TX'),
-    ('Minneapolis',    'Minneapolis/St. Paul MN'),
-    ('South Florida',  'South Florida/Orlando FL/Tampa-St.Pete FL'),
-    ('Denver',         'Denver'),
-    ('Atlanta',        'Atlanta'),
-    ('Nashville',      'Nashville'),
-    ('Kansas City',    'Kansas City MO'),
-    ('Columbus',       'Columbus OH'),
-    ('San Antonio',    'San Antonio TX'),
-    ('London',         'London'),
-    ('Paris',          'Paris'),
-    ('Amsterdam',      'Amsterdam'),
-    ('Tokyo',          'Tokyo'),
-    ('Hong Kong',      'Hong Kong'),
-    ('Toronto',        'Toronto'),
-]
 
 
 # ── Taxonomy ──────────────────────────────────────────────────────────────────
@@ -177,6 +171,7 @@ def index():
         pass
     return render_template('index.html',
                            taxonomy_json=json.dumps(taxonomy),
+                           city_map_json=json.dumps(load_city_map()),
                            sp_configured=sp_configured,
                            display_cities=DISPLAY_CITIES)
 
@@ -245,12 +240,19 @@ def run():
         selected_cities = request.form.getlist('selected_cities')
         app.logger.info(f'City routing: mode={routing_mode}, selected={selected_cities}')
         city_selections = []
+        # Build set of valid IC names for direct matching
+        valid_ics = {ic for _, ic in DISPLAY_CITIES}
         for city_key in selected_cities:
-            ck = city_key.strip().lower()
-            ic = CITY_IC_MAP.get(ck)
+            ck = city_key.strip()
+            # Direct IC name match (from data-driven UI)
+            if ck in valid_ics:
+                city_selections.append((ck, ck))
+                continue
+            # Shorthand resolution
+            ic = CITY_IC_MAP.get(ck.lower())
             if not ic:
                 for tab_name, ic_val in DISPLAY_CITIES:
-                    if tab_name.lower() == ck:
+                    if tab_name.lower() == ck.lower():
                         ic = ic_val
                         city_key = tab_name
                         break
@@ -467,6 +469,47 @@ def upload_taxonomy():
         save_taxonomy(taxonomy)
         total = sum(len(v) for v in taxonomy.values())
         return jsonify({'success': True, 'rows': total})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/admin/upload-city-map', methods=['POST'])
+def upload_city_map():
+    if not session.get('admin'):
+        return jsonify({'error': 'Unauthorized'}), 401
+    f = request.files.get('city_map_file')
+    if not f:
+        return jsonify({'error': 'No file provided'}), 400
+    try:
+        df = pd.read_excel(io.BytesIO(f.read()))
+        # Normalise column names
+        col_map = {}
+        for c in df.columns:
+            cl = str(c).strip().lower().replace(' ', '_')
+            if 'investment' in cl:
+                col_map[c] = 'investment_center'
+            elif 'nearby' in cl or 'city' in cl:
+                col_map[c] = 'city'
+            elif 'state' in cl:
+                col_map[c] = 'state'
+        df = df.rename(columns=col_map)
+        required = {'investment_center', 'city', 'state'}
+        if not required.issubset(set(df.columns)):
+            return jsonify({'error': f'Missing columns. Need: Investment Center, Nearby City, State. Found: {list(df.columns)}'}), 400
+        mappings = []
+        for _, row in df.iterrows():
+            ic = str(row['investment_center']).strip() if not pd.isna(row['investment_center']) else ''
+            city = str(row['city']).strip() if not pd.isna(row['city']) else ''
+            state = str(row['state']).strip() if not pd.isna(row['state']) else ''
+            if ic and city:
+                mappings.append({'investment_center': ic, 'city': city, 'state': state})
+        data = {'mappings': mappings}
+        save_city_map(data)
+        # Refresh DISPLAY_CITIES
+        global DISPLAY_CITIES
+        DISPLAY_CITIES = _build_display_cities()
+        ics = len({m['investment_center'] for m in mappings})
+        return jsonify({'success': True, 'rows': len(mappings), 'investment_centers': ics})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

@@ -104,18 +104,21 @@
       <div class="section-label">NDR routing</div>
       <div class="radio-stack">
         <label class="radio-row"><input type="radio" name="city_mode" value="virtual" checked><span class="radio-custom"></span><span class="radio-label">Virtual (single sheet)</span></label>
-        <label class="radio-row"><input type="radio" name="city_mode" value="cities"><span class="radio-custom"></span><span class="radio-label">Split by city</span></label>
+        <label class="radio-row"><input type="radio" name="city_mode" value="cities"><span class="radio-custom"></span><span class="radio-label">Investment Center</span></label>
+        <label class="radio-row"><input type="radio" name="city_mode" value="by_city"><span class="radio-custom"></span><span class="radio-label">City</span></label>
+        <label class="radio-row"><input type="radio" name="city_mode" value="by_state"><span class="radio-custom"></span><span class="radio-label">State</span></label>
       </div>
-      <div id="city-inputs" class="city-picker" style="display:none">
-        <div class="city-picker-hint">Select 1–4 cities</div>
-        <div class="city-grid">
-          {% for tab_name, ic_value in display_cities %}
-          <label class="city-opt">
-            <input type="checkbox" name="selected_cities" value="{{ tab_name.lower() }}" class="city-check">
-            <span>{{ tab_name }}</span>
-          </label>
-          {% endfor %}
-        </div>
+      <div id="routing-ic-panel" class="city-picker" style="display:none">
+        <div class="city-picker-hint">Select investment centers</div>
+        <div id="routing-ic-list"></div>
+      </div>
+      <div id="routing-city-panel" class="city-picker" style="display:none">
+        <div class="city-picker-hint">Select cities</div>
+        <div id="routing-city-list"></div>
+      </div>
+      <div id="routing-state-panel" class="city-picker" style="display:none">
+        <div class="city-picker-hint">Select states</div>
+        <div id="routing-state-list"></div>
       </div>
     </div>
 
@@ -224,6 +227,7 @@
 
 <script>
   window.TAXONOMY      = {{ taxonomy_json | safe }};
+  window.CITY_MAP      = {{ city_map_json | safe }};
   window.SP_CONFIGURED = {{ 'true' if sp_configured else 'false' }};
 </script>
 {% endblock %}
