@@ -168,6 +168,7 @@ function bindFile(inputId, statusId, onLoad) {
 bindFile('input-contacts',   'status-contacts');
 bindFile('input-ownership',  'status-ownership');
 bindFile('input-fund',       'status-fund');
+bindFile('input-mining',     'status-mining');
 
 bindFile('input-activities', 'status-activities', async (file) => {
   const fd = new FormData();
@@ -251,6 +252,9 @@ async function runFilter() {
 
   const actsFile = document.getElementById('input-activities')?.files[0];
   if (actsFile) fd.append('activities', actsFile);
+
+  const miningFile = document.getElementById('input-mining')?.files[0];
+  if (miningFile) fd.append('mining', miningFile);
 
   fd.append('company_name',      document.getElementById('company-name')?.value || 'Company');
   document.querySelectorAll('input[name="subject_symbols"]:checked').forEach(inp => {

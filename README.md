@@ -25,6 +25,7 @@ Upload your BD Advanced exports and optionally a company background document (10
 | `Ownership.xlsx` | Optional | Adds `Shares` column (header row 5) |
 | `Fund-Level Ownership.xlsx` | Optional | Adds four fund-level columns (header row 5) |
 | `Activities.xlsx` | Optional | Adds six meeting history columns; used for meeting exclusion and activity-only contacts |
+| `Junior Mining Contacts` | Optional | Mining contact list — added to results bypassing CDF criteria (header row 3) |
 | Company document (PDF or text) | Optional | 10-K, investor deck, etc. — triggers AI CDF recommendations |
 
 ---
@@ -107,6 +108,10 @@ Splits are applied to the running main list only. Contacts already split off are
 ### Activity-only contacts
 
 Contacts who appear in Activities.xlsx for the selected ticker but are not in the contacts file are automatically added to the output with `Source = Meeting History`. Their demographic and CDF data is populated from the most recent non-null value across their activity rows.
+
+### Junior Mining Contacts
+
+Contacts uploaded via the Junior Mining Contacts file are added to the contact list with `Source = Mining List`. These contacts **bypass CDF criteria filtering** — they are included regardless of Industry, Style, Market Cap, or Geography matches. However, they are still subject to all other splits (Too Small, HFs, DNC, Check, Quant, Activist, meeting history exclusion). Duplicate contacts already present in the main contacts file are not added again.
 
 ---
 

@@ -210,10 +210,11 @@ def analyze():
 
 @app.route('/api/run', methods=['POST'])
 def run():
-    contacts_file  = request.files.get('contacts')
-    ownership_file = request.files.get('ownership')
-    fund_file      = request.files.get('fund_ownership')
+    contacts_file   = request.files.get('contacts')
+    ownership_file  = request.files.get('ownership')
+    fund_file       = request.files.get('fund_ownership')
     activities_file = request.files.get('activities')
+    mining_file     = request.files.get('mining')
 
     if not contacts_file or contacts_file.filename == '':
         return jsonify({'error': 'Contacts file is required'}), 400
@@ -262,7 +263,7 @@ def run():
     except Exception as e:
         return jsonify({'error': f'Could not read contacts file: {e}'}), 400
 
-    ownership_df = fund_df = acts_named = None
+    ownership_df = fund_df = acts_named = mining_df = None
 
     if ownership_file and ownership_file.filename:
         try:
@@ -273,6 +274,12 @@ def run():
     if fund_file and fund_file.filename:
         try:
             fund_df = pd.read_excel(io.BytesIO(fund_file.read()), header=4)
+        except Exception:
+            pass
+
+    if mining_file and mining_file.filename:
+        try:
+            mining_df = pd.read_excel(io.BytesIO(mining_file.read()), header=2)
         except Exception:
             pass
 
@@ -288,7 +295,7 @@ def run():
             contacts_df, ownership_df, fund_df, acts_named,
             criteria, hf_treatment, meeting_exclusion,
             city_selections, subject_symbols, company_name,
-            eaum_min=eaum_min
+            eaum_min=eaum_min, mining_df=mining_df
         )
     except Exception as e:
         return jsonify({'error': f'Filter error: {e}'}), 500
