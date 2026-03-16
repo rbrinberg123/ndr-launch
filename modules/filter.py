@@ -358,6 +358,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                eaum_min=None, mining_df=None,
                acts_df_raw=None, other_symbols=None):
     df = contacts_df.copy()
+    df = df.reset_index(drop=True)
 
     # Ownership lookup
     if ownership_df is not None:
