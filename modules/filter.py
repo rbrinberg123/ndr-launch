@@ -352,7 +352,7 @@ def sort_frame(frame):
 def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                criteria, hf_treatment, meeting_exclusion,
                city_selections, subject_symbols, company_name,
-               eaum_min=None):
+               eaum_min=None, mining_df=None):
     df = contacts_df.copy()
 
     # Ownership lookup
@@ -454,6 +454,34 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             extra_new = extra_df[extra_df.apply(
                 lambda r: (r['_fname'], r['_lname']) not in filtered_keys, axis=1)]
             filtered = pd.concat([filtered, extra_new], ignore_index=True, sort=False)
+
+    # Append junior mining contacts (bypass CDF criteria, subject to other splits)
+    if mining_df is not None and len(mining_df) > 0:
+        mdf = mining_df.copy()
+        mdf.rename(columns=RENAME_MAP, inplace=True)
+        # Rename T/O % in mining file too
+        for old in ['Account Equity % Portfolio Turnover', 'Account Equity % T/O']:
+            if old in mdf.columns:
+                mdf[old] = pd.to_numeric(mdf[old], errors='coerce') / 100
+                mdf.rename(columns={old: 'T/O %'}, inplace=True)
+                break
+        if 'Primary Institution Type' in mdf.columns:
+            mdf['Primary Institution Type'] = mdf['Primary Institution Type'].replace(
+                'Investment Manager-Mutual Fund', 'Mutual fund')
+        mdf['_fname'] = mdf['First Name'].fillna('').str.strip().str.lower() if 'First Name' in mdf.columns else ''
+        mdf['_lname'] = mdf['Last Name'].fillna('').str.strip().str.lower()  if 'Last Name' in mdf.columns else ''
+        mdf['_inst']  = mdf['CRM Account Name'].fillna('').str.strip().str.lower() if 'CRM Account Name' in mdf.columns else ''
+        if 'Contact Investment Center' not in mdf.columns:
+            mdf['Contact Investment Center'] = mdf.apply(
+                lambda r: build_inv_center(r.get('City'), r.get('State/Province'), r.get('Country/Territory')), axis=1)
+        mdf['Match Criteria'] = ''
+        mdf['Match Count'] = None
+        mdf['Source'] = 'Mining List'
+        # Deduplicate: only add mining contacts not already in filtered
+        filtered_keys = set(zip(filtered['_fname'], filtered['_lname']))
+        mdf_new = mdf[mdf.apply(lambda r: (r['_fname'], r['_lname']) not in filtered_keys, axis=1)]
+        if len(mdf_new) > 0:
+            filtered = pd.concat([filtered, mdf_new], ignore_index=True, sort=False)
 
     # Add placeholder columns
     for col in ['Out1', 'Out2', 'Status', 'Notes', 'Contact Notes', 'As of', 'Last Meeting']:
