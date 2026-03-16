@@ -38,4 +38,10 @@ def analyze_documents(file_data, taxonomy=None):
     )
     text = response.content[0].text.strip().strip('`')
     if text.startswith('json'): text = text[4:]
-    return json.loads(text.strip())
+    result = json.loads(text.strip())
+    # If South America is selected, also include Emerging Markets
+    geo = result.get('geo', [])
+    if 'South America' in geo and '**Emerging Markets' not in geo:
+        geo.append('**Emerging Markets')
+        result['geo'] = geo
+    return result
