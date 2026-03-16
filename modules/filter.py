@@ -201,6 +201,7 @@ def load_activities(acts_df, subject_symbols):
 
 
 def compute_activity_cols(frame, acts_named, cutoff_l12m):
+    frame = frame.reset_index(drop=True)
     specifically, anyone, l12m_vals, total_vals, tp_vals, rc_vals = [], [], [], [], [], []
 
     for _, row in frame.iterrows():
