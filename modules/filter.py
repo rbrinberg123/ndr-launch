@@ -449,6 +449,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     df['Match Criteria'] = [r[1] for r in match_results]
     df['Match Count']    = df['Match Criteria'].apply(lambda x: len(x.split(', ')) if x else 0)
     filtered = df[[r[0] for r in match_results]].copy()
+    filtered = filtered.reset_index(drop=True)
     filtered['Source'] = 'CDF Match'
 
     # Append activity-only contacts
@@ -495,11 +496,16 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             filtered[col] = None
 
     # Combine Notes and Contact Notes into CRM Notes
-    notes = filtered['Notes'].fillna('') if 'Notes' in filtered.columns else ''
-    contact_notes = filtered['Contact Notes'].fillna('') if 'Contact Notes' in filtered.columns else ''
-    combined = (notes.str.cat(contact_notes, sep=' | ')
-                .str.strip(' | ').str.replace(r'^\| | \|$', '', regex=True).str.strip())
-    filtered['CRM Notes'] = combined.replace('', None)
+    n_vals = filtered['Notes'].fillna('').values if 'Notes' in filtered.columns else [''] * len(filtered)
+    c_vals = filtered['Contact Notes'].fillna('').values if 'Contact Notes' in filtered.columns else [''] * len(filtered)
+    crm = []
+    for n, c in zip(n_vals, c_vals):
+        n, c = str(n).strip(), str(c).strip()
+        if n and c:
+            crm.append(f'{n} | {c}')
+        else:
+            crm.append(n or c or '')
+    filtered['CRM Notes'] = [v if v else None for v in crm]
 
     main_df = filtered.copy()
 
