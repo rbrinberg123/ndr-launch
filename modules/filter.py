@@ -330,7 +330,7 @@ def is_activist(row):
 
 def split_df(df, mask_fn):
     mask = df.apply(mask_fn, axis=1)
-    return df[mask].copy(), df[~mask].copy()
+    return df[mask].reset_index(drop=True).copy(), df[~mask].reset_index(drop=True).copy()
 
 
 # ── Reorder + sort ────────────────────────────────────────────────────────────
@@ -514,9 +514,9 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     if eaum_min is not None and 'EAUM ($mm)' in main_df.columns:
         eaum_vals = pd.to_numeric(main_df['EAUM ($mm)'], errors='coerce')
         below_mask = eaum_vals.notna() & (eaum_vals < eaum_min)
-        too_small_df = main_df[below_mask].copy()
+        too_small_df = main_df[below_mask].reset_index(drop=True).copy()
         too_small_df['Exclusion Reason'] = f'EAUM below ${eaum_min:,.0f}M minimum'
-        main_df = main_df[~below_mask].copy()
+        main_df = main_df[~below_mask].reset_index(drop=True).copy()
 
     # HF split
     hf_df = pd.DataFrame()
@@ -566,10 +566,10 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         else:  # exclude_all
             exc_mask = main_df['Last Mtg btwn Contact & Co'].apply(pd.notna)
             exc_reason = 'Prior meeting with company'
-        excluded_df = main_df[exc_mask].copy()
+        excluded_df = main_df[exc_mask].reset_index(drop=True).copy()
         if not excluded_df.empty:
             excluded_df['Exclusion Reason'] = exc_reason
-        main_df     = main_df[~exc_mask].copy()
+        main_df     = main_df[~exc_mask].reset_index(drop=True).copy()
 
     # Append other-company activity contacts (after all splits, before city routing)
     if other_symbols and acts_df_raw is not None and len(acts_df_raw) > 0:
