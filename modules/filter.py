@@ -352,7 +352,8 @@ def sort_frame(frame):
 def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                criteria, hf_treatment, meeting_exclusion,
                city_selections, subject_symbols, company_name,
-               eaum_min=None, mining_df=None):
+               eaum_min=None, mining_df=None,
+               acts_df_raw=None, other_symbols=None):
     df = contacts_df.copy()
 
     # Ownership lookup
@@ -551,6 +552,30 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         if not excluded_df.empty:
             excluded_df['Exclusion Reason'] = exc_reason
         main_df     = main_df[~exc_mask].copy()
+
+    # Append other-company activity contacts (after all splits, before city routing)
+    if other_symbols and acts_df_raw is not None and len(acts_df_raw) > 0:
+        other_acts = load_activities(acts_df_raw, other_symbols)
+        if len(other_acts) > 0:
+            # Build keys from ALL frames (main + every split-off sheet)
+            all_keys = set()
+            for frame in [main_df, too_small_df, hf_df, dnc_df, check_df, quant_df, activist_df, excluded_df]:
+                if frame is not None and len(frame) > 0:
+                    all_keys.update(zip(frame['_fname'], frame['_lname']))
+            # Also include contacts from the original contacts file (not just filtered)
+            all_keys.update(zip(df['_fname'], df['_lname']))
+            other_extra = build_activity_only_contacts(other_acts, all_keys, cutoff_l12m)
+            if not other_extra.empty:
+                # Clear meeting columns — don't compute for other-company contacts
+                for col in ['Specifically with Co.', 'Anyone at Inst. with Co', 'L12M', 'Total', '3rd Party', 'Rose & Co']:
+                    if col in other_extra.columns:
+                        other_extra[col] = None
+                other_extra['Source'] = 'Meeting History (Other)'
+                # Deduplicate against all existing output keys
+                other_new = other_extra[other_extra.apply(
+                    lambda r: (r['_fname'], r['_lname']) not in all_keys, axis=1)]
+                if len(other_new) > 0:
+                    main_df = pd.concat([main_df, other_new], ignore_index=True, sort=False)
 
     # City routing
     city_dfs = {}

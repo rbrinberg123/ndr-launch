@@ -177,19 +177,32 @@ bindFile('input-activities', 'status-activities', async (file) => {
     const r    = await fetch('/api/detect-symbols', { method: 'POST', body: fd });
     const data = await r.json();
     const row  = document.getElementById('symbol-row');
-    const grid = document.getElementById('symbol-grid');
+    const subjectGrid = document.getElementById('symbol-grid-subject');
+    const otherGrid   = document.getElementById('symbol-grid-other');
     if (data.symbols?.length) {
-      grid.innerHTML = '';
+      subjectGrid.innerHTML = '';
+      otherGrid.innerHTML   = '';
       data.symbols.forEach(s => {
-        const label = document.createElement('label');
-        label.className = 'city-opt';
-        const cb = document.createElement('input');
-        cb.type = 'checkbox'; cb.name = 'subject_symbols'; cb.value = s; cb.className = 'city-check';
-        if (data.symbols.length === 1) cb.checked = true;
-        const span = document.createElement('span');
-        span.textContent = s;
-        label.appendChild(cb); label.appendChild(span);
-        grid.appendChild(label);
+        // Subject company checkbox
+        const sLabel = document.createElement('label');
+        sLabel.className = 'city-opt';
+        const sCb = document.createElement('input');
+        sCb.type = 'checkbox'; sCb.name = 'subject_symbols'; sCb.value = s; sCb.className = 'city-check';
+        if (data.symbols.length === 1) sCb.checked = true;
+        const sSpan = document.createElement('span');
+        sSpan.textContent = s;
+        sLabel.appendChild(sCb); sLabel.appendChild(sSpan);
+        subjectGrid.appendChild(sLabel);
+
+        // Other companies checkbox
+        const oLabel = document.createElement('label');
+        oLabel.className = 'city-opt';
+        const oCb = document.createElement('input');
+        oCb.type = 'checkbox'; oCb.name = 'other_symbols'; oCb.value = s; oCb.className = 'city-check';
+        const oSpan = document.createElement('span');
+        oSpan.textContent = s;
+        oLabel.appendChild(oCb); oLabel.appendChild(oSpan);
+        otherGrid.appendChild(oLabel);
       });
       row.style.display = 'block';
     } else {
@@ -259,6 +272,9 @@ async function runFilter() {
   fd.append('company_name',      document.getElementById('company-name')?.value || 'Company');
   document.querySelectorAll('input[name="subject_symbols"]:checked').forEach(inp => {
     fd.append('subject_symbols', inp.value);
+  });
+  document.querySelectorAll('input[name="other_symbols"]:checked').forEach(inp => {
+    fd.append('other_symbols', inp.value);
   });
   fd.append('hf_treatment',      document.querySelector('input[name="hf_treatment"]:checked')?.value || 'separate');
   fd.append('eaum_min',          document.getElementById('eaum-min')?.value || '');

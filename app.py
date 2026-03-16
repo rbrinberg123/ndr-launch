@@ -236,6 +236,7 @@ def run():
     meeting_exclusion = request.form.get('meeting_exclusion', 'include_all')
     company_name      = request.form.get('company_name', 'Company').strip() or 'Company'
     subject_symbols   = [s.strip().upper() for s in request.form.getlist('subject_symbols') if s.strip()]
+    other_symbols     = [s.strip().upper() for s in request.form.getlist('other_symbols') if s.strip()]
     routing_mode      = request.form.get('city_mode', 'virtual')
 
     # Parse city selections
@@ -263,7 +264,7 @@ def run():
     except Exception as e:
         return jsonify({'error': f'Could not read contacts file: {e}'}), 400
 
-    ownership_df = fund_df = acts_named = mining_df = None
+    ownership_df = fund_df = acts_named = acts_df_raw = mining_df = None
 
     if ownership_file and ownership_file.filename:
         try:
@@ -283,10 +284,11 @@ def run():
         except Exception:
             pass
 
-    if activities_file and activities_file.filename and subject_symbols:
+    if activities_file and activities_file.filename:
         try:
-            acts_df = pd.read_excel(io.BytesIO(activities_file.read()), header=1)
-            acts_named = load_activities(acts_df, subject_symbols)
+            acts_df_raw = pd.read_excel(io.BytesIO(activities_file.read()), header=1)
+            if subject_symbols:
+                acts_named = load_activities(acts_df_raw, subject_symbols)
         except Exception:
             pass
 
@@ -295,7 +297,8 @@ def run():
             contacts_df, ownership_df, fund_df, acts_named,
             criteria, hf_treatment, meeting_exclusion,
             city_selections, subject_symbols, company_name,
-            eaum_min=eaum_min, mining_df=mining_df
+            eaum_min=eaum_min, mining_df=mining_df,
+            acts_df_raw=acts_df_raw, other_symbols=other_symbols
         )
     except Exception as e:
         return jsonify({'error': f'Filter error: {e}'}), 500

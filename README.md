@@ -105,9 +105,12 @@ Splits are applied to the running main list only. Contacts already split off are
 6. **Activist** — `Activist` = Often
 7. **Excluded** — meeting history exclusion (if set)
 
-### Activity-only contacts
+### Ticker selection: Subject company vs Other companies
 
-Contacts who appear in Activities.xlsx for the selected ticker but are not in the contacts file are automatically added to the output with `Source = Meeting History`. Their demographic and CDF data is populated from the most recent non-null value across their activity rows.
+When an Activities file is uploaded, detected tickers are split into two groups:
+
+* **Subject company** — these tickers drive the six meeting history columns (`Specifically with Co.`, `Anyone at Inst. with Co`, `L12M`, `Total`, `3rd Party`, `Rose & Co`) and the meeting history exclusion logic. Activity-only contacts from these tickers are added with `Source = Meeting History`.
+* **Other companies** — contacts from these tickers are added after all splits are applied with `Source = Meeting History (Other)`. Meeting columns are left blank for these contacts and meeting history exclusion does **not** apply to them. They are only added if their name does not already appear anywhere in the output (across all sheets including HFs, DNC, Check, etc.).
 
 ### Junior Mining Contacts
 
