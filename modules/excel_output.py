@@ -1,4 +1,5 @@
 import io
+import re
 import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
@@ -12,6 +13,15 @@ NO_FILL     = PatternFill(fill_type=None)
 CENTER      = Alignment(horizontal='center', vertical='center')
 LEFT        = Alignment(horizontal='left',   vertical='center')
 THIN        = Border(bottom=Side(style='thin', color='D9D9D9'))
+
+def sanitize_sheet_name(name):
+    """Make a string safe for use as an Excel sheet name."""
+    name = name.replace('/', '-')
+    name = re.sub(r'[\\?*\[\]:]', ' ', name)
+    name = re.sub(r' {2,}', ' ', name)
+    name = name.strip()
+    return name[:31]
+
 
 NUMERIC_COLS = {
     'Shares', 'Fund Shares', 'Passive or Index Shares',
@@ -99,10 +109,13 @@ LABEL_FONT   = Font(name='Arial', bold=True, size=10, color='1F3864')
 VALUE_FONT   = Font(name='Arial', size=10)
 
 
-def _build_criteria_sheet(wb, results):
+def _build_criteria_sheet(wb, results, safe_names=None):
     ws = wb.create_sheet('Criteria', 0)
     ws.column_dimensions['A'].width = 28
     ws.column_dimensions['B'].width = 60
+
+    if safe_names is None:
+        safe_names = {}
 
     criteria          = results.get('criteria') or {}
     city_selections   = results.get('city_selections') or []
@@ -191,7 +204,8 @@ def _build_criteria_sheet(wb, results):
     excluded_keys = {'Too Small', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded'}
     for k, v in frames.items():
         if v is not None and len(v) > 0:
-            label = f'{k} (excluded)' if k in excluded_keys else k
+            display = safe_names.get(k, k)
+            label = f'{display} (excluded)' if k in excluded_keys else display
             write_row(label, f'{len(v):,} contacts')
 
     ws.sheet_properties.tabColor = '2E75B6'
@@ -204,7 +218,7 @@ def generate_excel(results, company_name):
 
     output = io.BytesIO()
 
-    # Determine sheet write order
+    # Determine sheet write order (original frame keys)
     sheet_order = []
     if has_city and city_selections:
         for tab_name, _ in city_selections:
@@ -220,11 +234,26 @@ def generate_excel(results, company_name):
         if extra in frames and frames[extra] is not None and len(frames[extra]) > 0:
             sheet_order.append(extra)
 
+    # Build mapping: original frame key → sanitized Excel sheet name (computed once)
+    safe_names = {}
+    used = set()
+    for key in sheet_order:
+        safe = sanitize_sheet_name(key)
+        # Handle collisions after truncation
+        base = safe
+        n = 2
+        while safe in used:
+            suffix = f' {n}'
+            safe = base[:31 - len(suffix)] + suffix
+            n += 1
+        used.add(safe)
+        safe_names[key] = safe
+
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        for sheet_name in sheet_order:
-            df = frames[sheet_name]
+        for key in sheet_order:
+            df = frames[key]
             if df is not None and len(df) > 0:
-                df.to_excel(writer, sheet_name=sheet_name, index=False)
+                df.to_excel(writer, sheet_name=safe_names[key], index=False)
 
         # Ensure at least one sheet exists
         if not sheet_order:
@@ -236,7 +265,7 @@ def generate_excel(results, company_name):
         _format_sheet(wb[sheet_name])
 
     # Add Criteria tab as the first sheet
-    _build_criteria_sheet(wb, results)
+    _build_criteria_sheet(wb, results, safe_names)
 
     final = io.BytesIO()
     wb.save(final)
