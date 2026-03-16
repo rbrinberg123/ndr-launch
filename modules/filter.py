@@ -19,19 +19,22 @@ RENAME_MAP = {
     'CDF (Contact): Investment Style':                  'Style',
     'CDF (Contact): Market Cap.':                       'Mkt. Cap',
     'CDF (Firm): Coverage':                             'Coverage',
+    'Last Meeting':                                     'Last Mtg. w/ Any Co',
+    'Primary Institution Type':                         'Type',
+    'Contact Investment Center':                        'Investment Ctr',
 }
 
 FINAL_COLS = [
     'First Name', 'Last Name', 'CRM Account Name', 'Job Function',
     'Phone', 'Email', 'Coverage',
     'Out1', 'Out2', 'Status', 'CRM Notes',
-    'Shares', 'As of', 'Last Meeting',
-    'Specifically with Co.', 'Anyone at Inst. with Co',
+    'Shares', 'As of', 'Last Mtg. w/ Any Co',
+    'Last Mtg btwn Contact & Co', 'Last Mtg btwn firm & Co',
     'Industry', 'Geo', 'Style', 'Mkt. Cap',
     'EAUM ($mm)', 'AUM ($mm)', 'T/O %',
     'City', 'State/Province', 'Country/Territory',
     'Fund Shares', 'Passive or Index Shares', 'Total Funds', 'Passive or Index Funds',
-    'Primary Institution Type', 'Activist', 'Contact Investment Center',
+    'Type', 'Activist', 'Investment Ctr',
     'L12M', 'Total', '3rd Party', 'Rose & Co',
     'Match Criteria', 'Match Count', 'Source',
     'Exclusion Reason',
@@ -224,8 +227,8 @@ def compute_activity_cols(frame, acts_named, cutoff_l12m):
         rc_vals.append(rc       if rc    > 0 else None)
 
     frame = frame.copy()
-    frame['Specifically with Co.']   = pd.to_datetime(pd.Series(specifically, index=frame.index)).dt.date
-    frame['Anyone at Inst. with Co'] = pd.to_datetime(pd.Series(anyone, index=frame.index)).dt.date
+    frame['Last Mtg btwn Contact & Co'] = pd.to_datetime(pd.Series(specifically, index=frame.index)).dt.date
+    frame['Last Mtg btwn firm & Co']    = pd.to_datetime(pd.Series(anyone, index=frame.index)).dt.date
     frame['L12M']      = l12m_vals
     frame['Total']     = total_vals
     frame['3rd Party'] = tp_vals
@@ -399,8 +402,8 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             break
 
     # Rename institution type
-    if 'Primary Institution Type' in df.columns:
-        df['Primary Institution Type'] = df['Primary Institution Type'].replace(
+    if 'Type' in df.columns:
+        df['Type'] = df['Type'].replace(
             'Investment Manager-Mutual Fund', 'Mutual fund')
 
     # Build _fname/_lname/_inst keys for matching
@@ -423,17 +426,17 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                     alt_keys.add((ar['_fname'], ar['_lname']))
             if alt_keys:
                 mask = df.apply(lambda r: (r['_fname'], r['_lname']) in alt_keys, axis=1)
-                df.loc[mask, 'Primary Institution Type'] = 'Hedge Fund'
+                df.loc[mask, 'Type'] = 'Hedge Fund'
 
     # Derive Contact Investment Center for main contacts
     def build_ic_row(row):
         return build_inv_center(row.get('City'), row.get('State/Province'), row.get('Country/Territory'))
 
-    if 'Contact Investment Center' not in df.columns:
-        df['Contact Investment Center'] = df.apply(build_ic_row, axis=1)
+    if 'Investment Ctr' not in df.columns:
+        df['Investment Ctr'] = df.apply(build_ic_row, axis=1)
     else:
-        blank = df['Contact Investment Center'].isna() | (df['Contact Investment Center'].astype(str).str.strip() == '')
-        df.loc[blank, 'Contact Investment Center'] = df[blank].apply(build_ic_row, axis=1)
+        blank = df['Investment Ctr'].isna() | (df['Investment Ctr'].astype(str).str.strip() == '')
+        df.loc[blank, 'Investment Ctr'] = df[blank].apply(build_ic_row, axis=1)
 
     # Translate mcap values
     if criteria.get('mcap'):
@@ -466,14 +469,14 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                 mdf[old] = pd.to_numeric(mdf[old], errors='coerce') / 100
                 mdf.rename(columns={old: 'T/O %'}, inplace=True)
                 break
-        if 'Primary Institution Type' in mdf.columns:
-            mdf['Primary Institution Type'] = mdf['Primary Institution Type'].replace(
+        if 'Type' in mdf.columns:
+            mdf['Type'] = mdf['Type'].replace(
                 'Investment Manager-Mutual Fund', 'Mutual fund')
         mdf['_fname'] = mdf['First Name'].fillna('').str.strip().str.lower() if 'First Name' in mdf.columns else ''
         mdf['_lname'] = mdf['Last Name'].fillna('').str.strip().str.lower()  if 'Last Name' in mdf.columns else ''
         mdf['_inst']  = mdf['CRM Account Name'].fillna('').str.strip().str.lower() if 'CRM Account Name' in mdf.columns else ''
-        if 'Contact Investment Center' not in mdf.columns:
-            mdf['Contact Investment Center'] = mdf.apply(
+        if 'Investment Ctr' not in mdf.columns:
+            mdf['Investment Ctr'] = mdf.apply(
                 lambda r: build_inv_center(r.get('City'), r.get('State/Province'), r.get('Country/Territory')), axis=1)
         mdf['Match Criteria'] = ''
         mdf['Match Count'] = None
@@ -485,7 +488,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             filtered = pd.concat([filtered, mdf_new], ignore_index=True, sort=False)
 
     # Add placeholder columns
-    for col in ['Out1', 'Out2', 'Status', 'As of', 'Last Meeting']:
+    for col in ['Out1', 'Out2', 'Status', 'As of', 'Last Mtg. w/ Any Co']:
         if col not in filtered.columns:
             filtered[col] = None
 
@@ -510,12 +513,12 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     # HF split
     hf_df = pd.DataFrame()
     if hf_treatment == 'separate':
-        hf_df, main_df = split_df(main_df, lambda r: r.get('Primary Institution Type') == 'Hedge Fund')
+        hf_df, main_df = split_df(main_df, lambda r: r.get('Type') == 'Hedge Fund')
         if not hf_df.empty:
             hf_df['Exclusion Reason'] = 'Hedge Fund (separated)'
     elif hf_treatment == 'low_turnover':
         def hf_high_turn(r):
-            if r.get('Primary Institution Type') != 'Hedge Fund':
+            if r.get('Type') != 'Hedge Fund':
                 return False
             try:
                 return float(r.get('T/O %', 0) or 0) > 1
@@ -541,19 +544,19 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
 
     # Meeting history exclusion
     excluded_df = pd.DataFrame()
-    if meeting_exclusion != 'include_all' and 'Specifically with Co.' in main_df.columns:
+    if meeting_exclusion != 'include_all' and 'Last Mtg btwn Contact & Co' in main_df.columns:
         if meeting_exclusion == 'exclude_l12m':
             cutoff = pd.Timestamp.today() - pd.DateOffset(months=12)
-            exc_mask = main_df['Specifically with Co.'].apply(
+            exc_mask = main_df['Last Mtg btwn Contact & Co'].apply(
                 lambda d: pd.notna(d) and pd.Timestamp(d) >= cutoff)
             exc_reason = 'Met with company in last 12 months'
         elif meeting_exclusion == 'exclude_l24m':
             cutoff = pd.Timestamp.today() - pd.DateOffset(months=24)
-            exc_mask = main_df['Specifically with Co.'].apply(
+            exc_mask = main_df['Last Mtg btwn Contact & Co'].apply(
                 lambda d: pd.notna(d) and pd.Timestamp(d) >= cutoff)
             exc_reason = 'Met with company in last 24 months'
         else:  # exclude_all
-            exc_mask = main_df['Specifically with Co.'].apply(pd.notna)
+            exc_mask = main_df['Last Mtg btwn Contact & Co'].apply(pd.notna)
             exc_reason = 'Prior meeting with company'
         excluded_df = main_df[exc_mask].copy()
         if not excluded_df.empty:
@@ -573,8 +576,9 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             all_keys.update(zip(df['_fname'], df['_lname']))
             other_extra = build_activity_only_contacts(other_acts, all_keys, cutoff_l12m)
             if not other_extra.empty:
+                other_extra.rename(columns=RENAME_MAP, inplace=True)
                 # Clear meeting columns — don't compute for other-company contacts
-                for col in ['Specifically with Co.', 'Anyone at Inst. with Co', 'L12M', 'Total', '3rd Party', 'Rose & Co']:
+                for col in ['Last Mtg btwn Contact & Co', 'Last Mtg btwn firm & Co', 'L12M', 'Total', '3rd Party', 'Rose & Co']:
                     if col in other_extra.columns:
                         other_extra[col] = None
                 other_extra['Source'] = 'Meeting History (Other)'
@@ -588,7 +592,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     city_dfs = {}
     if city_selections:
         remaining = main_df.copy()
-        ic_col = remaining['Contact Investment Center'].fillna('').str.lower()
+        ic_col = remaining['Investment Ctr'].fillna('').str.lower()
         for tab_name, ic_value in city_selections:
             ic_lower = ic_value.lower()
             # Try full match first, then first segment before '/' for flexibility
@@ -598,7 +602,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                 mask = ic_col.str.contains(first_segment, regex=False)
             city_dfs[tab_name] = remaining[mask].copy()
             remaining = remaining[~mask].copy()
-            ic_col = remaining['Contact Investment Center'].fillna('').str.lower()
+            ic_col = remaining['Investment Ctr'].fillna('').str.lower()
         city_dfs['Virtual'] = remaining
         main_df = None
 

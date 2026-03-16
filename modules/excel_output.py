@@ -12,6 +12,7 @@ ALT_FILL    = PatternFill('solid', start_color='EEF2F7')
 NO_FILL     = PatternFill(fill_type=None)
 CENTER      = Alignment(horizontal='center', vertical='center')
 LEFT        = Alignment(horizontal='left',   vertical='center')
+HEADER_ALIGN = Alignment(horizontal='center', vertical='center', wrap_text=True)
 THIN        = Border(bottom=Side(style='thin', color='D9D9D9'))
 
 def sanitize_sheet_name(name):
@@ -29,7 +30,7 @@ NUMERIC_COLS = {
     'EAUM ($mm)', 'AUM ($mm)', 'T/O %',
     'L12M', 'Total', '3rd Party', 'Rose & Co',
 }
-DATE_COLS  = {'Specifically with Co.', 'Anyone at Inst. with Co', 'Last Meeting', 'As of'}
+DATE_COLS  = {'Last Mtg btwn Contact & Co', 'Last Mtg btwn firm & Co', 'Last Mtg. w/ Any Co', 'As of'}
 SHRINK_COLS = {'Industry', 'Geo', 'Style', 'Mkt. Cap'}
 SHRINK_ALIGN = Alignment(horizontal='left', vertical='center', shrink_to_fit=True)
 
@@ -41,9 +42,9 @@ def _format_sheet(ws):
         cell = ws.cell(row=1, column=col_idx)
         cell.font      = HEADER_FONT
         cell.fill      = HEADER_FILL
-        cell.alignment = CENTER
+        cell.alignment = HEADER_ALIGN
         cell.border    = Border(bottom=Side(style='medium', color='FFFFFF'))
-    ws.row_dimensions[1].height = 20
+    ws.row_dimensions[1].height = 35
 
     readonly_cols = {i for i, h in enumerate(headers, start=1) if h == 'CRM Notes'}
 
