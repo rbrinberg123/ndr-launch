@@ -143,3 +143,59 @@ if (taxonomyBtn) {
     }
   });
 }
+
+/* ── City map upload ───────────────────────────────────────────────────── */
+let citymapFile = null;
+
+const citymapZone   = document.getElementById('citymap-zone');
+const citymapInput  = document.getElementById('citymap-file');
+const citymapBtn    = document.getElementById('upload-citymap-btn');
+const citymapResult = document.getElementById('citymap-result');
+
+if (citymapZone) {
+  citymapZone.addEventListener('click', () => citymapInput.click());
+  citymapZone.addEventListener('dragover', e => { e.preventDefault(); citymapZone.classList.add('drag-over'); });
+  citymapZone.addEventListener('dragleave', () => citymapZone.classList.remove('drag-over'));
+  citymapZone.addEventListener('drop', e => {
+    e.preventDefault();
+    citymapZone.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) { citymapFile = f; citymapZone.querySelector('.upload-hint').textContent = `Selected: ${f.name}`; citymapBtn.disabled = false; }
+  });
+
+  citymapInput.addEventListener('change', () => {
+    if (citymapInput.files[0]) {
+      citymapFile = citymapInput.files[0];
+      citymapZone.querySelector('.upload-hint').textContent = `Selected: ${citymapFile.name}`;
+      citymapBtn.disabled = false;
+    }
+  });
+}
+
+if (citymapBtn) {
+  citymapBtn.addEventListener('click', async () => {
+    if (!citymapFile) return;
+    citymapBtn.disabled = true;
+    citymapBtn.textContent = 'Uploading…';
+
+    const form = new FormData();
+    form.append('city_map_file', citymapFile);
+
+    try {
+      const resp = await fetch('/api/admin/upload-city-map', { method: 'POST', body: form });
+      const data = await resp.json();
+      if (data.error) throw new Error(data.error);
+
+      citymapResult.className = 'result-msg success';
+      citymapResult.textContent = `✓ City map updated — ${data.rows} rows, ${data.investment_centers} investment centers. Reload the filter page to see changes.`;
+      citymapResult.classList.remove('hidden');
+    } catch (err) {
+      citymapResult.className = 'result-msg error';
+      citymapResult.textContent = `Upload failed: ${err.message}`;
+      citymapResult.classList.remove('hidden');
+    } finally {
+      citymapBtn.textContent = 'Upload city map';
+      citymapBtn.disabled = false;
+    }
+  });
+}

@@ -230,15 +230,117 @@ function updateRunButton() {
   if (btn) btn.disabled = !hasFile;
 }
 
-// ── City routing toggle ───────────────────────────────────────────────────────
+// ── City routing (data-driven) ────────────────────────────────────────────────
+
+const CITY_MAP = window.CITY_MAP || { mappings: [] };
+
+function buildRoutingLists() {
+  const mappings = CITY_MAP.mappings || [];
+  const ics = [...new Set(mappings.map(m => m.investment_center))].sort();
+  const cities = [...new Set(mappings.map(m => `${m.city}, ${m.state}`))].sort();
+  const states = [...new Set(mappings.map(m => m.state))].sort();
+  return { ics, cities, states };
+}
+
+function renderRoutingChecklist(containerId, items, nameAttr) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+
+  const search = document.createElement('input');
+  search.type = 'text';
+  search.className = 'search-input routing-search';
+  search.placeholder = 'Search\u2026';
+  container.appendChild(search);
+
+  const grid = document.createElement('div');
+  grid.className = 'city-grid';
+  container.appendChild(grid);
+
+  items.forEach(item => {
+    const label = document.createElement('label');
+    label.className = 'city-opt';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.name = nameAttr;
+    cb.value = item;
+    cb.className = 'city-check';
+    const span = document.createElement('span');
+    span.textContent = item;
+    label.appendChild(cb);
+    label.appendChild(span);
+    grid.appendChild(label);
+  });
+
+  search.addEventListener('input', () => {
+    const q = search.value.toLowerCase().trim();
+    grid.querySelectorAll('.city-opt').forEach(opt => {
+      const match = opt.textContent.toLowerCase().includes(q);
+      opt.style.display = match ? '' : 'none';
+    });
+  });
+}
+
+function initRoutingUI() {
+  const { ics, cities, states } = buildRoutingLists();
+  renderRoutingChecklist('routing-ic-list', ics, 'selected_cities');
+  renderRoutingChecklist('routing-city-list', cities, 'routing_cities');
+  renderRoutingChecklist('routing-state-list', states, 'routing_states');
+}
+
+// Resolve city/state selections to IC-based city_selections for the form
+function resolveRoutingSelections(fd) {
+  const mode = document.querySelector('input[name="city_mode"]:checked')?.value || 'virtual';
+  fd.append('city_mode', mode);
+
+  if (mode === 'cities') {
+    // Investment Center mode — checkboxes already named selected_cities
+    document.querySelectorAll('#routing-ic-list input[name="selected_cities"]:checked').forEach(inp => {
+      fd.append('selected_cities', inp.value.trim());
+    });
+  } else if (mode === 'by_city') {
+    // City mode — look up IC for each checked city, dedupe
+    const mappings = CITY_MAP.mappings || [];
+    const seen = new Set();
+    document.querySelectorAll('#routing-city-list input[name="routing_cities"]:checked').forEach(inp => {
+      const val = inp.value; // "City, ST"
+      const match = mappings.find(m => `${m.city}, ${m.state}` === val);
+      if (match && !seen.has(match.investment_center)) {
+        seen.add(match.investment_center);
+        fd.append('selected_cities', match.investment_center);
+      }
+    });
+    // Override city_mode to 'cities' so backend handles it the same way
+    fd.set('city_mode', 'cities');
+  } else if (mode === 'by_state') {
+    // State mode — find all ICs with at least one city in checked states
+    const mappings = CITY_MAP.mappings || [];
+    const checkedStates = new Set();
+    document.querySelectorAll('#routing-state-list input[name="routing_states"]:checked').forEach(inp => {
+      checkedStates.add(inp.value);
+    });
+    const seen = new Set();
+    mappings.forEach(m => {
+      if (checkedStates.has(m.state) && !seen.has(m.investment_center)) {
+        seen.add(m.investment_center);
+        fd.append('selected_cities', m.investment_center);
+      }
+    });
+    fd.set('city_mode', 'cities');
+  }
+}
 
 document.querySelectorAll('input[name="city_mode"]').forEach(r => {
   r.addEventListener('change', () => {
-    const show = r.value === 'cities' && r.checked;
-    const el = document.getElementById('city-inputs');
-    if (el) el.style.display = show ? 'block' : 'none';
+    const panels = ['routing-ic-panel', 'routing-city-panel', 'routing-state-panel'];
+    panels.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+    if (r.value === 'cities') { const el = document.getElementById('routing-ic-panel'); if (el) el.style.display = 'block'; }
+    if (r.value === 'by_city') { const el = document.getElementById('routing-city-panel'); if (el) el.style.display = 'block'; }
+    if (r.value === 'by_state') { const el = document.getElementById('routing-state-panel'); if (el) el.style.display = 'block'; }
   });
 });
+
+initRoutingUI();
 
 // ── Run filter ────────────────────────────────────────────────────────────────
 
@@ -280,13 +382,7 @@ async function runFilter() {
   fd.append('eaum_min',          document.getElementById('eaum-min')?.value || '');
   fd.append('meeting_exclusion', document.querySelector('input[name="meeting_exclusion"]:checked')?.value || 'include_all');
 
-  const cityMode = document.querySelector('input[name="city_mode"]:checked')?.value || 'virtual';
-  fd.append('city_mode', cityMode);
-  if (cityMode === 'cities') {
-    document.querySelectorAll('input[name="selected_cities"]:checked').forEach(inp => {
-      fd.append('selected_cities', inp.value.trim());
-    });
-  }
+  resolveRoutingSelections(fd);
 
   selections.industry.forEach(v => fd.append('industry', v));
   selections.style.forEach(v    => fd.append('style', v));

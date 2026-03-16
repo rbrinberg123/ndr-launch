@@ -63,12 +63,16 @@ Optional threshold in $mm. Contacts with a non-blank EAUM below this value are m
 
 ### City routing
 
+Four routing modes are available:
+
 * **Virtual** (default) — all contacts go on a single `Contacts` sheet
-* **Select cities** — creates one tab per city plus a `Virtual` catch-all tab for unmatched contacts
+* **Investment Center** — searchable checklist of all 44 investment centers; creates one tab per selected IC plus a `Virtual` catch-all
+* **City** — searchable checklist of all cities from the city map, displayed as "City, ST"; resolves each city to its investment center and deduplicates
+* **State** — searchable checklist of all state codes; finds all ICs with at least one city in the selected states
 
-Supported cities: New York, Boston, Chicago, Philadelphia, San Francisco, Los Angeles, Dallas, Houston, Minneapolis, South Florida, Denver, Atlanta, Nashville, Kansas City, Columbus, San Antonio, London, Paris, Amsterdam, Tokyo, Hong Kong, Toronto.
+All three non-Virtual modes resolve to investment-center-based tabs using data from `city_map.json`.
 
-Also accepts shorthand input: NY/NYC, SF, LA, Philly, Miami, Florida.
+The city map is data-driven and can be updated via the Admin page by uploading an `.xlsx` with columns: Investment Center, Nearby City, State. Shorthand aliases (NY/NYC, SF, LA, Philly, Miami, Florida) are still supported for backward compatibility.
 
 ### Meeting history exclusion
 
@@ -184,6 +188,7 @@ SharePoint upload is optional — leave these blank to disable:
 ```
 ndr-launch/
 ├── app.py                    # Flask routes and city/IC mapping
+├── city_map.json             # Investment Center → City → State mapping (data-driven)
 ├── requirements.txt
 ├── render.yaml               # Render deployment config
 ├── modules/

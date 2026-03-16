@@ -1,0 +1,269 @@
+{
+  "mappings": [
+    {
+      "investment_center": "Albany NY",
+      "city": "Albany",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Atlanta GA",
+      "city": "Atlanta",
+      "state": "GA"
+    },
+    {
+      "investment_center": "Austin TX",
+      "city": "Austin",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Baltimore MD",
+      "city": "Baltimore",
+      "state": "MD"
+    },
+    {
+      "investment_center": "Boston MA",
+      "city": "Boston",
+      "state": "MA"
+    },
+    {
+      "investment_center": "Calgary",
+      "city": "Calgary",
+      "state": "AB"
+    },
+    {
+      "investment_center": "Charlotte NC",
+      "city": "Charlotte",
+      "state": "NC"
+    },
+    {
+      "investment_center": "Chicago IL",
+      "city": "Chicago",
+      "state": "IL"
+    },
+    {
+      "investment_center": "Cincinnati OH",
+      "city": "Cincinnati",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Cleveland OH",
+      "city": "Cleveland",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Columbus OH",
+      "city": "Columbus",
+      "state": "OH"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Dallas",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Dallas/Ft. Worth TX",
+      "city": "Fort Worth",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Denver CO",
+      "city": "Denver",
+      "state": "CO"
+    },
+    {
+      "investment_center": "Detroit MI",
+      "city": "Detroit",
+      "state": "MI"
+    },
+    {
+      "investment_center": "Hamilton",
+      "city": "Hamilton",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Hartford CT",
+      "city": "Hartford",
+      "state": "CT"
+    },
+    {
+      "investment_center": "Houston TX",
+      "city": "Houston",
+      "state": "TX"
+    },
+    {
+      "investment_center": "Indianapolis IN",
+      "city": "Indianapolis",
+      "state": "IN"
+    },
+    {
+      "investment_center": "Jacksonville FL",
+      "city": "Jacksonville",
+      "state": "FL"
+    },
+    {
+      "investment_center": "Kansas City MO",
+      "city": "Kansas City",
+      "state": "MO"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Los Angeles",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Los Angeles/Pasadena CA",
+      "city": "Pasadena",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Memphis TN",
+      "city": "Memphis",
+      "state": "TN"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Milwaukee",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Milwaukee/Madison WI",
+      "city": "Madison",
+      "state": "WI"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "Minneapolis",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Minneapolis/St. Paul MN",
+      "city": "St. Paul",
+      "state": "MN"
+    },
+    {
+      "investment_center": "Montr\u00e9al",
+      "city": "Montr\u00e9al",
+      "state": "QC"
+    },
+    {
+      "investment_center": "New Orleans LA",
+      "city": "New Orleans",
+      "state": "LA"
+    },
+    {
+      "investment_center": "New York/Southern CT/Northern NJ",
+      "city": "New York",
+      "state": "NY"
+    },
+    {
+      "investment_center": "Omaha NE",
+      "city": "Omaha",
+      "state": "NE"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Philadelphia",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Philadelphia PA/Wilmington DE",
+      "city": "Wilmington",
+      "state": "DE"
+    },
+    {
+      "investment_center": "Phoenix AZ",
+      "city": "Phoenix",
+      "state": "AZ"
+    },
+    {
+      "investment_center": "Pittsburgh PA",
+      "city": "Pittsburgh",
+      "state": "PA"
+    },
+    {
+      "investment_center": "Portland OR",
+      "city": "Portland",
+      "state": "OR"
+    },
+    {
+      "investment_center": "Providence RI",
+      "city": "Providence",
+      "state": "RI"
+    },
+    {
+      "investment_center": "Richmond VA",
+      "city": "Richmond",
+      "state": "VA"
+    },
+    {
+      "investment_center": "San Antonio TX",
+      "city": "San Antonio",
+      "state": "TX"
+    },
+    {
+      "investment_center": "San Diego CA",
+      "city": "San Diego",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "San Francisco",
+      "state": "CA"
+    },
+    {
+      "investment_center": "San Francisco/San Jose CA",
+      "city": "San Jose",
+      "state": "CA"
+    },
+    {
+      "investment_center": "Seattle WA",
+      "city": "Seattle",
+      "state": "WA"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Miami",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Orlando",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Tampa",
+      "state": "FL"
+    },
+    {
+      "investment_center": "South Florida/Orlando FL/Tampa-St.Pete FL",
+      "city": "Fort Lauderdale",
+      "state": "FL"
+    },
+    {
+      "investment_center": "St. Louis MO",
+      "city": "St. Louis",
+      "state": "MO"
+    },
+    {
+      "investment_center": "Toronto",
+      "city": "Toronto",
+      "state": "ON"
+    },
+    {
+      "investment_center": "Vancouver",
+      "city": "Vancouver",
+      "state": "BC"
+    },
+    {
+      "investment_center": "Washington DC/Northern VA/Suburban MD",
+      "city": "Washington",
+      "state": "DC"
+    },
+    {
+      "investment_center": "Winnipeg",
+      "city": "Winnipeg",
+      "state": "MB"
+    }
+  ]
+}

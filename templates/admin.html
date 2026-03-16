@@ -30,6 +30,19 @@
       <button class="admin-action-btn" id="upload-taxonomy-btn" disabled>Upload taxonomy</button>
       <div id="taxonomy-result" class="result-msg hidden"></div>
     </div>
+
+    <div class="admin-card">
+      <div class="admin-card-title">City map</div>
+      <div class="admin-card-sub">Upload an .xlsx with columns Investment Center, Nearby City, State to update the city/IC routing map.</div>
+      <div class="admin-upload-zone" id="citymap-zone">
+        <div class="upload-icon">↑</div>
+        <div class="upload-hint">Drop file here or <label for="citymap-file" class="inline-link">browse</label></div>
+        <div class="upload-formats">.xlsx · 3-column format</div>
+        <input type="file" id="citymap-file" accept=".xlsx,.xls" hidden>
+      </div>
+      <button class="admin-action-btn" id="upload-citymap-btn" disabled>Upload city map</button>
+      <div id="citymap-result" class="result-msg hidden"></div>
+    </div>
   </div>
   {% endif %}
 </div>
