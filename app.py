@@ -3,6 +3,7 @@ import io
 import json
 import uuid
 import tempfile
+import traceback
 import pandas as pd
 from flask import (Flask, render_template, request, jsonify,
                    send_file, session, redirect, url_for)
@@ -304,7 +305,7 @@ def run():
             acts_df_raw=acts_df_raw, other_symbols=other_symbols
         )
     except Exception as e:
-        return jsonify({'error': f'Filter error: {e}'}), 500
+        return jsonify({'error': f'Filter error: {e}', 'trace': traceback.format_exc()}), 500
 
     try:
         excel_bytes = generate_excel(results, company_name)
