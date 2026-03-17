@@ -12,7 +12,8 @@ Upload your BD Advanced exports and optionally a company background document (10
 2. **Filters contacts** across four dimensions: Industry Focus, Investment Style, Market Cap, Geography
 3. **Routes contacts** to city-based tabs (New York, Boston, etc.) or a single Virtual sheet
 4. **Enriches results** with ownership data and meeting history from Activities.xlsx
-5. **Splits output** into structured sheets: Contacts, HFs, DNC, Check, Quant, Activist, Excluded
+5. **Tracks other-company meetings** — contacts met under non-subject tickers appear with `Other: TICK1, TICK2` in the Source column
+6. **Splits output** into structured sheets: Contacts, HFs, DNC, Check, Quant, Activist, Excluded
 6. **Downloads** a formatted Excel file ready to use
 
 ---
@@ -40,8 +41,10 @@ Upload your BD Advanced exports and optionally a company background document (10
 | `Check` | Contacts flagged for review |
 | `Quant` | Quantitative funds |
 | `Activist` | Contacts where Activist = Often |
-| `Excluded` | Contacts excluded by meeting history rule |
+| `Excluded` | Contacts excluded by meeting history rule or shareholder threshold |
 | `Activity-Only` | Contacts found in Activities.xlsx but not in the contacts file |
+
+Contacts from Activities.xlsx that only appear under non-subject tickers are appended to the main results with a `Source` value of `Other: TICK1, TICK2` listing which tickers they were met under. Their meeting history columns are left blank since the meetings were for other companies.
 
 ---
 
@@ -57,6 +60,13 @@ Upload your BD Advanced exports and optionally a company background document (10
 - 1–4 cities → creates one tab per city + a Virtual catch-all tab
 
 Supported city shortcuts: NY/NYC, Boston, Chicago, Philly, SF, LA, Dallas, Houston, Minneapolis, Florida/Miami, London, Paris, Amsterdam, Tokyo, Hong Kong, Toronto, Columbus, Kansas City, San Antonio.
+
+**Shareholder exclusion**
+- Include all (default)
+- Exclude all shareholders
+- Exclude shareholders above a threshold: >0.01%, >0.02%, >0.03%, >0.4%, >0.5%
+- Uses the `% S/O` column from the Ownership file (falls back to column E if not found by name)
+- Contacts exceeding the threshold are moved to the Excluded sheet with reason "Exceeds Shareholder Limit"
 
 **Meeting history exclusion**
 - Include all
