@@ -380,6 +380,7 @@ async function runFilter() {
   });
   fd.append('hf_treatment',      document.querySelector('input[name="hf_treatment"]:checked')?.value || 'separate');
   fd.append('eaum_min',          document.getElementById('eaum-min')?.value || '');
+  fd.append('shareholder_exclusion', document.querySelector('input[name="shareholder_exclusion"]:checked')?.value || 'include_all');
   fd.append('meeting_exclusion', document.querySelector('input[name="meeting_exclusion"]:checked')?.value || 'include_all');
 
   resolveRoutingSelections(fd);
