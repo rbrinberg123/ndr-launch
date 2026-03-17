@@ -361,6 +361,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                acts_df_raw=None, other_symbols=None):
     df = contacts_df.copy()
     df = df.reset_index(drop=True)
+    df = df.loc[:, ~df.columns.duplicated()]
 
     # Ownership lookup
     if ownership_df is not None:
@@ -466,6 +467,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     # Append junior mining contacts (bypass CDF criteria, subject to other splits)
     if mining_df is not None and len(mining_df) > 0:
         mdf = mining_df.copy()
+        mdf = mdf.loc[:, ~mdf.columns.duplicated()]
         mdf.rename(columns=RENAME_MAP, inplace=True)
         # Rename T/O % in mining file too
         for old in ['Account Equity % Portfolio Turnover', 'Account Equity % T/O']:
