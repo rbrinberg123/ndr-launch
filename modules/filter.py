@@ -1,4 +1,5 @@
 import pandas as pd
+import traceback
 from typing import Optional
 
 MCAP_MAP = {
@@ -366,7 +367,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         try:
             shares_col = [c for c in ownership_df.columns
                           if 'Shares' in str(c) and 'Change' not in str(c) and 'Post' not in str(c)][0]
-            shares_lookup = ownership_df.set_index('Account Name')[shares_col]
+            shares_lookup = ownership_df.drop_duplicates(subset='Account Name').set_index('Account Name')[shares_col]
             if 'CRM Account Name' in df.columns:
                 crm_idx = df.columns.get_loc('CRM Account Name')
                 df.insert(crm_idx + 1, 'Shares', df['Account Name'].map(shares_lookup) if 'Account Name' in df.columns else None)
@@ -383,7 +384,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                 index_shares=(sc, 'sum'), index_funds=(sc, 'count')).reset_index()
             fa = fa.merge(idx_f, on='Account Name', how='left')
             fa[['index_shares', 'index_funds']] = fa[['index_shares', 'index_funds']].fillna(0).astype(int)
-            fa = fa.set_index('Account Name')
+            fa = fa.drop_duplicates(subset='Account Name').set_index('Account Name')
 
             si = df.columns.get_loc('Shares') + 1 if 'Shares' in df.columns else 1
             df.insert(si,     'Fund Shares',             df['Account Name'].map(fa['fund_shares'])     if 'Account Name' in df.columns else None)
