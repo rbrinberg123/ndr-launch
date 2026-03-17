@@ -231,8 +231,9 @@ def run():
 
     hf_treatment      = request.form.get('hf_treatment', 'separate')
     eaum_min_raw      = request.form.get('eaum_min', '').strip()
-    eaum_min          = float(eaum_min_raw) if eaum_min_raw else None
-    meeting_exclusion = request.form.get('meeting_exclusion', 'include_all')
+    eaum_min              = float(eaum_min_raw) if eaum_min_raw else None
+    shareholder_exclusion = request.form.get('shareholder_exclusion', 'include_all')
+    meeting_exclusion     = request.form.get('meeting_exclusion', 'include_all')
     company_name      = request.form.get('company_name', 'Company').strip() or 'Company'
     subject_symbols   = [s.strip().upper() for s in request.form.getlist('subject_symbols') if s.strip()]
     routing_mode      = request.form.get('city_mode', 'virtual')
@@ -262,7 +263,7 @@ def run():
     except Exception as e:
         return jsonify({'error': f'Could not read contacts file: {e}'}), 400
 
-    ownership_df = fund_df = acts_named = None
+    ownership_df = fund_df = acts_named = acts_df_raw = None
 
     if ownership_file and ownership_file.filename:
         try:
@@ -278,8 +279,8 @@ def run():
 
     if activities_file and activities_file.filename and subject_symbols:
         try:
-            acts_df = pd.read_excel(io.BytesIO(activities_file.read()), header=1)
-            acts_named = load_activities(acts_df, subject_symbols)
+            acts_df_raw = pd.read_excel(io.BytesIO(activities_file.read()), header=1)
+            acts_named = load_activities(acts_df_raw, subject_symbols)
         except Exception:
             pass
 
@@ -288,7 +289,8 @@ def run():
             contacts_df, ownership_df, fund_df, acts_named,
             criteria, hf_treatment, meeting_exclusion,
             city_selections, subject_symbols, company_name,
-            eaum_min=eaum_min
+            eaum_min=eaum_min, acts_df_raw=acts_df_raw,
+            shareholder_exclusion=shareholder_exclusion
         )
     except Exception as e:
         return jsonify({'error': f'Filter error: {e}'}), 500

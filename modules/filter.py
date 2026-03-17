@@ -352,7 +352,8 @@ def sort_frame(frame):
 def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                criteria, hf_treatment, meeting_exclusion,
                city_selections, subject_symbols, company_name,
-               eaum_min=None):
+               eaum_min=None, acts_df_raw=None,
+               shareholder_exclusion='include_all'):
     df = contacts_df.copy()
 
     # Ownership lookup
@@ -364,6 +365,20 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             if 'CRM Account Name' in df.columns:
                 crm_idx = df.columns.get_loc('CRM Account Name')
                 df.insert(crm_idx + 1, 'Shares', df['Account Name'].map(shares_lookup) if 'Account Name' in df.columns else None)
+        except Exception:
+            pass
+
+    # % S/O lookup for shareholder exclusion
+    so_lookup = {}
+    if shareholder_exclusion != 'include_all' and ownership_df is not None:
+        try:
+            so_col = next((c for c in ownership_df.columns if '% s/o' in str(c).lower()), None)
+            if so_col is None:
+                so_col = ownership_df.columns[4]
+            deduped = ownership_df.drop_duplicates(subset='Account Name')
+            so_lookup = dict(zip(
+                deduped['Account Name'],
+                pd.to_numeric(deduped[so_col], errors='coerce') / 100))
         except Exception:
             pass
 
@@ -503,8 +518,29 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     if not activist_df.empty:
         activist_df['Exclusion Reason'] = 'Frequent activist'
 
-    # Meeting history exclusion
+    # Shareholder exclusion
     excluded_df = pd.DataFrame()
+    if shareholder_exclusion != 'include_all' and so_lookup:
+        thresholds = {
+            'exclude_all': 0.0, 'gt_001': 0.0001, 'gt_002': 0.0002,
+            'gt_003': 0.0003, 'gt_04': 0.004, 'gt_05': 0.005,
+        }
+        threshold = thresholds.get(shareholder_exclusion)
+        if threshold is not None:
+            def exceeds_sh(r):
+                acct = r.get('Account Name', '')
+                val = so_lookup.get(acct)
+                if val is None or pd.isna(val):
+                    return False
+                return val > 0 if shareholder_exclusion == 'exclude_all' else val > threshold
+            sh_mask = main_df.apply(exceeds_sh, axis=1)
+            sh_excluded = main_df[sh_mask].copy()
+            if not sh_excluded.empty:
+                sh_excluded['Exclusion Reason'] = 'Exceeds Shareholder Limit'
+                excluded_df = pd.concat([excluded_df, sh_excluded], ignore_index=True, sort=False)
+            main_df = main_df[~sh_mask].reset_index(drop=True)
+
+    # Meeting history exclusion
     if meeting_exclusion != 'include_all' and 'Specifically with Co.' in main_df.columns:
         if meeting_exclusion == 'exclude_l12m':
             cutoff = pd.Timestamp.today() - pd.DateOffset(months=12)
@@ -519,10 +555,79 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         else:  # exclude_all
             exc_mask = main_df['Specifically with Co.'].apply(pd.notna)
             exc_reason = 'Prior meeting with company'
-        excluded_df = main_df[exc_mask].copy()
-        if not excluded_df.empty:
-            excluded_df['Exclusion Reason'] = exc_reason
-        main_df     = main_df[~exc_mask].copy()
+        meeting_excluded = main_df[exc_mask].copy()
+        if not meeting_excluded.empty:
+            meeting_excluded['Exclusion Reason'] = exc_reason
+            excluded_df = pd.concat([excluded_df, meeting_excluded], ignore_index=True, sort=False)
+        main_df = main_df[~exc_mask].copy()
+
+    # Append other-company activity contacts
+    if acts_df_raw is not None and subject_symbols:
+        all_syms = set(acts_df_raw['Symbols'].dropna().astype(str).str.strip().str.upper())
+        upper_subject = {s.upper() for s in subject_symbols}
+        other_symbols = sorted(all_syms - upper_subject)
+        if other_symbols:
+            contact_tickers = {}
+            for sym in other_symbols:
+                sym_acts = load_activities(acts_df_raw, [sym])
+                for _, r in sym_acts.iterrows():
+                    key = (r['_fname'], r['_lname'])
+                    contact_tickers.setdefault(key, set()).add(sym)
+
+            all_keys = set()
+            if main_df is not None and not main_df.empty:
+                all_keys |= set(zip(main_df['_fname'], main_df['_lname']))
+            for frame in [too_small_df, hf_df, dnc_df, check_df, quant_df, activist_df, excluded_df]:
+                if not frame.empty:
+                    all_keys |= set(zip(frame['_fname'], frame['_lname']))
+
+            all_other_acts = load_activities(acts_df_raw, other_symbols)
+            all_other_sorted = all_other_acts.sort_values('Date', ascending=False)
+
+            other_rows = []
+            for (fn, ln), tickers in contact_tickers.items():
+                if (fn, ln) in all_keys:
+                    continue
+                person_rows = all_other_sorted[
+                    (all_other_sorted['_fname'] == fn) & (all_other_sorted['_lname'] == ln)]
+                if person_rows.empty:
+                    continue
+                eaum_raw = best_value(person_rows, 'Equity Assets Under Management')
+                ata_raw  = best_value(person_rows, 'Reported Total Assets')
+                turnover = best_value(person_rows, 'Turnover')
+                eaum_mm  = round(float(eaum_raw) / 1_000_000) if eaum_raw and pd.notna(eaum_raw) else None
+                ata_mm   = round(float(ata_raw) / 1_000_000) if ata_raw and pd.notna(ata_raw) else None
+                to_pct   = round(float(turnover) * 100, 1) if turnover and pd.notna(turnover) else None
+                city    = best_value(person_rows, 'City')
+                state   = best_value(person_rows, 'State/Province')
+                country = best_value(person_rows, 'Country/Territory')
+                style   = best_value(person_rows, 'CDF (Contact): Investment Style')
+                other_rows.append({
+                    'First Name':       best_value(person_rows, 'External Participant First Name'),
+                    'Last Name':        best_value(person_rows, 'External Participant Last Name'),
+                    'CRM Account Name': best_value(person_rows, 'External Participants (Institutions)'),
+                    'Email':            best_value(person_rows, 'Email'),
+                    'Phone':            best_value(person_rows, 'CRM Phone'),
+                    'Job Function':     best_value(person_rows, 'Job Function'),
+                    'City': city, 'State/Province': state, 'Country/Territory': country,
+                    'Contact Investment Center': build_inv_center(city, state, country),
+                    'Coverage':         best_value(person_rows, 'CDF (Firm): Coverage'),
+                    'EAUM ($mm)': eaum_mm, 'AUM ($mm)': ata_mm, 'T/O %': to_pct,
+                    'Primary Institution Type': 'Hedge Fund' if style == 'Alternative' else None,
+                    'Industry': best_value(person_rows, 'CDF (Contact): Industry Focus'),
+                    'Geo':      best_value(person_rows, 'CDF (Contact): Geography'),
+                    'Style':    style,
+                    'Mkt. Cap': best_value(person_rows, 'CDF (Contact): Market Cap.'),
+                    'Specifically with Co.': None, 'Anyone at Inst. with Co': None,
+                    'L12M': None, 'Total': None, '3rd Party': None, 'Rose & Co': None,
+                    '_fname': fn, '_lname': ln,
+                    '_inst': str(best_value(person_rows, 'External Participants (Institutions)') or '').strip().lower(),
+                    'Match Criteria': '', 'Match Count': None,
+                    'Source': 'Other: ' + ', '.join(sorted(tickers)),
+                })
+            if other_rows:
+                other_df = pd.DataFrame(other_rows)
+                main_df = pd.concat([main_df, other_df], ignore_index=True, sort=False)
 
     # City routing
     city_dfs = {}
