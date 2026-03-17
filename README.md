@@ -43,7 +43,7 @@ Sheets are written in this order. Empty sheets are omitted.
 | `Check` | Check before calling |
 | `Quant` | Quantitative funds |
 | `Activist` | Contacts where Activist = Often |
-| `Excluded` | Contacts excluded by meeting history rule |
+| `Excluded` | Contacts excluded by shareholder threshold or meeting history rule |
 | `Too Small` | Contacts below the EAUM minimum threshold (if set) |
 
 Sheet names containing `/` are sanitized (replaced with `-`) and truncated to 31 characters to comply with Excel requirements.
@@ -58,7 +58,7 @@ Enter the company name used for the output filename. If an Activities file is up
 
 **Subject company** — one or more tickers identifying the company this NDR is for. All six meeting history columns are computed using only rows matching these tickers. Meeting exclusion logic applies only to subject company meetings. Multiple subject tickers are pooled together — this is intended for dual-listed companies (same company, different ticker symbols). Using multiple genuinely different companies as subject tickers will produce misleading meeting counts.
 
-**Other companies** — contacts who appear in activities for these tickers but are not already in the output are appended with `Source = Meeting History (Other)`. Their meeting columns are left blank and meeting exclusion does not apply to them.
+**Other companies** — contacts who appear in activities for these tickers but are not already in the output are appended with `Source = Other: TICK1, TICK2` listing which tickers they were met under. Their meeting columns are left blank and meeting exclusion does not apply to them.
 
 ### CDF criteria
 
@@ -91,6 +91,14 @@ Four modes:
 * **State** — searchable checklist of state codes; all investment centers with cities in selected states are included
 
 Routing always operates at the investment center level regardless of which mode was used to select. The investment center → city → state mapping is stored in `city_map.json` and can be updated via the admin page.
+
+### Shareholder exclusion
+
+Optional filter based on the `% S/O` column from the Ownership file (falls back to column index 4 if not found by name). Raw values are divided by 100. Options:
+
+* **Include all** (default) — no exclusion
+* **Exclude all shareholders** — any contact with `% S/O` > 0 is moved to Excluded
+* **Greater than 0.01%** / **0.02%** / **0.03%** / **0.4%** / **0.5%** — contacts exceeding the threshold are moved to Excluded with reason "Exceeds Shareholder Limit"
 
 ### Meeting history exclusion
 
@@ -125,7 +133,8 @@ Each contact is evaluated across four CDF dimensions. Each returns **match**, **
 4. **Check** — `CDF (Firm): Check before calling` = Yes
 5. **Quant** — `CDF (Contact): Is Quant?` = Yes
 6. **Activist** — `Activist` = Often
-7. **Excluded** — meeting history exclusion (subject company only)
+7. **Excluded (shareholders)** — shareholder exclusion based on `% S/O` threshold
+8. **Excluded (meetings)** — meeting history exclusion (subject company only)
 
 ### Contact sources
 
@@ -133,7 +142,7 @@ Each contact is evaluated across four CDF dimensions. Each returns **match**, **
 | --- | --- |
 | `CDF Match` | Passed the CDF filter from the contacts file |
 | `Meeting History` | In Activities for subject company but not in contacts file |
-| `Meeting History (Other)` | In Activities for other-company tickers, not already in output |
+| `Other: TICK1, TICK2` | In Activities for other-company tickers, not already in output; lists specific tickers |
 | `Mining List` | From the supplemental contacts file |
 
 ---
