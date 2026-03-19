@@ -203,38 +203,31 @@ def load_activities(acts_df, subject_symbols):
 
 def compute_activity_cols(frame, acts_named, cutoff_l12m):
     frame = frame.reset_index(drop=True)
-    specifically, anyone, l12m_vals, total_vals, tp_vals, rc_vals = [], [], [], [], [], []
-
-    for _, row in frame.iterrows():
-        fn   = row.get('_fname', '')
-        ln   = row.get('_lname', '')
-        inst = row.get('_inst', '')
-
-        c_acts = acts_named[(acts_named['_fname'] == fn) & (acts_named['_lname'] == ln)]
-        i_acts = acts_named[acts_named['_inst'] == inst] if inst else acts_named.iloc[0:0]
-
-        specifically.append(c_acts['Date'].max() if len(c_acts) > 0 else pd.NaT)
-        anyone.append(i_acts['Date'].max() if len(i_acts) > 0 else pd.NaT)
-
-        l12m  = int((c_acts['Date'] >= cutoff_l12m).sum())
-        total = len(c_acts)
-        tp    = int((c_acts['Topic'].fillna('').str.strip() == '3rd Party').sum())
-        rc    = int(c_acts['Topic'].apply(
-            lambda t: pd.isna(t) or str(t).strip() == '' or str(t).strip() == '*Rose & Company'
-        ).sum())
-
-        l12m_vals.append(l12m  if l12m  > 0 else None)
-        total_vals.append(total if total > 0 else None)
-        tp_vals.append(tp       if tp    > 0 else None)
-        rc_vals.append(rc       if rc    > 0 else None)
-
-    frame = frame.copy()
-    frame['Last Mtg btwn Contact & Co'] = pd.to_datetime(pd.Series(specifically, index=frame.index)).dt.date
-    frame['Last Mtg btwn firm & Co']    = pd.to_datetime(pd.Series(anyone, index=frame.index)).dt.date
-    frame['L12M']      = l12m_vals
-    frame['Total']     = total_vals
-    frame['3rd Party'] = tp_vals
-    frame['Rose & Co'] = rc_vals
+    if acts_named is None or len(acts_named) == 0:
+        for col in ['Last Mtg btwn Contact & Co', 'Last Mtg btwn firm & Co', 'L12M', 'Total', '3rd Party', 'Rose & Co']:
+            frame[col] = None
+        return frame
+    contact_grp = acts_named.groupby(['_fname', '_lname'])
+    last_contact = contact_grp['Date'].max()
+    total = contact_grp.size()
+    l12m = acts_named[acts_named['Date'] >= cutoff_l12m].groupby(['_fname', '_lname']).size()
+    topic = acts_named['Topic'].fillna('').str.strip()
+    third_party = acts_named[topic == '3rd Party'].groupby(['_fname', '_lname']).size()
+    rose = acts_named[topic.isin(['', '*Rose & Company'])].groupby(['_fname', '_lname']).size()
+    inst_last = acts_named.groupby('_inst')['Date'].max()
+    key_index = pd.MultiIndex.from_tuples(list(zip(frame['_fname'], frame['_lname'])), names=['_fname', '_lname'])
+    frame['Last Mtg btwn Contact & Co'] = pd.to_datetime(last_contact.reindex(key_index).values, errors='coerce')
+    frame['Last Mtg btwn Contact & Co'] = frame['Last Mtg btwn Contact & Co'].dt.date
+    total_vals = total.reindex(key_index).fillna(0).astype(int).values
+    l12m_vals = l12m.reindex(key_index).fillna(0).astype(int).values
+    tp_vals = third_party.reindex(key_index).fillna(0).astype(int).values
+    rc_vals = rose.reindex(key_index).fillna(0).astype(int).values
+    frame['Total'] = [int(v) if v > 0 else None for v in total_vals]
+    frame['L12M'] = [int(v) if v > 0 else None for v in l12m_vals]
+    frame['3rd Party'] = [int(v) if v > 0 else None for v in tp_vals]
+    frame['Rose & Co'] = [int(v) if v > 0 else None for v in rc_vals]
+    frame['Last Mtg btwn firm & Co'] = pd.to_datetime(inst_last.reindex(frame['_inst'].values).values, errors='coerce')
+    frame['Last Mtg btwn firm & Co'] = frame['Last Mtg btwn firm & Co'].dt.date
     return frame
 
 
