@@ -273,7 +273,9 @@ def run():
     meeting_exclusion     = request.form.get('meeting_exclusion', 'include_all')
     shareholder_exclusion = request.form.get('shareholder_exclusion', 'include_all')
     company_name          = request.form.get('company_name', 'Company').strip() or 'Company'
-    subject_symbol        = request.form.get('subject_symbol', '').strip().upper()
+    subject_symbols_raw   = request.form.getlist('subject_symbol')
+    subject_symbol        = [s.strip().upper() for s in subject_symbols_raw if s.strip()] or ['']
+    subject_symbol        = subject_symbol[0] if len(subject_symbol) == 1 else subject_symbol
     routing_mode          = request.form.get('city_mode', 'virtual')
     virtual_scope         = request.form.get('virtual_scope', 'both')
 
@@ -348,8 +350,9 @@ def run():
             acts_bytes  = activities_file.read()
             acts_df     = pd.read_excel(io.BytesIO(acts_bytes), header=1)
             acts_df_raw = acts_df.copy()
-            if subject_symbol:
-                acts_named = load_activities(acts_df, subject_symbol)
+            sym_arg = subject_symbol if subject_symbol != [''] else None
+            if sym_arg:
+                acts_named = load_activities(acts_df, sym_arg)
         except Exception:
             pass
 
@@ -397,7 +400,8 @@ def run():
 
     # Save for download
     file_id  = str(uuid.uuid4())
-    filename = f'{subject_symbol or company_name} Contacts Mapping.xlsx'
+    sym_str  = (subject_symbol[0] if isinstance(subject_symbol, list) else subject_symbol) or ''
+    filename = f'{sym_str or company_name} Contacts Mapping.xlsx'
     with open(os.path.join(TEMP_DIR, f'{file_id}.xlsx'), 'wb') as f:
         f.write(excel_bytes)
     session['download_id']   = file_id
