@@ -229,7 +229,8 @@ def run():
     hf_treatment      = request.form.get('hf_treatment', 'separate')
     eaum_min_raw      = request.form.get('eaum_min', '').strip()
     eaum_min          = float(eaum_min_raw) if eaum_min_raw else None
-    meeting_exclusion = request.form.get('meeting_exclusion', 'include_all')
+    meeting_exclusion     = request.form.get('meeting_exclusion', 'include_all')
+    shareholder_exclusion = request.form.get('shareholder_exclusion', 'include_all')
     company_name      = request.form.get('company_name', 'Company').strip() or 'Company'
     subject_symbols   = [s.strip().upper() for s in request.form.getlist('subject_symbols') if s.strip()]
     other_symbols     = [s.strip().upper() for s in request.form.getlist('other_symbols') if s.strip()]
@@ -310,6 +311,7 @@ def run():
             eaum_min=eaum_min, mining_df=mining_df,
             acts_df_raw=acts_df_raw, other_symbols=other_symbols,
             virtual_scope=virtual_scope
+            shareholder_exclusion=shareholder_exclusion
         )
     except Exception as e:
         return jsonify({'error': f'Filter error: {e}', 'trace': traceback.format_exc()}), 500

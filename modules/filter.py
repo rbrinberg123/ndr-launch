@@ -385,6 +385,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                eaum_min=None, mining_df=None,
                acts_df_raw=None, other_symbols=None,
                virtual_scope='both'):
+               shareholder_exclusion='include_all'):
     df = contacts_df.copy()
     df = df.reset_index(drop=True)
     df = df.loc[:, ~df.columns.duplicated()]
@@ -398,6 +399,20 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             if 'CRM Account Name' in df.columns:
                 crm_idx = df.columns.get_loc('CRM Account Name')
                 df.insert(crm_idx + 1, 'Shares', df['Account Name'].map(shares_lookup) if 'Account Name' in df.columns else None)
+        except Exception:
+            pass
+
+    # % S/O lookup for shareholder exclusion
+    so_lookup = {}
+    if shareholder_exclusion != 'include_all' and ownership_df is not None:
+        try:
+            so_col = next((c for c in ownership_df.columns if '% s/o' in str(c).lower()), None)
+            if so_col is None:
+                so_col = ownership_df.columns[4]
+            deduped = ownership_df.drop_duplicates(subset='Account Name')
+            so_lookup = dict(zip(
+                deduped['Account Name'],
+                pd.to_numeric(deduped[so_col], errors='coerce') / 100))
         except Exception:
             pass
 
@@ -582,8 +597,29 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     if not credit_hy_df.empty:
         credit_hy_df['Exclusion Reason'] = 'Fixed Income Investor'
 
-    # Meeting history exclusion
+    # Shareholder exclusion
     excluded_df = pd.DataFrame()
+    if shareholder_exclusion != 'include_all' and so_lookup:
+        thresholds = {
+            'exclude_all': 0.0, 'gt_001': 0.0001, 'gt_002': 0.0002,
+            'gt_003': 0.0003, 'gt_04': 0.004, 'gt_05': 0.005,
+        }
+        threshold = thresholds.get(shareholder_exclusion)
+        if threshold is not None:
+            def exceeds_sh(r):
+                acct = r.get('Account Name', '')
+                val = so_lookup.get(acct)
+                if val is None or pd.isna(val):
+                    return False
+                return val > 0 if shareholder_exclusion == 'exclude_all' else val > threshold
+            sh_mask = main_df.apply(exceeds_sh, axis=1)
+            sh_excluded = main_df[sh_mask].copy()
+            if not sh_excluded.empty:
+                sh_excluded['Exclusion Reason'] = 'Exceeds Shareholder Limit'
+                excluded_df = pd.concat([excluded_df, sh_excluded], ignore_index=True, sort=False)
+            main_df = main_df[~sh_mask].reset_index(drop=True)
+
+    # Meeting history exclusion
     if meeting_exclusion != 'include_all' and 'Last Mtg btwn Contact & Co' in main_df.columns:
         if meeting_exclusion == 'exclude_l12m':
             cutoff = pd.Timestamp.today() - pd.DateOffset(months=12)
@@ -598,15 +634,23 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         else:  # exclude_all
             exc_mask = main_df['Last Mtg btwn Contact & Co'].apply(pd.notna)
             exc_reason = 'Prior meeting with company'
-        excluded_df = main_df[exc_mask].reset_index(drop=True).copy()
-        if not excluded_df.empty:
-            excluded_df['Exclusion Reason'] = exc_reason
-        main_df     = main_df[~exc_mask].reset_index(drop=True).copy()
+        meeting_excluded = main_df[exc_mask].reset_index(drop=True).copy()
+        if not meeting_excluded.empty:
+            meeting_excluded['Exclusion Reason'] = exc_reason
+            excluded_df = pd.concat([excluded_df, meeting_excluded], ignore_index=True, sort=False)
+        main_df = main_df[~exc_mask].reset_index(drop=True).copy()
 
     # Append other-company activity contacts (after all splits, before city routing)
     if other_symbols and acts_df_raw is not None and len(acts_df_raw) > 0:
-        other_acts = load_activities(acts_df_raw, other_symbols)
-        if len(other_acts) > 0:
+        # Build contact_tickers: (fname, lname) → set of ticker strings
+        contact_tickers = {}
+        for sym in other_symbols:
+            sym_acts = load_activities(acts_df_raw, [sym])
+            for _, r in sym_acts.iterrows():
+                key = (r['_fname'], r['_lname'])
+                contact_tickers.setdefault(key, set()).add(sym)
+
+        if contact_tickers:
             # Build keys from ALL frames (main + every split-off sheet)
             all_keys = set()
             for frame in [main_df, too_small_df, hf_df, dnc_df, check_df, quant_df, activist_df, credit_hy_df, excluded_df]:
@@ -614,6 +658,8 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                     all_keys.update(zip(frame['_fname'], frame['_lname']))
             # Also include contacts from the original contacts file (not just filtered)
             all_keys.update(zip(df['_fname'], df['_lname']))
+
+            other_acts = load_activities(acts_df_raw, other_symbols)
             other_extra = build_activity_only_contacts(other_acts, all_keys, cutoff_l12m)
             if not other_extra.empty:
                 other_extra.rename(columns=RENAME_MAP, inplace=True)
@@ -621,7 +667,10 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                 for col in ['Last Mtg btwn Contact & Co', 'Last Mtg btwn firm & Co', 'L12M', 'Total', '3rd Party', 'Rose & Co']:
                     if col in other_extra.columns:
                         other_extra[col] = None
-                other_extra['Source'] = 'Meeting History (Other)'
+                # Set per-contact Source with specific tickers
+                other_extra['Source'] = other_extra.apply(
+                    lambda r: 'Other: ' + ', '.join(sorted(contact_tickers.get((r['_fname'], r['_lname']), set()))),
+                    axis=1)
                 # Deduplicate against all existing output keys
                 other_new = other_extra[other_extra.apply(
                     lambda r: (r['_fname'], r['_lname']) not in all_keys, axis=1)]
