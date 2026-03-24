@@ -278,7 +278,8 @@ def run():
         results = run_filter(
             contacts_df, ownership_df, fund_df, acts_named,
             criteria, hf_treatment, meeting_exclusion,
-            city_selections, subject_symbol, company_name
+            city_selections, subject_symbol, company_name,
+            virtual_scope=virtual_scope
         )
     except Exception as e:
         return jsonify({'error': f'Filter error: {e}'}), 500
