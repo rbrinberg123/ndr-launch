@@ -73,7 +73,7 @@
     <!-- Hidden company name (kept for filename) -->
     <input type="hidden" id="company-name" value="Contacts">
 
-    <!-- Ticker selection — shown automatically when Activities.xlsx is uploaded -->
+    <!-- Subject ticker — shown when Activities.xlsx is uploaded -->
     <div id="symbol-row" class="sidebar-section" style="display:none">
       <div class="section-label">Subject ticker</div>
       <div class="field-row">
@@ -81,6 +81,13 @@
           <option value="">Select ticker…</option>
         </select>
       </div>
+    </div>
+
+    <!-- Other tickers — shown when Activities.xlsx is uploaded with multiple symbols -->
+    <div id="other-symbols-row" class="sidebar-section" style="display:none">
+      <div class="section-label">Other tickers</div>
+      <div class="city-picker-hint" style="margin-bottom:6px">Append contacts from activities for these tickers</div>
+      <div class="city-grid" id="other-symbols-grid"></div>
     </div>
 
     <!-- Hedge funds -->
@@ -98,9 +105,12 @@
       <div class="section-label">NDR routing</div>
       <div class="radio-stack">
         <label class="radio-row"><input type="radio" name="city_mode" value="virtual" checked><span class="radio-custom"></span><span class="radio-label">Virtual (single sheet)</span></label>
+        <label class="radio-row"><input type="radio" name="city_mode" value="investment_center"><span class="radio-custom"></span><span class="radio-label">Investment Center</span></label>
         <label class="radio-row"><input type="radio" name="city_mode" value="cities"><span class="radio-custom"></span><span class="radio-label">Split by city</span></label>
+        <label class="radio-row"><input type="radio" name="city_mode" value="state"><span class="radio-custom"></span><span class="radio-label">Split by state</span></label>
       </div>
-      <!-- Virtual scope — shown when Virtual is selected -->
+
+      <!-- Virtual scope -->
       <div id="virtual-scope-inputs" class="city-picker" style="display:block; margin-top:8px">
         <div class="city-picker-hint">Geography scope</div>
         <div class="radio-stack">
@@ -109,7 +119,16 @@
           <label class="radio-row"><input type="radio" name="virtual_scope" value="eur"><span class="radio-custom"></span><span class="radio-label">EUR only</span></label>
         </div>
       </div>
-      <div id="city-inputs" class="city-picker" style="display:none">
+
+      <!-- Investment Center picker -->
+      <div id="ic-inputs" class="city-picker" style="display:none; margin-top:8px">
+        <div class="city-picker-hint">Select investment centers (1–6)</div>
+        <input type="text" class="search-input" placeholder="Search…" id="ic-search" style="margin-bottom:6px">
+        <div class="city-grid" id="ic-grid"></div>
+      </div>
+
+      <!-- City picker -->
+      <div id="city-inputs" class="city-picker" style="display:none; margin-top:8px">
         <div class="city-picker-hint">Select 1–4 cities</div>
         <div class="city-grid">
           {% for tab_name, ic_value in display_cities %}
@@ -119,6 +138,12 @@
           </label>
           {% endfor %}
         </div>
+      </div>
+
+      <!-- State picker -->
+      <div id="state-inputs" class="city-picker" style="display:none; margin-top:8px">
+        <div class="city-picker-hint">Select states / provinces</div>
+        <div class="city-grid" id="state-grid"></div>
       </div>
     </div>
 
@@ -132,6 +157,28 @@
         <label class="radio-row"><input type="radio" name="meeting_exclusion" value="exclude_l24m"><span class="radio-custom"></span><span class="radio-label">Exclude last 24 months</span></label>
         <label class="radio-row"><input type="radio" name="meeting_exclusion" value="exclude_all"><span class="radio-custom"></span><span class="radio-label">Exclude all prior meetings</span></label>
       </div>
+    </div>
+
+    <!-- Shareholder exclusion -->
+    <div class="sidebar-section">
+      <div class="section-label">Shareholder exclusion</div>
+      <div class="city-picker-hint" style="margin-bottom:6px">Requires Ownership.xlsx</div>
+      <div class="radio-stack">
+        <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="include_all" checked><span class="radio-custom"></span><span class="radio-label">Include all</span></label>
+        <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="exclude_all"><span class="radio-custom"></span><span class="radio-label">Exclude all shareholders</span></label>
+        <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_001"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.01%</span></label>
+        <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_002"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.02%</span></label>
+        <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_003"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.03%</span></label>
+        <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_04"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.4%</span></label>
+        <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_05"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.5%</span></label>
+      </div>
+    </div>
+
+    <!-- EAUM minimum -->
+    <div class="sidebar-section">
+      <div class="section-label">EAUM minimum ($mm)</div>
+      <div class="city-picker-hint" style="margin-bottom:6px">Contacts below this move to Too Small sheet</div>
+      <input type="number" id="eaum-min" class="text-input" placeholder="e.g. 100" min="0" step="1" style="width:100%">
     </div>
 
     <button class="run-button" id="run-btn" disabled>
@@ -214,7 +261,9 @@
 </div>
 
 <script>
-  window.TAXONOMY      = {{ taxonomy_json | safe }};
-  window.SP_CONFIGURED = {{ 'true' if sp_configured else 'false' }};
+  window.TAXONOMY         = {{ taxonomy_json | safe }};
+  window.SP_CONFIGURED    = {{ 'true' if sp_configured else 'false' }};
+  window.CITY_MAP_ICS     = {{ city_map_ics_json | safe }};
+  window.CITY_MAP_STATES  = {{ city_map_states_json | safe }};
 </script>
 {% endblock %}

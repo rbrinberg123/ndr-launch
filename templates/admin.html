@@ -18,6 +18,8 @@
   </div>
 
   <div class="admin-grid">
+
+    <!-- CDF Taxonomy -->
     <div class="admin-card">
       <div class="admin-card-title">CDF taxonomy</div>
       <div class="admin-card-sub">Upload a new CDFs.xlsx to update all picker values and AI guidance. Format: 3 columns — Field Type · Value · Description.</div>
@@ -31,6 +33,7 @@
       <div id="taxonomy-result" class="result-msg hidden"></div>
     </div>
 
+    <!-- City map -->
     <div class="admin-card">
       <div class="admin-card-title">City map</div>
       <div class="admin-card-sub">Upload an .xlsx with columns Investment Center, Nearby City, State to update the city/IC routing map.</div>
@@ -43,6 +46,30 @@
       <button class="admin-action-btn" id="upload-citymap-btn" disabled>Upload city map</button>
       <div id="citymap-result" class="result-msg hidden"></div>
     </div>
+
+    <!-- Meetings database -->
+    <div class="admin-card">
+      <div class="admin-card-title">Meetings database</div>
+      {% if db_configured %}
+      <div class="admin-card-sub">Upload Activities.xlsx to store meeting history in the database. Incremental upload adds new rows and updates existing ones; full upload replaces everything.</div>
+      <div class="admin-upload-zone" id="meetings-zone">
+        <div class="upload-icon">↑</div>
+        <div class="upload-hint">Drop file here or <label for="meetings-file" class="inline-link">browse</label></div>
+        <div class="upload-formats">Activities.xlsx · header row 2</div>
+        <input type="file" id="meetings-file" accept=".xlsx,.xls" hidden>
+      </div>
+      <div class="radio-stack" style="margin: 8px 0;">
+        <label class="radio-row"><input type="radio" name="upload_type" value="incremental" checked><span class="radio-custom"></span><span class="radio-label">Incremental (add / update)</span></label>
+        <label class="radio-row"><input type="radio" name="upload_type" value="full"><span class="radio-custom"></span><span class="radio-label">Full replace</span></label>
+      </div>
+      <div id="meetings-preview" class="result-msg hidden" style="margin-bottom:8px"></div>
+      <button class="admin-action-btn" id="confirm-meetings-btn" disabled>Confirm upload</button>
+      <div id="meetings-result" class="result-msg hidden"></div>
+      {% else %}
+      <div class="admin-card-sub" style="color:var(--text-muted)">DATABASE_URL is not configured. Set this environment variable in Render to enable the meetings database.</div>
+      {% endif %}
+    </div>
+
   </div>
   {% endif %}
 </div>
