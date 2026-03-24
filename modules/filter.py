@@ -10,7 +10,21 @@ MCAP_MAP = {
     'Mega':  'Mega',
 }
 
-GENERALIST   = {'*Generalist'}
+GENERALIST = {'*Generalist'}
+
+EUR_COUNTRIES = {
+    'United Kingdom', 'France', 'Germany', 'Netherlands', 'Belgium', 'Switzerland',
+    'Sweden', 'Norway', 'Denmark', 'Poland', 'Austria', 'Ireland', 'Spain', 'Italy',
+    'Finland', 'Portugal', 'Luxembourg', 'Czech Republic', 'Hungary', 'Romania',
+    'Greece', 'Israel', 'Turkey', 'Russia', 'South Africa', 'Jersey', 'Guernsey',
+    'Isle of Man', 'Channel Islands', 'Gibraltar', 'Malta', 'Cyprus', 'Bulgaria',
+    'Croatia', 'Slovakia', 'Slovenia', 'Estonia', 'Latvia', 'Lithuania',
+}
+
+NAM_COUNTRIES = {
+    'United States', 'Canada', 'Mexico', 'Puerto Rico', 'Bermuda',
+    'Cayman Islands', 'British Virgin Islands', 'Bahamas',
+}
 
 RENAME_MAP = {
     'Account Equity Assets Under Management (USD, mm)': 'EAUM ($mm)',
@@ -185,6 +199,25 @@ def build_inv_center(city, state, country):
     return None
 
 
+# ── Virtual region classification ─────────────────────────────────────────────
+
+def classify_virtual_region(row):
+    """Classify a contact as Virtual - NAM, Virtual - EUR, or Virtual - Other."""
+    country = str(row.get('Country/Territory', '') or '').strip()
+    ic = str(row.get('Investment Ctr', '') or '').strip()
+    if country in NAM_COUNTRIES:
+        return 'Virtual - NAM'
+    if country in EUR_COUNTRIES:
+        return 'Virtual - EUR'
+    if not country:
+        eur_ic_hints = ('London', 'Paris', 'Amsterdam', 'Stockholm', 'Zurich',
+                        'Frankfurt', 'Milan', 'Madrid', 'Oslo', 'Copenhagen')
+        if any(h in ic for h in eur_ic_hints):
+            return 'Virtual - EUR'
+        return 'Virtual - NAM'
+    return 'Virtual - Other'
+
+
 # ── Activities enrichment ─────────────────────────────────────────────────────
 
 def load_activities(acts_df, subject_symbols):
@@ -286,9 +319,10 @@ def build_activity_only_contacts(acts_named, df_contact_keys, cutoff_l12m):
             'Geo':              best_value(person_rows, 'CDF (Contact): Geography'),
             'Style':            style,
             'Mkt. Cap':         best_value(person_rows, 'CDF (Contact): Market Cap.'),
-            'CDF (Contact): Do Not Call':       best_value(person_rows, 'CDF (Contact): Do Not Call'),
-            'CDF (Contact): Is Quant?':         best_value(person_rows, 'CDF (Contact): Is Quant?'),
-            'CDF (Firm): Check before calling': best_value(person_rows, 'CDF (Firm): Check before calling'),
+            'CDF (Contact): Do Not Call':         best_value(person_rows, 'CDF (Contact): Do Not Call'),
+            'CDF (Contact): Is Quant?':           best_value(person_rows, 'CDF (Contact): Is Quant?'),
+            'CDF (Contact): Invests in Credit/HY': best_value(person_rows, 'CDF (Contact): Invests in Credit/HY'),
+            'CDF (Firm): Check before calling':   best_value(person_rows, 'CDF (Firm): Check before calling'),
             '_fname': fn, '_lname': ln,
             '_inst': str(best_value(person_rows, 'External Participants (Institutions)') or '').strip().lower(),
             'Match Criteria': '', 'Match Count': None, 'Source': 'Meeting History',
@@ -321,7 +355,7 @@ def is_activist(row):
     v = row.get('Activist', None)
     return not pd.isna(v) and str(v).strip().lower() == 'often'
 
-def is_credit_hy(row):
+def is_fixed_income(row):
     v = row.get('CDF (Contact): Invests in Credit/HY', None)
     return not pd.isna(v) and str(v).strip().lower() == 'yes'
 
@@ -349,34 +383,6 @@ def sort_frame(frame):
     ).reset_index(drop=True)
 
 
-# ── Geography classification ──────────────────────────────────────────────────
-
-EUR_COUNTRIES = {
-    'Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus',
-    'Belgium', 'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 'Cyprus',
-    'Czech Republic', 'Czechia', 'Denmark', 'Estonia', 'Finland', 'France',
-    'Georgia', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Italy',
-    'Kazakhstan', 'Kosovo', 'Latvia', 'Liechtenstein', 'Lithuania',
-    'Luxembourg', 'Malta', 'Moldova', 'Monaco', 'Montenegro',
-    'Netherlands', 'North Macedonia', 'Norway', 'Poland', 'Portugal',
-    'Romania', 'Russia', 'San Marino', 'Serbia', 'Slovakia', 'Slovenia',
-    'Spain', 'Sweden', 'Switzerland', 'Turkey', 'Ukraine',
-    'United Kingdom', 'Vatican City',
-}
-
-NAM_COUNTRIES = {'United States', 'Canada'}
-
-
-def classify_region(country):
-    """Return 'NAM', 'EUR', or 'OTHER' based on Country/Territory."""
-    c = str(country).strip() if pd.notna(country) else ''
-    if c in NAM_COUNTRIES:
-        return 'NAM'
-    if c in EUR_COUNTRIES:
-        return 'EUR'
-    return 'OTHER'
-
-
 # ── Main run_filter ───────────────────────────────────────────────────────────
 
 def run_filter(contacts_df, ownership_df, fund_df, acts_named,
@@ -384,8 +390,8 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                city_selections, subject_symbols, company_name,
                eaum_min=None, mining_df=None,
                acts_df_raw=None, other_symbols=None,
+               shareholder_exclusion='include_all',
                virtual_scope='both'):
-               shareholder_exclusion='include_all'):
     df = contacts_df.copy()
     df = df.reset_index(drop=True)
     df = df.loc[:, ~df.columns.duplicated()]
@@ -448,8 +454,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
 
     # Rename institution type
     if 'Type' in df.columns:
-        df['Type'] = df['Type'].replace(
-            'Investment Manager-Mutual Fund', 'Mutual fund')
+        df['Type'] = df['Type'].replace('Investment Manager-Mutual Fund', 'Mutual fund')
 
     # Build _fname/_lname/_inst keys for matching
     df['_fname'] = df['First Name'].fillna('').str.strip().str.lower()   if 'First Name' in df.columns else ''
@@ -461,8 +466,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     if acts_named is not None and len(acts_named) > 0:
         df = compute_activity_cols(df, acts_named, cutoff_l12m)
 
-        # Override institution type to Hedge Fund for contacts whose Style is
-        # Alternative in the activities file
+        # Override institution type to Hedge Fund for contacts whose Style is Alternative
         style_col = 'CDF (Contact): Investment Style'
         if style_col in acts_named.columns:
             alt_keys = set()
@@ -473,7 +477,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                 mask = df.apply(lambda r: (r['_fname'], r['_lname']) in alt_keys, axis=1)
                 df.loc[mask, 'Type'] = 'Hedge Fund'
 
-    # Derive Contact Investment Center for main contacts
+    # Derive Investment Ctr for main contacts
     def build_ic_row(row):
         return build_inv_center(row.get('City'), row.get('State/Province'), row.get('Country/Territory'))
 
@@ -510,15 +514,13 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         mdf = mining_df.copy()
         mdf.rename(columns=RENAME_MAP, inplace=True)
         mdf = mdf.loc[:, ~mdf.columns.duplicated(keep='first')]
-        # Rename T/O % in mining file too
         for old in ['Account Equity % Portfolio Turnover', 'Account Equity % T/O']:
             if old in mdf.columns:
                 mdf[old] = pd.to_numeric(mdf[old], errors='coerce') / 100
                 mdf.rename(columns={old: 'T/O %'}, inplace=True)
                 break
         if 'Type' in mdf.columns:
-            mdf['Type'] = mdf['Type'].replace(
-                'Investment Manager-Mutual Fund', 'Mutual fund')
+            mdf['Type'] = mdf['Type'].replace('Investment Manager-Mutual Fund', 'Mutual fund')
         mdf['_fname'] = mdf['First Name'].fillna('').str.strip().str.lower() if 'First Name' in mdf.columns else ''
         mdf['_lname'] = mdf['Last Name'].fillna('').str.strip().str.lower()  if 'Last Name' in mdf.columns else ''
         mdf['_inst']  = mdf['CRM Account Name'].fillna('').str.strip().str.lower() if 'CRM Account Name' in mdf.columns else ''
@@ -528,7 +530,6 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         mdf['Match Criteria'] = ''
         mdf['Match Count'] = None
         mdf['Source'] = 'Additional List'
-        # Deduplicate: only add mining contacts not already in filtered
         filtered_keys = set(zip(filtered['_fname'], filtered['_lname']))
         mdf_new = mdf[mdf.apply(lambda r: (r['_fname'], r['_lname']) not in filtered_keys, axis=1)]
         if len(mdf_new) > 0:
@@ -553,7 +554,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
 
     main_df = filtered.copy()
 
-    # EAUM minimum filter — move contacts below threshold to "Too Small" tab
+    # EAUM minimum filter
     too_small_df = pd.DataFrame()
     if eaum_min is not None and 'EAUM ($mm)' in main_df.columns:
         eaum_vals = pd.to_numeric(main_df['EAUM ($mm)'], errors='coerce')
@@ -580,6 +581,12 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         if not hf_df.empty:
             hf_df['Exclusion Reason'] = 'Hedge Fund with T/O > 100%'
 
+    # Fixed Income split — contacts with Invests in Credit/HY = Yes
+    fi_df = pd.DataFrame()
+    fi_df, main_df = split_df(main_df, is_fixed_income)
+    if not fi_df.empty:
+        fi_df['Exclusion Reason'] = 'Fixed Income Investor'
+
     # DNC split
     dnc_df,      main_df = split_df(main_df, is_dnc)
     if not dnc_df.empty:
@@ -593,9 +600,6 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     activist_df, main_df = split_df(main_df, is_activist)
     if not activist_df.empty:
         activist_df['Exclusion Reason'] = 'Frequent activist'
-    credit_hy_df, main_df = split_df(main_df, is_credit_hy)
-    if not credit_hy_df.empty:
-        credit_hy_df['Exclusion Reason'] = 'Fixed Income Investor'
 
     # Shareholder exclusion
     excluded_df = pd.DataFrame()
@@ -619,20 +623,25 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                 excluded_df = pd.concat([excluded_df, sh_excluded], ignore_index=True, sort=False)
             main_df = main_df[~sh_mask].reset_index(drop=True)
 
-    # Meeting history exclusion
-    if meeting_exclusion != 'include_all' and 'Last Mtg btwn Contact & Co' in main_df.columns:
+    # Meeting history exclusion — works with either activities column name
+    mtg_col = None
+    for c in ['Last Mtg btwn Contact & Co', 'Specifically with Co.']:
+        if c in main_df.columns:
+            mtg_col = c
+            break
+    if meeting_exclusion != 'include_all' and mtg_col:
         if meeting_exclusion == 'exclude_l12m':
             cutoff = pd.Timestamp.today() - pd.DateOffset(months=12)
-            exc_mask = main_df['Last Mtg btwn Contact & Co'].apply(
+            exc_mask = main_df[mtg_col].apply(
                 lambda d: pd.notna(d) and pd.Timestamp(d) >= cutoff)
             exc_reason = 'Met with company in last 12 months'
         elif meeting_exclusion == 'exclude_l24m':
             cutoff = pd.Timestamp.today() - pd.DateOffset(months=24)
-            exc_mask = main_df['Last Mtg btwn Contact & Co'].apply(
+            exc_mask = main_df[mtg_col].apply(
                 lambda d: pd.notna(d) and pd.Timestamp(d) >= cutoff)
             exc_reason = 'Met with company in last 24 months'
-        else:  # exclude_all
-            exc_mask = main_df['Last Mtg btwn Contact & Co'].apply(pd.notna)
+        else:
+            exc_mask = main_df[mtg_col].apply(pd.notna)
             exc_reason = 'Prior meeting with company'
         meeting_excluded = main_df[exc_mask].reset_index(drop=True).copy()
         if not meeting_excluded.empty:
@@ -640,9 +649,8 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             excluded_df = pd.concat([excluded_df, meeting_excluded], ignore_index=True, sort=False)
         main_df = main_df[~exc_mask].reset_index(drop=True).copy()
 
-    # Append other-company activity contacts (after all splits, before city routing)
+    # Append other-company activity contacts
     if other_symbols and acts_df_raw is not None and len(acts_df_raw) > 0:
-        # Build contact_tickers: (fname, lname) → set of ticker strings
         contact_tickers = {}
         for sym in other_symbols:
             sym_acts = load_activities(acts_df_raw, [sym])
@@ -651,40 +659,34 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                 contact_tickers.setdefault(key, set()).add(sym)
 
         if contact_tickers:
-            # Build keys from ALL frames (main + every split-off sheet)
             all_keys = set()
-            for frame in [main_df, too_small_df, hf_df, dnc_df, check_df, quant_df, activist_df, credit_hy_df, excluded_df]:
+            for frame in [main_df, too_small_df, hf_df, fi_df, dnc_df, check_df, quant_df, activist_df, excluded_df]:
                 if frame is not None and len(frame) > 0:
                     all_keys.update(zip(frame['_fname'], frame['_lname']))
-            # Also include contacts from the original contacts file (not just filtered)
             all_keys.update(zip(df['_fname'], df['_lname']))
 
             other_acts = load_activities(acts_df_raw, other_symbols)
             other_extra = build_activity_only_contacts(other_acts, all_keys, cutoff_l12m)
             if not other_extra.empty:
                 other_extra.rename(columns=RENAME_MAP, inplace=True)
-                # Clear meeting columns — don't compute for other-company contacts
                 for col in ['Last Mtg btwn Contact & Co', 'Last Mtg btwn firm & Co', 'L12M', 'Total', '3rd Party', 'Rose & Co']:
                     if col in other_extra.columns:
                         other_extra[col] = None
-                # Set per-contact Source with specific tickers
                 other_extra['Source'] = other_extra.apply(
                     lambda r: 'Other: ' + ', '.join(sorted(contact_tickers.get((r['_fname'], r['_lname']), set()))),
                     axis=1)
-                # Deduplicate against all existing output keys
                 other_new = other_extra[other_extra.apply(
                     lambda r: (r['_fname'], r['_lname']) not in all_keys, axis=1)]
                 if len(other_new) > 0:
                     main_df = pd.concat([main_df, other_new], ignore_index=True, sort=False)
 
-    # City routing
+    # City routing — split virtual into NAM / EUR / Other sub-tabs
     city_dfs = {}
     if city_selections:
         remaining = main_df.copy()
         ic_col = remaining['Investment Ctr'].fillna('').str.lower()
         for tab_name, ic_value in city_selections:
             ic_lower = ic_value.lower()
-            # Try full match first, then first segment before '/' for flexibility
             mask = ic_col.str.contains(ic_lower, regex=False)
             if mask.sum() == 0:
                 first_segment = ic_lower.split('/')[0].strip()
@@ -692,29 +694,25 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             city_dfs[tab_name] = remaining[mask].copy()
             remaining = remaining[~mask].copy()
             ic_col = remaining['Investment Ctr'].fillna('').str.lower()
-        # Split Virtual remainder into NAM / EUR based on Country/Territory
-        if len(remaining) > 0 and 'Country/Territory' in remaining.columns:
-            region = remaining['Country/Territory'].apply(classify_region)
-            nam_mask = region == 'NAM'
-            eur_mask = region == 'EUR'
-            other_mask = ~(nam_mask | eur_mask)
-            if nam_mask.any():
-                city_dfs['Virtual - NAM'] = remaining[nam_mask].copy()
-            if eur_mask.any():
-                city_dfs['Virtual - EUR'] = remaining[eur_mask].copy()
-            if other_mask.any():
-                city_dfs['Virtual - Other'] = remaining[other_mask].copy()
-        elif len(remaining) > 0:
-            city_dfs['Virtual'] = remaining
+
+        # Split unmatched into Virtual - NAM / Virtual - EUR / Virtual - Other
+        if len(remaining) > 0:
+            remaining = remaining.copy()
+            remaining['_vregion'] = remaining.apply(classify_virtual_region, axis=1)
+            for vname in ['Virtual - NAM', 'Virtual - EUR', 'Virtual - Other']:
+                city_dfs[vname] = remaining[remaining['_vregion'] == vname].drop(columns=['_vregion']).copy()
         main_df = None
-    elif virtual_scope != 'both':
-        # Virtual mode with EUR/NAM filtering
-        if 'Country/Territory' in main_df.columns:
-            region = main_df['Country/Territory'].apply(classify_region)
-            if virtual_scope == 'nam':
-                main_df = main_df[region == 'NAM'].reset_index(drop=True).copy()
-            elif virtual_scope == 'eur':
-                main_df = main_df[region == 'EUR'].reset_index(drop=True).copy()
+
+    # Virtual mode — apply virtual_scope filter (NAM / EUR / Both)
+    elif virtual_scope and virtual_scope != 'both' and main_df is not None and len(main_df) > 0:
+        main_df = main_df.copy()
+        main_df['_vregion'] = main_df.apply(classify_virtual_region, axis=1)
+        if virtual_scope == 'nam':
+            main_df = main_df[main_df['_vregion'] == 'Virtual - NAM'].drop(columns=['_vregion']).reset_index(drop=True)
+        elif virtual_scope == 'eur':
+            main_df = main_df[main_df['_vregion'] == 'Virtual - EUR'].drop(columns=['_vregion']).reset_index(drop=True)
+        else:
+            main_df = main_df.drop(columns=['_vregion'], errors='ignore')
 
     # Reorder + sort all frames
     frames_to_process = {}
@@ -724,17 +722,17 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     else:
         frames_to_process['Contacts'] = sort_frame(reorder(main_df))
 
-    frames_to_process['Too Small'] = sort_frame(reorder(too_small_df))
-    frames_to_process['HFs']      = sort_frame(reorder(hf_df))
-    frames_to_process['DNC']      = sort_frame(reorder(dnc_df))
-    frames_to_process['Check']    = sort_frame(reorder(check_df))
+    frames_to_process['Too Small']    = sort_frame(reorder(too_small_df))
+    frames_to_process['Fixed Income'] = sort_frame(reorder(fi_df))
+    frames_to_process['HFs']          = sort_frame(reorder(hf_df))
+    frames_to_process['DNC']          = sort_frame(reorder(dnc_df))
+    frames_to_process['Check']        = sort_frame(reorder(check_df))
     frames_to_process['Quant']        = sort_frame(reorder(quant_df))
     frames_to_process['Activist']     = sort_frame(reorder(activist_df))
-    frames_to_process['Fixed Income'] = sort_frame(reorder(credit_hy_df))
     frames_to_process['Excluded']     = sort_frame(reorder(excluded_df))
 
     total_matched = sum(len(v) for k, v in frames_to_process.items()
-                        if k not in ('Too Small', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Fixed Income', 'Excluded')
+                        if k not in ('Too Small', 'Fixed Income', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded')
                         and v is not None)
 
     return {
