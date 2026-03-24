@@ -73,14 +73,11 @@
     <!-- Hidden company name (kept for filename) -->
     <input type="hidden" id="company-name" value="Contacts">
 
-    <!-- Subject ticker — shown when Activities.xlsx is uploaded -->
+    <!-- Subject tickers — shown when Activities.xlsx is uploaded -->
     <div id="symbol-row" class="sidebar-section" style="display:none">
-      <div class="section-label">Subject ticker</div>
-      <div class="field-row">
-        <select id="symbol-select" class="text-input" style="width:100%">
-          <option value="">Select ticker…</option>
-        </select>
-      </div>
+      <div class="section-label">Subject ticker(s)</div>
+      <div class="city-picker-hint" style="margin-bottom:6px">Select one or more tickers for this NDR</div>
+      <div class="city-grid" id="subject-symbols-grid"></div>
     </div>
 
     <!-- Other tickers — shown when Activities.xlsx is uploaded with multiple symbols -->
@@ -110,16 +107,6 @@
         <label class="radio-row"><input type="radio" name="city_mode" value="state"><span class="radio-custom"></span><span class="radio-label">Split by state</span></label>
       </div>
 
-      <!-- Virtual scope -->
-      <div id="virtual-scope-inputs" class="city-picker" style="display:block; margin-top:8px">
-        <div class="city-picker-hint">Geography scope</div>
-        <div class="radio-stack">
-          <label class="radio-row"><input type="radio" name="virtual_scope" value="both" checked><span class="radio-custom"></span><span class="radio-label">Both (NAM + EUR)</span></label>
-          <label class="radio-row"><input type="radio" name="virtual_scope" value="nam"><span class="radio-custom"></span><span class="radio-label">NAM only</span></label>
-          <label class="radio-row"><input type="radio" name="virtual_scope" value="eur"><span class="radio-custom"></span><span class="radio-label">EUR only</span></label>
-        </div>
-      </div>
-
       <!-- Investment Center picker -->
       <div id="ic-inputs" class="city-picker" style="display:none; margin-top:8px">
         <div class="city-picker-hint">Select investment centers (1–6)</div>
@@ -144,6 +131,16 @@
       <div id="state-inputs" class="city-picker" style="display:none; margin-top:8px">
         <div class="city-picker-hint">Select states / provinces</div>
         <div class="city-grid" id="state-grid"></div>
+      </div>
+    </div>
+
+    <!-- Virtual scope — always visible, applies to Virtual tab in all routing modes -->
+    <div class="sidebar-section">
+      <div class="section-label">Virtual scope</div>
+      <div class="radio-stack">
+        <label class="radio-row"><input type="radio" name="virtual_scope" value="both" checked><span class="radio-custom"></span><span class="radio-label">Both (NAM + EUR)</span></label>
+        <label class="radio-row"><input type="radio" name="virtual_scope" value="nam"><span class="radio-custom"></span><span class="radio-label">NAM only</span></label>
+        <label class="radio-row"><input type="radio" name="virtual_scope" value="eur"><span class="radio-custom"></span><span class="radio-label">EUR only</span></label>
       </div>
     </div>
 
