@@ -321,6 +321,10 @@ def is_activist(row):
     v = row.get('Activist', None)
     return not pd.isna(v) and str(v).strip().lower() == 'often'
 
+def is_credit_hy(row):
+    v = row.get('CDF (Contact): Invests in Credit/HY', None)
+    return not pd.isna(v) and str(v).strip().lower() == 'yes'
+
 
 def split_df(df, mask_fn):
     mask = df.apply(mask_fn, axis=1)
@@ -345,6 +349,34 @@ def sort_frame(frame):
     ).reset_index(drop=True)
 
 
+# ── Geography classification ──────────────────────────────────────────────────
+
+EUR_COUNTRIES = {
+    'Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus',
+    'Belgium', 'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 'Cyprus',
+    'Czech Republic', 'Czechia', 'Denmark', 'Estonia', 'Finland', 'France',
+    'Georgia', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Italy',
+    'Kazakhstan', 'Kosovo', 'Latvia', 'Liechtenstein', 'Lithuania',
+    'Luxembourg', 'Malta', 'Moldova', 'Monaco', 'Montenegro',
+    'Netherlands', 'North Macedonia', 'Norway', 'Poland', 'Portugal',
+    'Romania', 'Russia', 'San Marino', 'Serbia', 'Slovakia', 'Slovenia',
+    'Spain', 'Sweden', 'Switzerland', 'Turkey', 'Ukraine',
+    'United Kingdom', 'Vatican City',
+}
+
+NAM_COUNTRIES = {'United States', 'Canada'}
+
+
+def classify_region(country):
+    """Return 'NAM', 'EUR', or 'OTHER' based on Country/Territory."""
+    c = str(country).strip() if pd.notna(country) else ''
+    if c in NAM_COUNTRIES:
+        return 'NAM'
+    if c in EUR_COUNTRIES:
+        return 'EUR'
+    return 'OTHER'
+
+
 # ── Main run_filter ───────────────────────────────────────────────────────────
 
 def run_filter(contacts_df, ownership_df, fund_df, acts_named,
@@ -352,6 +384,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                city_selections, subject_symbols, company_name,
                eaum_min=None, mining_df=None,
                acts_df_raw=None, other_symbols=None,
+               virtual_scope='both'):
                shareholder_exclusion='include_all'):
     df = contacts_df.copy()
     df = df.reset_index(drop=True)
@@ -472,7 +505,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                 lambda r: (r['_fname'], r['_lname']) not in filtered_keys, axis=1)]
             filtered = pd.concat([filtered, extra_new], ignore_index=True, sort=False)
 
-    # Append junior mining contacts (bypass CDF criteria, subject to other splits)
+    # Append additional list contacts (bypass CDF criteria, subject to other splits)
     if mining_df is not None and len(mining_df) > 0:
         mdf = mining_df.copy()
         mdf.rename(columns=RENAME_MAP, inplace=True)
@@ -494,7 +527,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                 lambda r: build_inv_center(r.get('City'), r.get('State/Province'), r.get('Country/Territory')), axis=1)
         mdf['Match Criteria'] = ''
         mdf['Match Count'] = None
-        mdf['Source'] = 'Mining List'
+        mdf['Source'] = 'Additional List'
         # Deduplicate: only add mining contacts not already in filtered
         filtered_keys = set(zip(filtered['_fname'], filtered['_lname']))
         mdf_new = mdf[mdf.apply(lambda r: (r['_fname'], r['_lname']) not in filtered_keys, axis=1)]
@@ -560,6 +593,9 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     activist_df, main_df = split_df(main_df, is_activist)
     if not activist_df.empty:
         activist_df['Exclusion Reason'] = 'Frequent activist'
+    credit_hy_df, main_df = split_df(main_df, is_credit_hy)
+    if not credit_hy_df.empty:
+        credit_hy_df['Exclusion Reason'] = 'Fixed Income Investor'
 
     # Shareholder exclusion
     excluded_df = pd.DataFrame()
@@ -617,7 +653,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         if contact_tickers:
             # Build keys from ALL frames (main + every split-off sheet)
             all_keys = set()
-            for frame in [main_df, too_small_df, hf_df, dnc_df, check_df, quant_df, activist_df, excluded_df]:
+            for frame in [main_df, too_small_df, hf_df, dnc_df, check_df, quant_df, activist_df, credit_hy_df, excluded_df]:
                 if frame is not None and len(frame) > 0:
                     all_keys.update(zip(frame['_fname'], frame['_lname']))
             # Also include contacts from the original contacts file (not just filtered)
@@ -656,8 +692,29 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             city_dfs[tab_name] = remaining[mask].copy()
             remaining = remaining[~mask].copy()
             ic_col = remaining['Investment Ctr'].fillna('').str.lower()
-        city_dfs['Virtual'] = remaining
+        # Split Virtual remainder into NAM / EUR based on Country/Territory
+        if len(remaining) > 0 and 'Country/Territory' in remaining.columns:
+            region = remaining['Country/Territory'].apply(classify_region)
+            nam_mask = region == 'NAM'
+            eur_mask = region == 'EUR'
+            other_mask = ~(nam_mask | eur_mask)
+            if nam_mask.any():
+                city_dfs['Virtual - NAM'] = remaining[nam_mask].copy()
+            if eur_mask.any():
+                city_dfs['Virtual - EUR'] = remaining[eur_mask].copy()
+            if other_mask.any():
+                city_dfs['Virtual - Other'] = remaining[other_mask].copy()
+        elif len(remaining) > 0:
+            city_dfs['Virtual'] = remaining
         main_df = None
+    elif virtual_scope != 'both':
+        # Virtual mode with EUR/NAM filtering
+        if 'Country/Territory' in main_df.columns:
+            region = main_df['Country/Territory'].apply(classify_region)
+            if virtual_scope == 'nam':
+                main_df = main_df[region == 'NAM'].reset_index(drop=True).copy()
+            elif virtual_scope == 'eur':
+                main_df = main_df[region == 'EUR'].reset_index(drop=True).copy()
 
     # Reorder + sort all frames
     frames_to_process = {}
@@ -671,12 +728,13 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     frames_to_process['HFs']      = sort_frame(reorder(hf_df))
     frames_to_process['DNC']      = sort_frame(reorder(dnc_df))
     frames_to_process['Check']    = sort_frame(reorder(check_df))
-    frames_to_process['Quant']    = sort_frame(reorder(quant_df))
-    frames_to_process['Activist'] = sort_frame(reorder(activist_df))
-    frames_to_process['Excluded'] = sort_frame(reorder(excluded_df))
+    frames_to_process['Quant']        = sort_frame(reorder(quant_df))
+    frames_to_process['Activist']     = sort_frame(reorder(activist_df))
+    frames_to_process['Fixed Income'] = sort_frame(reorder(credit_hy_df))
+    frames_to_process['Excluded']     = sort_frame(reorder(excluded_df))
 
     total_matched = sum(len(v) for k, v in frames_to_process.items()
-                        if k not in ('Too Small', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded')
+                        if k not in ('Too Small', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Fixed Income', 'Excluded')
                         and v is not None)
 
     return {

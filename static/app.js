@@ -168,7 +168,12 @@ function bindFile(inputId, statusId, onLoad) {
 bindFile('input-contacts',   'status-contacts');
 bindFile('input-ownership',  'status-ownership');
 bindFile('input-fund',       'status-fund');
-bindFile('input-mining',     'status-mining');
+// Multi-file Additional List(s)
+document.getElementById('input-mining')?.addEventListener('change', function() {
+  const n = this.files.length;
+  document.getElementById('status-mining').textContent = n ? `✓ ${n} file${n>1?'s':''}` : '';
+  updateRunButton();
+});
 
 bindFile('input-activities', 'status-activities', async (file) => {
   const fd = new FormData();
@@ -292,6 +297,8 @@ function initRoutingUI() {
 function resolveRoutingSelections(fd) {
   const mode = document.querySelector('input[name="city_mode"]:checked')?.value || 'virtual';
   fd.append('city_mode', mode);
+  const virtualScope = document.querySelector('input[name="virtual_scope"]:checked')?.value || 'both';
+  fd.append('virtual_scope', virtualScope);
 
   if (mode === 'cities') {
     // Investment Center mode — checkboxes already named selected_cities
@@ -332,8 +339,9 @@ function resolveRoutingSelections(fd) {
 
 document.querySelectorAll('input[name="city_mode"]').forEach(r => {
   r.addEventListener('change', () => {
-    const panels = ['routing-ic-panel', 'routing-city-panel', 'routing-state-panel'];
+    const panels = ['routing-virtual-panel', 'routing-ic-panel', 'routing-city-panel', 'routing-state-panel'];
     panels.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+    if (r.value === 'virtual') { const el = document.getElementById('routing-virtual-panel'); if (el) el.style.display = 'block'; }
     if (r.value === 'cities') { const el = document.getElementById('routing-ic-panel'); if (el) el.style.display = 'block'; }
     if (r.value === 'by_city') { const el = document.getElementById('routing-city-panel'); if (el) el.style.display = 'block'; }
     if (r.value === 'by_state') { const el = document.getElementById('routing-state-panel'); if (el) el.style.display = 'block'; }
@@ -368,8 +376,10 @@ async function runFilter() {
   const actsFile = document.getElementById('input-activities')?.files[0];
   if (actsFile) fd.append('activities', actsFile);
 
-  const miningFile = document.getElementById('input-mining')?.files[0];
-  if (miningFile) fd.append('mining', miningFile);
+  const miningInput = document.getElementById('input-mining');
+  if (miningInput?.files?.length) {
+    Array.from(miningInput.files).forEach(f => fd.append('mining', f));
+  }
 
   fd.append('company_name',      document.getElementById('company-name')?.value || 'Company');
   document.querySelectorAll('input[name="subject_symbols"]:checked').forEach(inp => {
@@ -435,6 +445,7 @@ function renderResults(data) {
     ['Check', data.check_count],
     ['Quant', data.quant_count],
     ['Activist', data.activist_count],
+    ['Fixed Income', data.fixed_income_count],
     ['Too Small', data.too_small_count],
     ['Excluded', data.excluded_count],
   ];

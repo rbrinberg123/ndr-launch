@@ -210,7 +210,7 @@ def run():
     ownership_file  = request.files.get('ownership')
     fund_file       = request.files.get('fund_ownership')
     activities_file = request.files.get('activities')
-    mining_file     = request.files.get('mining')
+    mining_files    = request.files.getlist('mining')
 
     if not contacts_file or contacts_file.filename == '':
         return jsonify({'error': 'Contacts file is required'}), 400
@@ -235,6 +235,7 @@ def run():
     subject_symbols   = [s.strip().upper() for s in request.form.getlist('subject_symbols') if s.strip()]
     other_symbols     = [s.strip().upper() for s in request.form.getlist('other_symbols') if s.strip()]
     routing_mode      = request.form.get('city_mode', 'virtual')
+    virtual_scope     = request.form.get('virtual_scope', 'both')
 
     # Parse city selections
     city_selections = None
@@ -283,11 +284,16 @@ def run():
         except Exception:
             pass
 
-    if mining_file and mining_file.filename:
-        try:
-            mining_df = pd.read_excel(io.BytesIO(mining_file.read()), header=2)
-        except Exception:
-            pass
+    if mining_files:
+        mining_parts = []
+        for mf in mining_files:
+            if mf and mf.filename:
+                try:
+                    mining_parts.append(pd.read_excel(io.BytesIO(mf.read()), header=2))
+                except Exception:
+                    pass
+        if mining_parts:
+            mining_df = pd.concat(mining_parts, ignore_index=True, sort=False)
 
     if activities_file and activities_file.filename:
         try:
@@ -304,6 +310,7 @@ def run():
             city_selections, subject_symbols, company_name,
             eaum_min=eaum_min, mining_df=mining_df,
             acts_df_raw=acts_df_raw, other_symbols=other_symbols,
+            virtual_scope=virtual_scope
             shareholder_exclusion=shareholder_exclusion
         )
     except Exception as e:
@@ -341,7 +348,7 @@ def run():
 
     # Match breakdown (main/city sheets only)
     main_frames = {k: v for k, v in frames.items()
-                   if k not in ('Too Small', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded')
+                   if k not in ('Too Small', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Fixed Income', 'Excluded')
                    and v is not None and len(v) > 0}
     combined = pd.concat(list(main_frames.values()), ignore_index=True) if main_frames else pd.DataFrame()
     match_breakdown = {}
@@ -353,7 +360,7 @@ def run():
                 pass
 
     # Build city_counts and main_count for JS
-    excluded_sheets = {'Too Small', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded'}
+    excluded_sheets = {'Too Small', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Fixed Income', 'Excluded'}
     if results['has_city_routing']:
         city_counts = {k: v for k, v in sheet_counts.items() if k not in excluded_sheets}
         main_count  = sum(city_counts.values())
@@ -371,9 +378,10 @@ def run():
         'dnc_count':       sheet_counts.get('DNC', 0),
         'check_count':     sheet_counts.get('Check', 0),
         'quant_count':     sheet_counts.get('Quant', 0),
-        'activist_count':  sheet_counts.get('Activist', 0),
-        'too_small_count': sheet_counts.get('Too Small', 0),
-        'excluded_count':  sheet_counts.get('Excluded', 0),
+        'activist_count':      sheet_counts.get('Activist', 0),
+        'fixed_income_count':  sheet_counts.get('Fixed Income', 0),
+        'too_small_count':     sheet_counts.get('Too Small', 0),
+        'excluded_count':      sheet_counts.get('Excluded', 0),
         'match_breakdown': match_breakdown,
         'sharepoint_url':  sharepoint_url,
         'filename':        filename,
