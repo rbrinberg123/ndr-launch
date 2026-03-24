@@ -222,48 +222,63 @@ bindFile('input-activities', 'status-activities', async (file) => {
 });
 
 function populateSymbolRows(symbols) {
-  const symbolRow       = document.getElementById('symbol-row');
-  const otherRow        = document.getElementById('other-symbols-row');
-  const symbolSelect    = document.getElementById('symbol-select');
-  const otherGrid       = document.getElementById('other-symbols-grid');
+  const symbolRow  = document.getElementById('symbol-row');
+  const otherRow   = document.getElementById('other-symbols-row');
+  const subjGrid   = document.getElementById('subject-symbols-grid');
+  const otherGrid  = document.getElementById('other-symbols-grid');
 
   if (!symbols.length) {
-    if (symbolRow)    symbolRow.style.display    = 'none';
-    if (otherRow)     otherRow.style.display     = 'none';
+    if (symbolRow) symbolRow.style.display = 'none';
+    if (otherRow)  otherRow.style.display  = 'none';
     return;
   }
 
-  // Subject ticker dropdown
-  symbolSelect.innerHTML = '<option value="">Select ticker…</option>';
-  symbols.forEach(s => {
-    const o = document.createElement('option');
-    o.value = s; o.textContent = s;
-    symbolSelect.appendChild(o);
-  });
-  if (symbols.length === 1) symbolSelect.value = symbols[0];
-  symbolRow.style.display = 'block';
-
-  // Other tickers checkboxes
-  otherGrid.innerHTML = '';
+  // Subject tickers — checkboxes, auto-check single symbol
+  subjGrid.innerHTML = '';
   symbols.forEach(s => {
     const label = document.createElement('label');
     label.className = 'city-opt';
     label.dataset.symbol = s;
-    label.innerHTML = `<input type="checkbox" name="other_symbols" value="${s}" class="other-sym-check"><span>${s}</span>`;
-    otherGrid.appendChild(label);
+    label.innerHTML = `<input type="checkbox" name="subject_symbol" value="${s}" class="subj-sym-check"><span>${s}</span>`;
+    subjGrid.appendChild(label);
   });
+  if (symbols.length === 1) subjGrid.querySelector('input').checked = true;
+  symbolRow.style.display = 'block';
 
-  // When subject changes, hide that symbol from other list
-  symbolSelect.addEventListener('change', () => {
-    const subj = symbolSelect.value;
-    otherGrid.querySelectorAll('label[data-symbol]').forEach(lbl => {
-      const isSubj = lbl.dataset.symbol === subj;
-      lbl.style.display = isSubj ? 'none' : '';
-      if (isSubj) lbl.querySelector('input').checked = false;
+  // Other tickers — shown only if >1 symbol; excludes checked subjects
+  if (symbols.length > 1) {
+    otherGrid.innerHTML = '';
+    symbols.forEach(s => {
+      const label = document.createElement('label');
+      label.className = 'city-opt';
+      label.dataset.symbol = s;
+      label.innerHTML = `<input type="checkbox" name="other_symbols" value="${s}" class="other-sym-check"><span>${s}</span>`;
+      otherGrid.appendChild(label);
     });
-  });
 
-  otherRow.style.display = symbols.length > 1 ? 'block' : 'none';
+    // When subject checkboxes change, hide that symbol from other list
+    subjGrid.querySelectorAll('input.subj-sym-check').forEach(cb => {
+      cb.addEventListener('change', syncOtherSymbols);
+    });
+    syncOtherSymbols();
+    otherRow.style.display = 'block';
+  } else {
+    otherRow.style.display = 'none';
+  }
+}
+
+function syncOtherSymbols() {
+  const subjGrid  = document.getElementById('subject-symbols-grid');
+  const otherGrid = document.getElementById('other-symbols-grid');
+  if (!subjGrid || !otherGrid) return;
+  const checked = new Set(
+    Array.from(subjGrid.querySelectorAll('input.subj-sym-check:checked')).map(cb => cb.value)
+  );
+  otherGrid.querySelectorAll('label[data-symbol]').forEach(lbl => {
+    const isSubj = checked.has(lbl.dataset.symbol);
+    lbl.style.display = isSubj ? 'none' : '';
+    if (isSubj) lbl.querySelector('input').checked = false;
+  });
 }
 
 function updateAIButton() {
@@ -281,7 +296,6 @@ function updateRunButton() {
 // ── Routing mode toggle ───────────────────────────────────────────────────────
 
 const ROUTING_PANELS = {
-  virtual:           'virtual-scope-inputs',
   investment_center: 'ic-inputs',
   cities:            'city-inputs',
   state:             'state-inputs',
@@ -327,7 +341,8 @@ async function runFilter() {
   if (miningFiles) Array.from(miningFiles).forEach(f => fd.append('mining', f));
 
   fd.append('company_name',      document.getElementById('company-name')?.value || 'Company');
-  fd.append('subject_symbol',    document.getElementById('symbol-select')?.value || '');
+  // Subject tickers — multi-select checkboxes
+  document.querySelectorAll('input[name="subject_symbol"]:checked').forEach(inp => fd.append('subject_symbol', inp.value));
   fd.append('hf_treatment',      document.querySelector('input[name="hf_treatment"]:checked')?.value || 'separate');
   fd.append('meeting_exclusion', document.querySelector('input[name="meeting_exclusion"]:checked')?.value || 'include_all');
   fd.append('shareholder_exclusion', document.querySelector('input[name="shareholder_exclusion"]:checked')?.value || 'include_all');
@@ -344,9 +359,10 @@ async function runFilter() {
   const cityMode = document.querySelector('input[name="city_mode"]:checked')?.value || 'virtual';
   fd.append('city_mode', cityMode);
 
-  if (cityMode === 'virtual') {
-    fd.append('virtual_scope', document.querySelector('input[name="virtual_scope"]:checked')?.value || 'both');
-  } else if (cityMode === 'investment_center') {
+  // Always send virtual_scope — applies to Virtual overflow tabs in all routing modes
+  fd.append('virtual_scope', document.querySelector('input[name="virtual_scope"]:checked')?.value || 'both');
+
+  if (cityMode === 'investment_center') {
     document.querySelectorAll('input[name="selected_ics"]:checked').forEach(inp => fd.append('selected_ics', inp.value));
   } else if (cityMode === 'cities') {
     document.querySelectorAll('input[name="selected_cities"]:checked').forEach(inp => fd.append('selected_cities', inp.value.trim()));
