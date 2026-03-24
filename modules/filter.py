@@ -696,11 +696,19 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             ic_col = remaining['Investment Ctr'].fillna('').str.lower()
 
         # Split unmatched into Virtual - NAM / Virtual - EUR / Virtual - Other
+        # then apply virtual_scope filter to overflow tabs
         if len(remaining) > 0:
             remaining = remaining.copy()
             remaining['_vregion'] = remaining.apply(classify_virtual_region, axis=1)
             for vname in ['Virtual - NAM', 'Virtual - EUR', 'Virtual - Other']:
                 city_dfs[vname] = remaining[remaining['_vregion'] == vname].drop(columns=['_vregion']).copy()
+        # Apply virtual_scope to city-routing overflow tabs
+        if virtual_scope == 'nam':
+            city_dfs.pop('Virtual - EUR',   None)
+            city_dfs.pop('Virtual - Other', None)
+        elif virtual_scope == 'eur':
+            city_dfs.pop('Virtual - NAM',   None)
+            city_dfs.pop('Virtual - Other', None)
         main_df = None
 
     # Virtual mode — apply virtual_scope filter (NAM / EUR / Both)

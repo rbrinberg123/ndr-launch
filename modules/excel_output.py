@@ -242,6 +242,14 @@ def _write_summary_sheet(wb, results, company_name):
     ws.freeze_panes = 'A2'
 
 
+def _safe_sheet_name(name):
+    """Sanitize for Excel: max 31 chars, no /\\?*[]:\'"."""
+    import re
+    name = re.sub(r'[/\\?*\[\]:\'"]', '-', str(name))
+    name = name.strip('-').strip()
+    return name[:31] if name else 'Sheet'
+
+
 def generate_excel(results, company_name):
     frames          = results['frames']
     city_selections = results.get('city_selections') or []
@@ -266,11 +274,23 @@ def generate_excel(results, company_name):
         if extra in frames and frames[extra] is not None and len(frames[extra]) > 0:
             sheet_order.append(extra)
 
+    # Sanitize and deduplicate sheet names
+    seen_names = {}
+    safe_names = {}
+    for name in sheet_order:
+        safe = _safe_sheet_name(name)
+        if safe in seen_names:
+            seen_names[safe] += 1
+            safe = _safe_sheet_name(name[:27] + '-' + str(seen_names[safe]))
+        else:
+            seen_names[safe] = 0
+        safe_names[name] = safe
+
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         for sheet_name in sheet_order:
             df = frames[sheet_name]
             if df is not None and len(df) > 0:
-                df.to_excel(writer, sheet_name=sheet_name, index=False)
+                df.to_excel(writer, sheet_name=safe_names[sheet_name], index=False)
 
         if not sheet_order:
             pd.DataFrame(columns=['No results']).to_excel(writer, sheet_name='Contacts', index=False)
