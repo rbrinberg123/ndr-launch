@@ -3,7 +3,6 @@ import io
 import json
 import uuid
 import tempfile
-import traceback
 import pandas as pd
 from flask import (Flask, render_template, request, jsonify,
                    send_file, session, redirect, url_for)
@@ -11,71 +10,69 @@ from modules.filter import run_filter, load_activities
 from modules.sharepoint import SharePointClient
 from modules.ai_analysis import analyze_documents
 from modules.excel_output import generate_excel
+
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'change-this-in-production')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin')
 TEMP_DIR       = tempfile.mkdtemp()
 
-def _init_meetings_db():
-    url = os.environ.get('DATABASE_URL')
-    if not url:
-        return None
-    from modules.meetings import MeetingsDB
-    return MeetingsDB(url)
-
-meetings_db = _init_meetings_db()
-
-# ── City map ──────────────────────────────────────────────────────────────────
-
-CITY_MAP_PATH = os.path.join(os.path.dirname(__file__), 'city_map.json')
-
-def load_city_map():
-    if os.path.exists(CITY_MAP_PATH):
-        try:
-            with open(CITY_MAP_PATH) as f:
-                return json.load(f)
-        except Exception:
-            pass
-    return {'mappings': []}
-
-def save_city_map(data):
-    with open(CITY_MAP_PATH, 'w') as f:
-        json.dump(data, f, indent=2)
-
-def _build_display_cities():
-    """One entry per unique investment center, alphabetical."""
-    cm = load_city_map()
-    ics = sorted({m['investment_center'] for m in cm.get('mappings', [])})
-    return [(ic, ic) for ic in ics]
-
-DISPLAY_CITIES = _build_display_cities()
-
-# Shorthand resolution map — preserves all legacy shorthands
+# City name → Investment Center mapping (mirrors skill Step 0-B2)
 CITY_IC_MAP = {
+    'new york': 'New York/Southern CT/Northern NJ',
     'ny': 'New York/Southern CT/Northern NJ',
     'nyc': 'New York/Southern CT/Northern NJ',
-    'new york': 'New York/Southern CT/Northern NJ',
-    'sf': 'San Francisco/San Jose CA',
-    'san francisco': 'San Francisco/San Jose CA',
-    'la': 'Los Angeles/Pasadena CA',
-    'los angeles': 'Los Angeles/Pasadena CA',
-    'philly': 'Philadelphia PA/Wilmington DE',
-    'philadelphia': 'Philadelphia PA/Wilmington DE',
-    'dallas': 'Dallas/Ft. Worth TX',
-    'houston': 'Houston TX',
     'boston': 'Boston MA',
     'chicago': 'Chicago IL',
+    'philadelphia': 'Philadelphia PA/Wilmington DE',
+    'philly': 'Philadelphia PA/Wilmington DE',
+    'san francisco': 'San Francisco/San Jose CA',
+    'sf': 'San Francisco/San Jose CA',
+    'los angeles': 'Los Angeles/Pasadena CA',
+    'la': 'Los Angeles/Pasadena CA',
+    'dallas': 'Dallas/Ft. Worth TX',
+    'houston': 'Houston TX',
     'minneapolis': 'Minneapolis/St. Paul MN',
     'florida': 'South Florida/Orlando FL/Tampa-St.Pete FL',
     'miami': 'South Florida/Orlando FL/Tampa-St.Pete FL',
     'south florida': 'South Florida/Orlando FL/Tampa-St.Pete FL',
+    'london': 'London',
+    'paris': 'Paris',
+    'amsterdam': 'Amsterdam',
+    'tokyo': 'Tokyo',
+    'hong kong': 'Hong Kong',
     'toronto': 'Toronto',
     'columbus': 'Columbus OH',
     'kansas city': 'Kansas City MO',
     'san antonio': 'San Antonio TX',
-    'denver': 'Denver CO',
-    'atlanta': 'Atlanta GA',
+    'denver': 'Denver',
+    'atlanta': 'Atlanta',
+    'nashville': 'Nashville',
 }
+
+DISPLAY_CITIES = [
+    ('New York',       'New York/Southern CT/Northern NJ'),
+    ('Boston',         'Boston MA'),
+    ('Chicago',        'Chicago IL'),
+    ('Philadelphia',   'Philadelphia PA/Wilmington DE'),
+    ('San Francisco',  'San Francisco/San Jose CA'),
+    ('Los Angeles',    'Los Angeles/Pasadena CA'),
+    ('Dallas',         'Dallas/Ft. Worth TX'),
+    ('Houston',        'Houston TX'),
+    ('Minneapolis',    'Minneapolis/St. Paul MN'),
+    ('South Florida',  'South Florida/Orlando FL/Tampa-St.Pete FL'),
+    ('Denver',         'Denver'),
+    ('Atlanta',        'Atlanta'),
+    ('Nashville',      'Nashville'),
+    ('Kansas City',    'Kansas City MO'),
+    ('Columbus',       'Columbus OH'),
+    ('San Antonio',    'San Antonio TX'),
+    ('London',         'London'),
+    ('Paris',          'Paris'),
+    ('Amsterdam',      'Amsterdam'),
+    ('Tokyo',          'Tokyo'),
+    ('Hong Kong',      'Hong Kong'),
+    ('Toronto',        'Toronto'),
+]
 
 
 # ── Taxonomy ──────────────────────────────────────────────────────────────────
@@ -172,7 +169,6 @@ def index():
         pass
     return render_template('index.html',
                            taxonomy_json=json.dumps(taxonomy),
-                           city_map_json=json.dumps(load_city_map()),
                            sp_configured=sp_configured,
                            display_cities=DISPLAY_CITIES)
 
@@ -206,11 +202,10 @@ def analyze():
 
 @app.route('/api/run', methods=['POST'])
 def run():
-    contacts_file   = request.files.get('contacts')
-    ownership_file  = request.files.get('ownership')
-    fund_file       = request.files.get('fund_ownership')
+    contacts_file  = request.files.get('contacts')
+    ownership_file = request.files.get('ownership')
+    fund_file      = request.files.get('fund_ownership')
     activities_file = request.files.get('activities')
-    mining_files    = request.files.getlist('mining')
 
     if not contacts_file or contacts_file.filename == '':
         return jsonify({'error': 'Contacts file is required'}), 400
@@ -227,13 +222,9 @@ def run():
     }
 
     hf_treatment      = request.form.get('hf_treatment', 'separate')
-    eaum_min_raw      = request.form.get('eaum_min', '').strip()
-    eaum_min          = float(eaum_min_raw) if eaum_min_raw else None
-    meeting_exclusion     = request.form.get('meeting_exclusion', 'include_all')
-    shareholder_exclusion = request.form.get('shareholder_exclusion', 'include_all')
+    meeting_exclusion = request.form.get('meeting_exclusion', 'include_all')
     company_name      = request.form.get('company_name', 'Company').strip() or 'Company'
-    subject_symbols   = [s.strip().upper() for s in request.form.getlist('subject_symbols') if s.strip()]
-    other_symbols     = [s.strip().upper() for s in request.form.getlist('other_symbols') if s.strip()]
+    subject_symbol    = request.form.get('subject_symbol', '').strip().upper()
     routing_mode      = request.form.get('city_mode', 'virtual')
     virtual_scope     = request.form.get('virtual_scope', 'both')
 
@@ -243,19 +234,12 @@ def run():
         selected_cities = request.form.getlist('selected_cities')
         app.logger.info(f'City routing: mode={routing_mode}, selected={selected_cities}')
         city_selections = []
-        # Build set of valid IC names for direct matching
-        valid_ics = {ic for _, ic in DISPLAY_CITIES}
         for city_key in selected_cities:
-            ck = city_key.strip()
-            # Direct IC name match (from data-driven UI)
-            if ck in valid_ics:
-                city_selections.append((ck, ck))
-                continue
-            # Shorthand resolution
-            ic = CITY_IC_MAP.get(ck.lower())
+            ck = city_key.strip().lower()
+            ic = CITY_IC_MAP.get(ck)
             if not ic:
                 for tab_name, ic_val in DISPLAY_CITIES:
-                    if tab_name.lower() == ck.lower():
+                    if tab_name.lower() == ck:
                         ic = ic_val
                         city_key = tab_name
                         break
@@ -266,11 +250,10 @@ def run():
     # Load files
     try:
         contacts_df = pd.read_excel(io.BytesIO(contacts_file.read()), header=2)
-        contacts_df = contacts_df.drop_duplicates()
     except Exception as e:
         return jsonify({'error': f'Could not read contacts file: {e}'}), 400
 
-    ownership_df = fund_df = acts_named = acts_df_raw = mining_df = None
+    ownership_df = fund_df = acts_named = None
 
     if ownership_file and ownership_file.filename:
         try:
@@ -284,22 +267,10 @@ def run():
         except Exception:
             pass
 
-    if mining_files:
-        mining_parts = []
-        for mf in mining_files:
-            if mf and mf.filename:
-                try:
-                    mining_parts.append(pd.read_excel(io.BytesIO(mf.read()), header=2))
-                except Exception:
-                    pass
-        if mining_parts:
-            mining_df = pd.concat(mining_parts, ignore_index=True, sort=False)
-
-    if activities_file and activities_file.filename:
+    if activities_file and activities_file.filename and subject_symbol:
         try:
-            acts_df_raw = pd.read_excel(io.BytesIO(activities_file.read()), header=1)
-            if subject_symbols:
-                acts_named = load_activities(acts_df_raw, subject_symbols)
+            acts_df = pd.read_excel(io.BytesIO(activities_file.read()), header=1)
+            acts_named = load_activities(acts_df, subject_symbol)
         except Exception:
             pass
 
@@ -307,14 +278,10 @@ def run():
         results = run_filter(
             contacts_df, ownership_df, fund_df, acts_named,
             criteria, hf_treatment, meeting_exclusion,
-            city_selections, subject_symbols, company_name,
-            eaum_min=eaum_min, mining_df=mining_df,
-            acts_df_raw=acts_df_raw, other_symbols=other_symbols,
-            virtual_scope=virtual_scope
-            shareholder_exclusion=shareholder_exclusion
+            city_selections, subject_symbol, company_name
         )
     except Exception as e:
-        return jsonify({'error': f'Filter error: {e}', 'trace': traceback.format_exc()}), 500
+        return jsonify({'error': f'Filter error: {e}'}), 500
 
     try:
         excel_bytes = generate_excel(results, company_name)
@@ -323,8 +290,7 @@ def run():
 
     # Save for download
     file_id  = str(uuid.uuid4())
-    symbol_label = ' '.join(subject_symbols) if subject_symbols else company_name
-    filename = f'{symbol_label} Contacts Mapping.xlsx'
+    filename = f'{subject_symbol or company_name} Contacts Mapping.xlsx'
     with open(os.path.join(TEMP_DIR, f'{file_id}.xlsx'), 'wb') as f:
         f.write(excel_bytes)
     session['download_id']   = file_id
@@ -348,7 +314,7 @@ def run():
 
     # Match breakdown (main/city sheets only)
     main_frames = {k: v for k, v in frames.items()
-                   if k not in ('Too Small', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Fixed Income', 'Excluded')
+                   if k not in ('HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded')
                    and v is not None and len(v) > 0}
     combined = pd.concat(list(main_frames.values()), ignore_index=True) if main_frames else pd.DataFrame()
     match_breakdown = {}
@@ -360,7 +326,7 @@ def run():
                 pass
 
     # Build city_counts and main_count for JS
-    excluded_sheets = {'Too Small', 'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Fixed Income', 'Excluded'}
+    excluded_sheets = {'HFs', 'DNC', 'Check', 'Quant', 'Activist', 'Excluded'}
     if results['has_city_routing']:
         city_counts = {k: v for k, v in sheet_counts.items() if k not in excluded_sheets}
         main_count  = sum(city_counts.values())
@@ -378,10 +344,8 @@ def run():
         'dnc_count':       sheet_counts.get('DNC', 0),
         'check_count':     sheet_counts.get('Check', 0),
         'quant_count':     sheet_counts.get('Quant', 0),
-        'activist_count':      sheet_counts.get('Activist', 0),
-        'fixed_income_count':  sheet_counts.get('Fixed Income', 0),
-        'too_small_count':     sheet_counts.get('Too Small', 0),
-        'excluded_count':      sheet_counts.get('Excluded', 0),
+        'activist_count':  sheet_counts.get('Activist', 0),
+        'excluded_count':  sheet_counts.get('Excluded', 0),
         'match_breakdown': match_breakdown,
         'sharepoint_url':  sharepoint_url,
         'filename':        filename,
@@ -422,44 +386,6 @@ def admin_logout():
     return redirect(url_for('admin'))
 
 
-@app.route('/api/admin/preview-meetings', methods=['POST'])
-def preview_meetings():
-    if not session.get('admin'):
-        return jsonify({'error': 'Unauthorized'}), 401
-    if not meetings_db:
-        return jsonify({'error': 'Database not configured'}), 500
-    f = request.files.get('meetings_file')
-    if not f:
-        return jsonify({'error': 'No file provided'}), 400
-    try:
-        df = pd.read_excel(io.BytesIO(f.read()))
-        result = meetings_db.preview_incremental(df)
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-@app.route('/api/admin/upload-meetings', methods=['POST'])
-def upload_meetings():
-    if not session.get('admin'):
-        return jsonify({'error': 'Unauthorized'}), 401
-    if not meetings_db:
-        return jsonify({'error': 'Database not configured'}), 500
-    f = request.files.get('meetings_file')
-    if not f:
-        return jsonify({'error': 'No file provided'}), 400
-    upload_type = request.form.get('upload_type', 'incremental')
-    try:
-        df = pd.read_excel(io.BytesIO(f.read()))
-        if upload_type == 'full':
-            result = meetings_db.upload_full(df, filename=f.filename)
-        else:
-            result = meetings_db.upload_incremental(df, filename=f.filename)
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
 @app.route('/api/admin/upload-taxonomy', methods=['POST'])
 def upload_taxonomy():
     if not session.get('admin'):
@@ -481,47 +407,6 @@ def upload_taxonomy():
         save_taxonomy(taxonomy)
         total = sum(len(v) for v in taxonomy.values())
         return jsonify({'success': True, 'rows': total})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-@app.route('/api/admin/upload-city-map', methods=['POST'])
-def upload_city_map():
-    if not session.get('admin'):
-        return jsonify({'error': 'Unauthorized'}), 401
-    f = request.files.get('city_map_file')
-    if not f:
-        return jsonify({'error': 'No file provided'}), 400
-    try:
-        df = pd.read_excel(io.BytesIO(f.read()))
-        # Normalise column names
-        col_map = {}
-        for c in df.columns:
-            cl = str(c).strip().lower().replace(' ', '_')
-            if 'investment' in cl:
-                col_map[c] = 'investment_center'
-            elif 'nearby' in cl or 'city' in cl:
-                col_map[c] = 'city'
-            elif 'state' in cl:
-                col_map[c] = 'state'
-        df = df.rename(columns=col_map)
-        required = {'investment_center', 'city', 'state'}
-        if not required.issubset(set(df.columns)):
-            return jsonify({'error': f'Missing columns. Need: Investment Center, Nearby City, State. Found: {list(df.columns)}'}), 400
-        mappings = []
-        for _, row in df.iterrows():
-            ic = str(row['investment_center']).strip() if not pd.isna(row['investment_center']) else ''
-            city = str(row['city']).strip() if not pd.isna(row['city']) else ''
-            state = str(row['state']).strip() if not pd.isna(row['state']) else ''
-            if ic and city:
-                mappings.append({'investment_center': ic, 'city': city, 'state': state})
-        data = {'mappings': mappings}
-        save_city_map(data)
-        # Refresh DISPLAY_CITIES
-        global DISPLAY_CITIES
-        DISPLAY_CITIES = _build_display_cities()
-        ics = len({m['investment_center'] for m in mappings})
-        return jsonify({'success': True, 'rows': len(mappings), 'investment_centers': ics})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
