@@ -1,6 +1,8 @@
 /* ── NDR Launch app.js ─────────────────────────────────────────────────────── */
 
-const TAX = window.TAXONOMY || {};
+const TAX    = window.TAXONOMY       || {};
+const CM_ICS = window.CITY_MAP_ICS   || [];
+const CM_STS = window.CITY_MAP_STATES || [];
 
 // ── CDF list rendering ────────────────────────────────────────────────────────
 
@@ -22,7 +24,6 @@ function renderCDFList(dim) {
 
   listEl.innerHTML = '';
 
-  // Group Industry Focus by top-level prefix
   if (dim === 'industry') {
     let lastGroup = null;
     items.forEach(val => {
@@ -48,8 +49,8 @@ function makeItem(dim, val) {
   el.className = 'cdf-item' + (selections[dim].has(val) ? ' selected' : '');
   el.dataset.value = val;
 
-  const cb   = document.createElement('div'); cb.className = 'cdf-checkbox';
-  const txt  = document.createElement('div'); txt.className = 'cdf-item-text'; txt.textContent = val;
+  const cb  = document.createElement('div'); cb.className = 'cdf-checkbox';
+  const txt = document.createElement('div'); txt.className = 'cdf-item-text'; txt.textContent = val;
   el.appendChild(cb); el.appendChild(txt);
 
   el.addEventListener('click', () => {
@@ -78,10 +79,8 @@ document.querySelectorAll('.search-input').forEach(inp => {
     const list  = document.getElementById(`list-${dim}`);
     if (!list) return;
     list.querySelectorAll('.cdf-item').forEach(item => {
-      const match = item.dataset.value.toLowerCase().includes(query);
-      item.classList.toggle('hidden-item', !match);
+      item.classList.toggle('hidden-item', !item.dataset.value.toLowerCase().includes(query));
     });
-    // Hide group headers if all children hidden
     list.querySelectorAll('.cdf-group-header').forEach(hdr => {
       let next = hdr.nextElementSibling;
       let anyVisible = false;
@@ -94,6 +93,42 @@ document.querySelectorAll('.search-input').forEach(inp => {
   });
 });
 
+// ── IC list rendering ─────────────────────────────────────────────────────────
+
+function renderICList() {
+  const grid = document.getElementById('ic-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  CM_ICS.forEach(ic => {
+    const label = document.createElement('label');
+    label.className = 'city-opt';
+    label.innerHTML = `<input type="checkbox" name="selected_ics" value="${ic}" class="ic-check"><span>${ic}</span>`;
+    grid.appendChild(label);
+  });
+}
+
+// IC search
+document.getElementById('ic-search')?.addEventListener('input', function () {
+  const q = this.value.toLowerCase().trim();
+  document.querySelectorAll('#ic-grid .city-opt').forEach(opt => {
+    opt.style.display = opt.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+});
+
+// ── State list rendering ──────────────────────────────────────────────────────
+
+function renderStateList() {
+  const grid = document.getElementById('state-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  CM_STS.forEach(state => {
+    const label = document.createElement('label');
+    label.className = 'city-opt';
+    label.innerHTML = `<input type="checkbox" name="selected_states" value="${state}" class="state-check"><span>${state}</span>`;
+    grid.appendChild(label);
+  });
+}
+
 // ── AI pre-fill ───────────────────────────────────────────────────────────────
 
 function applyAIResults(data) {
@@ -101,12 +136,10 @@ function applyAIResults(data) {
   Object.entries(map).forEach(([dim, vals]) => {
     selections[dim].clear();
     vals.forEach(v => selections[dim].add(v));
-    // Re-render checkboxes
     const list = document.getElementById(`list-${dim}`);
     if (list) {
       list.querySelectorAll('.cdf-item').forEach(item => {
-        const sel = selections[dim].has(item.dataset.value);
-        item.classList.toggle('selected', sel);
+        item.classList.toggle('selected', selections[dim].has(item.dataset.value));
       });
     }
     updateCount(dim, document.getElementById(`count-${dim}`));
@@ -116,13 +149,11 @@ function applyAIResults(data) {
 
 document.getElementById('ai-btn')?.addEventListener('click', async () => {
   const input = document.getElementById('input-docs');
-  if (!input?.files?.length) {
-    showError('Please upload company documents first (10-K, deck, etc.)');
-    return;
-  }
-  const banner = document.getElementById('ai-banner');
+  if (!input?.files?.length) { showError('Please upload company documents first (10-K, deck, etc.)'); return; }
+
+  const banner     = document.getElementById('ai-banner');
   const bannerText = document.getElementById('ai-banner-text');
-  const loader = document.getElementById('ai-loader');
+  const loader     = document.getElementById('ai-loader');
   banner.classList.remove('hidden');
   bannerText.textContent = 'Analyzing documents…';
   loader.style.display = 'block';
@@ -137,8 +168,6 @@ document.getElementById('ai-btn')?.addEventListener('click', async () => {
     applyAIResults(data);
     bannerText.textContent = 'CDF criteria pre-filled from documents — review and adjust as needed';
     loader.style.display = 'none';
-
-    // Show reasoning if present
     if (data.reasoning) {
       const tips = Object.entries(data.reasoning).map(([k,v]) => `${k}: ${v}`).join(' · ');
       bannerText.textContent += ` · ${tips}`;
@@ -165,16 +194,21 @@ function bindFile(inputId, statusId, onLoad) {
   });
 }
 
-bindFile('input-contacts',   'status-contacts');
-bindFile('input-ownership',  'status-ownership');
-bindFile('input-fund',       'status-fund');
+bindFile('input-contacts',  'status-contacts');
+bindFile('input-ownership', 'status-ownership');
+bindFile('input-fund',      'status-fund');
 
-// Mining / Additional List(s) — multiple files
-document.getElementById('input-mining')?.addEventListener('change', function() {
-  const n = this.files.length;
+document.getElementById('input-mining')?.addEventListener('change', function () {
+  const n   = this.files.length;
   const sta = document.getElementById('status-mining');
   if (sta) sta.textContent = n ? `✓ ${n} file${n > 1 ? 's' : ''}` : '';
   updateRunButton();
+});
+
+document.getElementById('input-docs')?.addEventListener('change', function () {
+  const n = this.files.length;
+  document.getElementById('status-docs').textContent = n ? `✓ ${n} file${n>1?'s':''}` : '';
+  updateAIButton();
 });
 
 bindFile('input-activities', 'status-activities', async (file) => {
@@ -183,27 +217,54 @@ bindFile('input-activities', 'status-activities', async (file) => {
   try {
     const r    = await fetch('/api/detect-symbols', { method: 'POST', body: fd });
     const data = await r.json();
-    const row  = document.getElementById('symbol-row');
-    const sel  = document.getElementById('symbol-select');
-    if (data.symbols?.length) {
-      sel.innerHTML = '<option value="">Select ticker…</option>';
-      data.symbols.forEach(s => {
-        const o = document.createElement('option'); o.value = s; o.textContent = s; sel.appendChild(o);
-      });
-      if (data.symbols.length === 1) sel.value = data.symbols[0];
-      row.style.display = 'block';
-    } else {
-      row.style.display = 'none';
-    }
+    populateSymbolRows(data.symbols || []);
   } catch {}
 });
 
-// Multi-file docs
-document.getElementById('input-docs')?.addEventListener('change', function() {
-  const n = this.files.length;
-  document.getElementById('status-docs').textContent = n ? `✓ ${n} file${n>1?'s':''}` : '';
-  updateAIButton();
-});
+function populateSymbolRows(symbols) {
+  const symbolRow       = document.getElementById('symbol-row');
+  const otherRow        = document.getElementById('other-symbols-row');
+  const symbolSelect    = document.getElementById('symbol-select');
+  const otherGrid       = document.getElementById('other-symbols-grid');
+
+  if (!symbols.length) {
+    if (symbolRow)    symbolRow.style.display    = 'none';
+    if (otherRow)     otherRow.style.display     = 'none';
+    return;
+  }
+
+  // Subject ticker dropdown
+  symbolSelect.innerHTML = '<option value="">Select ticker…</option>';
+  symbols.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s; o.textContent = s;
+    symbolSelect.appendChild(o);
+  });
+  if (symbols.length === 1) symbolSelect.value = symbols[0];
+  symbolRow.style.display = 'block';
+
+  // Other tickers checkboxes
+  otherGrid.innerHTML = '';
+  symbols.forEach(s => {
+    const label = document.createElement('label');
+    label.className = 'city-opt';
+    label.dataset.symbol = s;
+    label.innerHTML = `<input type="checkbox" name="other_symbols" value="${s}" class="other-sym-check"><span>${s}</span>`;
+    otherGrid.appendChild(label);
+  });
+
+  // When subject changes, hide that symbol from other list
+  symbolSelect.addEventListener('change', () => {
+    const subj = symbolSelect.value;
+    otherGrid.querySelectorAll('label[data-symbol]').forEach(lbl => {
+      const isSubj = lbl.dataset.symbol === subj;
+      lbl.style.display = isSubj ? 'none' : '';
+      if (isSubj) lbl.querySelector('input').checked = false;
+    });
+  });
+
+  otherRow.style.display = symbols.length > 1 ? 'block' : 'none';
+}
 
 function updateAIButton() {
   const btn   = document.getElementById('ai-btn');
@@ -217,15 +278,22 @@ function updateRunButton() {
   if (btn) btn.disabled = !hasFile;
 }
 
-// ── City routing toggle ───────────────────────────────────────────────────────
+// ── Routing mode toggle ───────────────────────────────────────────────────────
+
+const ROUTING_PANELS = {
+  virtual:           'virtual-scope-inputs',
+  investment_center: 'ic-inputs',
+  cities:            'city-inputs',
+  state:             'state-inputs',
+};
 
 document.querySelectorAll('input[name="city_mode"]').forEach(r => {
   r.addEventListener('change', () => {
-    const isCities = r.value === 'cities' && r.checked;
-    const cityEl = document.getElementById('city-inputs');
-    const scopeEl = document.getElementById('virtual-scope-inputs');
-    if (cityEl) cityEl.style.display = isCities ? 'block' : 'none';
-    if (scopeEl) scopeEl.style.display = isCities ? 'none' : 'block';
+    if (!r.checked) return;
+    Object.entries(ROUTING_PANELS).forEach(([mode, panelId]) => {
+      const el = document.getElementById(panelId);
+      if (el) el.style.display = (r.value === mode) ? 'block' : 'none';
+    });
   });
 });
 
@@ -255,26 +323,35 @@ async function runFilter() {
   const actsFile = document.getElementById('input-activities')?.files[0];
   if (actsFile) fd.append('activities', actsFile);
 
-  // Additional List(s) — multiple files
   const miningFiles = document.getElementById('input-mining')?.files;
-  if (miningFiles) {
-    Array.from(miningFiles).forEach(f => fd.append('mining', f));
-  }
+  if (miningFiles) Array.from(miningFiles).forEach(f => fd.append('mining', f));
 
   fd.append('company_name',      document.getElementById('company-name')?.value || 'Company');
   fd.append('subject_symbol',    document.getElementById('symbol-select')?.value || '');
   fd.append('hf_treatment',      document.querySelector('input[name="hf_treatment"]:checked')?.value || 'separate');
   fd.append('meeting_exclusion', document.querySelector('input[name="meeting_exclusion"]:checked')?.value || 'include_all');
+  fd.append('shareholder_exclusion', document.querySelector('input[name="shareholder_exclusion"]:checked')?.value || 'include_all');
 
+  const eaumMin = document.getElementById('eaum-min')?.value?.trim();
+  if (eaumMin) fd.append('eaum_min', eaumMin);
+
+  // Other symbols
+  document.querySelectorAll('input[name="other_symbols"]:checked').forEach(inp => {
+    fd.append('other_symbols', inp.value);
+  });
+
+  // Routing mode
   const cityMode = document.querySelector('input[name="city_mode"]:checked')?.value || 'virtual';
   fd.append('city_mode', cityMode);
-  if (cityMode === 'cities') {
-    document.querySelectorAll('input[name="selected_cities"]:checked').forEach(inp => {
-      fd.append('selected_cities', inp.value.trim());
-    });
-  } else {
-    const virtualScope = document.querySelector('input[name="virtual_scope"]:checked')?.value || 'both';
-    fd.append('virtual_scope', virtualScope);
+
+  if (cityMode === 'virtual') {
+    fd.append('virtual_scope', document.querySelector('input[name="virtual_scope"]:checked')?.value || 'both');
+  } else if (cityMode === 'investment_center') {
+    document.querySelectorAll('input[name="selected_ics"]:checked').forEach(inp => fd.append('selected_ics', inp.value));
+  } else if (cityMode === 'cities') {
+    document.querySelectorAll('input[name="selected_cities"]:checked').forEach(inp => fd.append('selected_cities', inp.value.trim()));
+  } else if (cityMode === 'state') {
+    document.querySelectorAll('input[name="selected_states"]:checked').forEach(inp => fd.append('selected_states', inp.value));
   }
 
   selections.industry.forEach(v => fd.append('industry', v));
@@ -305,13 +382,10 @@ function renderResults(data) {
   const panel = document.getElementById('results-panel');
   panel.classList.remove('hidden');
 
-  // Stats cards
   const grid = document.getElementById('stats-grid');
   grid.innerHTML = '';
 
-  const stats = [
-    { label: 'Source contacts', value: data.total_source },
-  ];
+  const stats = [{ label: 'Source contacts', value: data.total_source }];
 
   if (data.city_counts && Object.keys(data.city_counts).length > 0) {
     Object.entries(data.city_counts).forEach(([city, n]) => {
@@ -322,12 +396,14 @@ function renderResults(data) {
   }
 
   const subs = [
-    ['HFs', data.hf_count],
-    ['DNC', data.dnc_count],
-    ['Check', data.check_count],
-    ['Quant', data.quant_count],
-    ['Activist', data.activist_count],
-    ['Excluded', data.excluded_count],
+    ['HFs',          data.hf_count],
+    ['DNC',          data.dnc_count],
+    ['Check',        data.check_count],
+    ['Quant',        data.quant_count],
+    ['Activist',     data.activist_count],
+    ['Fixed Income', data.fi_count],
+    ['Too Small',    data.too_small_count],
+    ['Excluded',     data.excluded_count],
   ];
   subs.forEach(([label, val]) => { if (val > 0) stats.push({ label, value: val }); });
 
@@ -339,10 +415,10 @@ function renderResults(data) {
   });
 
   // Breakdown bars
-  const bars = document.getElementById('breakdown-bars');
-  bars.innerHTML = '';
+  const bars      = document.getElementById('breakdown-bars');
+  bars.innerHTML  = '';
   const breakdown = data.match_breakdown || {};
-  const maxVal = Math.max(...Object.values(breakdown), 1);
+  const maxVal    = Math.max(...Object.values(breakdown), 1);
 
   [4, 3, 2, 1].forEach(n => {
     const val = breakdown[n] || 0;
@@ -357,7 +433,6 @@ function renderResults(data) {
     bars.appendChild(row);
   });
 
-  // SharePoint link
   const spBtn = document.getElementById('sharepoint-btn');
   if (data.sharepoint_url && spBtn) {
     spBtn.href = data.sharepoint_url;
@@ -381,5 +456,7 @@ function hideError() {
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 Object.keys(DIM_MAP).forEach(renderCDFList);
+renderICList();
+renderStateList();
 updateRunButton();
 updateAIButton();
