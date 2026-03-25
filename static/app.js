@@ -70,6 +70,28 @@ function updateCount(dim, el) {
   el.style.color = n > 0 ? 'var(--accent)' : 'var(--text-muted)';
 }
 
+// ── Select all / Clear per dimension ─────────────────────────────────────────
+
+function selectAllDim(dim) {
+  const taxKey = DIM_MAP[dim];
+  const items  = (TAX[taxKey] || []).map(i => i.value);
+  items.forEach(v => selections[dim].add(v));
+  document.querySelectorAll(`#list-${dim} .cdf-item`).forEach(el => {
+    el.classList.add('selected');
+  });
+  updateCount(dim, document.getElementById(`count-${dim}`));
+  updateRunButton();
+}
+
+function clearDim(dim) {
+  selections[dim].clear();
+  document.querySelectorAll(`#list-${dim} .cdf-item`).forEach(el => {
+    el.classList.remove('selected');
+  });
+  updateCount(dim, document.getElementById(`count-${dim}`));
+  updateRunButton();
+}
+
 // ── Search filtering ──────────────────────────────────────────────────────────
 
 document.querySelectorAll('.search-input').forEach(inp => {
@@ -93,7 +115,17 @@ document.querySelectorAll('.search-input').forEach(inp => {
   });
 });
 
-// ── IC list rendering ─────────────────────────────────────────────────────────
+// ── Accordion ────────────────────────────────────────────────────────────────
+
+function toggleAcc(id) {
+  const body  = document.getElementById(`acc-body-${id}`);
+  const arrow = document.getElementById(`acc-arrow-${id}`);
+  const open  = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  if (arrow) arrow.classList.toggle('open', !open);
+}
+
+// ── IC / State list rendering ─────────────────────────────────────────────────
 
 function renderICList() {
   const grid = document.getElementById('ic-grid');
@@ -101,21 +133,11 @@ function renderICList() {
   grid.innerHTML = '';
   CM_ICS.forEach(ic => {
     const label = document.createElement('label');
-    label.className = 'city-opt';
-    label.innerHTML = `<input type="checkbox" name="selected_ics" value="${ic}" class="ic-check"><span>${ic}</span>`;
+    label.className = 'route-opt';
+    label.innerHTML = `<input type="checkbox" name="selected_ics" value="${ic}" class="ic-check"><span title="${ic}">${ic}</span>`;
     grid.appendChild(label);
   });
 }
-
-// IC search
-document.getElementById('ic-search')?.addEventListener('input', function () {
-  const q = this.value.toLowerCase().trim();
-  document.querySelectorAll('#ic-grid .city-opt').forEach(opt => {
-    opt.style.display = opt.textContent.toLowerCase().includes(q) ? '' : 'none';
-  });
-});
-
-// ── State list rendering ──────────────────────────────────────────────────────
 
 function renderStateList() {
   const grid = document.getElementById('state-grid');
@@ -123,10 +145,57 @@ function renderStateList() {
   grid.innerHTML = '';
   CM_STS.forEach(state => {
     const label = document.createElement('label');
-    label.className = 'city-opt';
+    label.className = 'route-opt';
     label.innerHTML = `<input type="checkbox" name="selected_states" value="${state}" class="state-check"><span>${state}</span>`;
     grid.appendChild(label);
   });
+}
+
+// IC search
+document.getElementById('ic-search')?.addEventListener('input', function () {
+  const q = this.value.toLowerCase().trim();
+  document.querySelectorAll('#ic-grid .route-opt').forEach(opt => {
+    opt.style.display = opt.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+});
+
+// ── Routing mode ──────────────────────────────────────────────────────────────
+
+function setRoutingMode(mode, btn) {
+  // Update segment buttons
+  btn.closest('.seg-ctrl').querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Update hidden input
+  const inp = document.getElementById('city_mode_input');
+  if (inp) inp.value = mode;
+
+  // Show/hide sub-panels
+  ['virtual', 'investment_center', 'cities', 'state'].forEach(m => {
+    const p = document.getElementById(`rp-${m}`);
+    if (p) p.classList.toggle('open', m === mode);
+  });
+
+  // Update routing badge
+  updateRoutingBadge();
+}
+
+function setScope(scope, btn) {
+  btn.closest('.scope-seg').querySelectorAll('.scope-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const inp = document.getElementById('virtual_scope_input');
+  if (inp) inp.value = scope;
+  updateRoutingBadge();
+}
+
+function updateRoutingBadge() {
+  const badge = document.getElementById('acc-badge-routing');
+  if (!badge) return;
+  const mode  = document.getElementById('city_mode_input')?.value || 'virtual';
+  const scope = document.getElementById('virtual_scope_input')?.value || 'both';
+  const modeLabels = { virtual: 'Virtual', investment_center: 'IC', cities: 'City', state: 'State' };
+  const scopeLabels = { both: 'Both', nam: 'NAM', eur: 'EUR' };
+  badge.textContent = `${modeLabels[mode] || mode} · ${scopeLabels[scope] || scope}`;
 }
 
 // ── AI pre-fill ───────────────────────────────────────────────────────────────
@@ -180,18 +249,33 @@ document.getElementById('ai-btn')?.addEventListener('click', async () => {
 
 // ── File inputs ───────────────────────────────────────────────────────────────
 
+let fileCount = 0;
+
 function bindFile(inputId, statusId, onLoad) {
   const inp = document.getElementById(inputId);
   const sta = document.getElementById(statusId);
   inp?.addEventListener('change', () => {
     const f = inp.files[0];
     if (f) {
-      sta.textContent = '✓ ' + f.name.replace(/\.[^.]+$/, '').substring(0, 22);
+      sta.textContent = '✓ ' + f.name.replace(/\.[^.]+$/, '').substring(0, 20);
       if (onLoad) onLoad(f);
+      fileCount++;
     }
     updateRunButton();
     updateAIButton();
+    updateFilesBadge();
   });
+}
+
+function updateFilesBadge() {
+  const badge = document.getElementById('acc-badge-files');
+  if (!badge) return;
+  const statuses = ['status-contacts','status-activities','status-ownership','status-fund','status-mining','status-docs'];
+  const loaded = statuses.filter(id => {
+    const el = document.getElementById(id);
+    return el && el.textContent.trim().startsWith('✓');
+  }).length;
+  badge.textContent = `${loaded} / 6`;
 }
 
 bindFile('input-contacts',  'status-contacts');
@@ -203,12 +287,14 @@ document.getElementById('input-mining')?.addEventListener('change', function () 
   const sta = document.getElementById('status-mining');
   if (sta) sta.textContent = n ? `✓ ${n} file${n > 1 ? 's' : ''}` : '';
   updateRunButton();
+  updateFilesBadge();
 });
 
 document.getElementById('input-docs')?.addEventListener('change', function () {
   const n = this.files.length;
   document.getElementById('status-docs').textContent = n ? `✓ ${n} file${n>1?'s':''}` : '';
   updateAIButton();
+  updateFilesBadge();
 });
 
 bindFile('input-activities', 'status-activities', async (file) => {
@@ -222,10 +308,10 @@ bindFile('input-activities', 'status-activities', async (file) => {
 });
 
 function populateSymbolRows(symbols) {
-  const symbolRow  = document.getElementById('symbol-row');
-  const otherRow   = document.getElementById('other-symbols-row');
-  const subjGrid   = document.getElementById('subject-symbols-grid');
-  const otherGrid  = document.getElementById('other-symbols-grid');
+  const symbolRow = document.getElementById('symbol-row');
+  const otherRow  = document.getElementById('other-symbols-row');
+  const subjGrid  = document.getElementById('subject-symbols-grid');
+  const otherGrid = document.getElementById('other-symbols-grid');
 
   if (!symbols.length) {
     if (symbolRow) symbolRow.style.display = 'none';
@@ -233,7 +319,7 @@ function populateSymbolRows(symbols) {
     return;
   }
 
-  // Subject tickers — checkboxes, auto-check single symbol
+  // Subject tickers checkboxes
   subjGrid.innerHTML = '';
   symbols.forEach(s => {
     const label = document.createElement('label');
@@ -245,7 +331,6 @@ function populateSymbolRows(symbols) {
   if (symbols.length === 1) subjGrid.querySelector('input').checked = true;
   symbolRow.style.display = 'block';
 
-  // Other tickers — shown only if >1 symbol; excludes checked subjects
   if (symbols.length > 1) {
     otherGrid.innerHTML = '';
     symbols.forEach(s => {
@@ -255,8 +340,6 @@ function populateSymbolRows(symbols) {
       label.innerHTML = `<input type="checkbox" name="other_symbols" value="${s}" class="other-sym-check"><span>${s}</span>`;
       otherGrid.appendChild(label);
     });
-
-    // When subject checkboxes change, hide that symbol from other list
     subjGrid.querySelectorAll('input.subj-sym-check').forEach(cb => {
       cb.addEventListener('change', syncOtherSymbols);
     });
@@ -293,24 +376,6 @@ function updateRunButton() {
   if (btn) btn.disabled = !hasFile;
 }
 
-// ── Routing mode toggle ───────────────────────────────────────────────────────
-
-const ROUTING_PANELS = {
-  investment_center: 'ic-inputs',
-  cities:            'city-inputs',
-  state:             'state-inputs',
-};
-
-document.querySelectorAll('input[name="city_mode"]').forEach(r => {
-  r.addEventListener('change', () => {
-    if (!r.checked) return;
-    Object.entries(ROUTING_PANELS).forEach(([mode, panelId]) => {
-      const el = document.getElementById(panelId);
-      if (el) el.style.display = (r.value === mode) ? 'block' : 'none';
-    });
-  });
-});
-
 // ── Run filter ────────────────────────────────────────────────────────────────
 
 document.getElementById('run-btn')?.addEventListener('click', runFilter);
@@ -340,27 +405,25 @@ async function runFilter() {
   const miningFiles = document.getElementById('input-mining')?.files;
   if (miningFiles) Array.from(miningFiles).forEach(f => fd.append('mining', f));
 
-  fd.append('company_name',      document.getElementById('company-name')?.value || 'Company');
-  // Subject tickers — multi-select checkboxes
+  fd.append('company_name', document.getElementById('company-name')?.value || 'Company');
+
+  // Subject tickers
   document.querySelectorAll('input[name="subject_symbol"]:checked').forEach(inp => fd.append('subject_symbol', inp.value));
-  fd.append('hf_treatment',      document.querySelector('input[name="hf_treatment"]:checked')?.value || 'separate');
-  fd.append('meeting_exclusion', document.querySelector('input[name="meeting_exclusion"]:checked')?.value || 'include_all');
-  fd.append('shareholder_exclusion', document.querySelector('input[name="shareholder_exclusion"]:checked')?.value || 'include_all');
+  // Other symbols
+  document.querySelectorAll('input[name="other_symbols"]:checked').forEach(inp => fd.append('other_symbols', inp.value));
+
+  fd.append('hf_treatment',           document.querySelector('input[name="hf_treatment"]:checked')?.value || 'separate');
+  fd.append('meeting_exclusion',       document.querySelector('input[name="meeting_exclusion"]:checked')?.value || 'include_all');
+  fd.append('shareholder_exclusion',   document.querySelector('input[name="shareholder_exclusion"]:checked')?.value || 'include_all');
 
   const eaumMin = document.getElementById('eaum-min')?.value?.trim();
   if (eaumMin) fd.append('eaum_min', eaumMin);
 
-  // Other symbols
-  document.querySelectorAll('input[name="other_symbols"]:checked').forEach(inp => {
-    fd.append('other_symbols', inp.value);
-  });
-
-  // Routing mode
-  const cityMode = document.querySelector('input[name="city_mode"]:checked')?.value || 'virtual';
-  fd.append('city_mode', cityMode);
-
-  // Always send virtual_scope — applies to Virtual overflow tabs in all routing modes
-  fd.append('virtual_scope', document.querySelector('input[name="virtual_scope"]:checked')?.value || 'both');
+  // Routing — read from hidden inputs set by setRoutingMode/setScope
+  const cityMode    = document.getElementById('city_mode_input')?.value    || 'virtual';
+  const virtualScope = document.getElementById('virtual_scope_input')?.value || 'both';
+  fd.append('city_mode',     cityMode);
+  fd.append('virtual_scope', virtualScope);
 
   if (cityMode === 'investment_center') {
     document.querySelectorAll('input[name="selected_ics"]:checked').forEach(inp => fd.append('selected_ics', inp.value));
@@ -430,9 +493,8 @@ function renderResults(data) {
     grid.appendChild(card);
   });
 
-  // Breakdown bars
-  const bars      = document.getElementById('breakdown-bars');
-  bars.innerHTML  = '';
+  const bars     = document.getElementById('breakdown-bars');
+  bars.innerHTML = '';
   const breakdown = data.match_breakdown || {};
   const maxVal    = Math.max(...Object.values(breakdown), 1);
 
