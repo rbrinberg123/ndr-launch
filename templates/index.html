@@ -6,176 +6,176 @@
   <!-- ── Sidebar ── -->
   <aside class="sidebar">
 
-    <div class="sidebar-section">
-      <div class="section-label">Files</div>
-
-      <div class="file-upload-row">
-        <div class="file-info">
-          <span class="file-dot required"></span>
-          <div><div class="file-name">Contacts w CDFs</div><div class="file-sub">BD Advanced · required</div></div>
-        </div>
-        <label class="upload-btn" for="input-contacts">Choose</label>
-        <input type="file" id="input-contacts" accept=".xlsx,.xls" hidden>
-        <div class="file-status" id="status-contacts"></div>
+    <!-- Files accordion -->
+    <div class="acc-section">
+      <div class="acc-header" onclick="toggleAcc('files')">
+        <span class="acc-title">Files</span>
+        <span class="acc-badge" id="acc-badge-files">0 / 6</span>
+        <span class="acc-arrow open" id="acc-arrow-files">▾</span>
       </div>
-
-      <div class="file-upload-row">
-        <div class="file-info">
-          <span class="file-dot optional"></span>
-          <div><div class="file-name">Activities.xlsx</div><div class="file-sub">Meeting history · optional</div></div>
+      <div class="acc-body open" id="acc-body-files">
+        <div class="file-upload-row">
+          <div class="file-info">
+            <span class="file-dot required"></span>
+            <div><div class="file-name">Contacts w CDFs</div><div class="file-sub">BD Advanced · required</div></div>
+          </div>
+          <label class="upload-btn" for="input-contacts">Choose</label>
+          <input type="file" id="input-contacts" accept=".xlsx,.xls" hidden>
+          <div class="file-status" id="status-contacts"></div>
         </div>
-        <label class="upload-btn" for="input-activities">Choose</label>
-        <input type="file" id="input-activities" accept=".xlsx,.xls" hidden>
-        <div class="file-status" id="status-activities"></div>
-      </div>
-
-      <div class="file-upload-row">
-        <div class="file-info">
-          <span class="file-dot optional"></span>
-          <div><div class="file-name">Ownership.xlsx</div><div class="file-sub">Shares data · optional</div></div>
+        <div class="file-upload-row">
+          <div class="file-info">
+            <span class="file-dot optional"></span>
+            <div><div class="file-name">Activities.xlsx</div><div class="file-sub">Meeting history · optional</div></div>
+          </div>
+          <label class="upload-btn" for="input-activities">Choose</label>
+          <input type="file" id="input-activities" accept=".xlsx,.xls" hidden>
+          <div class="file-status" id="status-activities"></div>
         </div>
-        <label class="upload-btn" for="input-ownership">Choose</label>
-        <input type="file" id="input-ownership" accept=".xlsx,.xls" hidden>
-        <div class="file-status" id="status-ownership"></div>
-      </div>
-
-      <div class="file-upload-row">
-        <div class="file-info">
-          <span class="file-dot optional"></span>
-          <div><div class="file-name">Fund-Level Ownership</div><div class="file-sub">Fund detail · optional</div></div>
+        <div class="file-upload-row">
+          <div class="file-info">
+            <span class="file-dot optional"></span>
+            <div><div class="file-name">Ownership.xlsx</div><div class="file-sub">Shares data · optional</div></div>
+          </div>
+          <label class="upload-btn" for="input-ownership">Choose</label>
+          <input type="file" id="input-ownership" accept=".xlsx,.xls" hidden>
+          <div class="file-status" id="status-ownership"></div>
         </div>
-        <label class="upload-btn" for="input-fund">Choose</label>
-        <input type="file" id="input-fund" accept=".xlsx,.xls" hidden>
-        <div class="file-status" id="status-fund"></div>
-      </div>
-
-      <div class="file-upload-row">
-        <div class="file-info">
-          <span class="file-dot optional"></span>
-          <div><div class="file-name">Additional List(s)</div><div class="file-sub">Bypass CDF · optional · multiple OK</div></div>
+        <div class="file-upload-row">
+          <div class="file-info">
+            <span class="file-dot optional"></span>
+            <div><div class="file-name">Fund-Level Ownership</div><div class="file-sub">Fund detail · optional</div></div>
+          </div>
+          <label class="upload-btn" for="input-fund">Choose</label>
+          <input type="file" id="input-fund" accept=".xlsx,.xls" hidden>
+          <div class="file-status" id="status-fund"></div>
         </div>
-        <label class="upload-btn" for="input-mining">Choose</label>
-        <input type="file" id="input-mining" accept=".xlsx,.xls" multiple hidden>
-        <div class="file-status" id="status-mining"></div>
-      </div>
-
-      <div class="file-upload-row">
-        <div class="file-info">
-          <span class="file-dot optional"></span>
-          <div><div class="file-name">Company docs</div><div class="file-sub">10-K, deck · AI analysis</div></div>
+        <div class="file-upload-row">
+          <div class="file-info">
+            <span class="file-dot optional"></span>
+            <div><div class="file-name">Additional List(s)</div><div class="file-sub">Bypass CDF · multiple OK</div></div>
+          </div>
+          <label class="upload-btn" for="input-mining">Choose</label>
+          <input type="file" id="input-mining" accept=".xlsx,.xls" multiple hidden>
+          <div class="file-status" id="status-mining"></div>
         </div>
-        <label class="upload-btn" for="input-docs">Choose</label>
-        <input type="file" id="input-docs" accept=".pdf,.xlsx,.xls,.txt,.docx" multiple hidden>
-        <div class="file-status" id="status-docs"></div>
+        <div class="file-upload-row">
+          <div class="file-info">
+            <span class="file-dot optional"></span>
+            <div><div class="file-name">Company docs</div><div class="file-sub">10-K, deck · AI analysis</div></div>
+          </div>
+          <label class="upload-btn" for="input-docs">Choose</label>
+          <input type="file" id="input-docs" accept=".pdf,.xlsx,.xls,.txt,.docx" multiple hidden>
+          <div class="file-status" id="status-docs"></div>
+        </div>
+
+        <!-- Subject tickers — shown when Activities.xlsx is uploaded -->
+        <div id="symbol-row" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <div class="section-label">Subject ticker(s)</div>
+          <div class="city-picker-hint">Select one or more tickers for this NDR</div>
+          <div class="city-grid" id="subject-symbols-grid"></div>
+        </div>
+        <!-- Other tickers -->
+        <div id="other-symbols-row" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <div class="section-label">Other tickers</div>
+          <div class="city-picker-hint">Append contacts from activities for these tickers</div>
+          <div class="city-grid" id="other-symbols-grid"></div>
+        </div>
       </div>
     </div>
 
-    <!-- Hidden company name (kept for filename) -->
     <input type="hidden" id="company-name" value="Contacts">
 
-    <!-- Subject tickers — shown when Activities.xlsx is uploaded -->
-    <div id="symbol-row" class="sidebar-section" style="display:none">
-      <div class="section-label">Subject ticker(s)</div>
-      <div class="city-picker-hint" style="margin-bottom:6px">Select one or more tickers for this NDR</div>
-      <div class="city-grid" id="subject-symbols-grid"></div>
-    </div>
-
-    <!-- Other tickers — shown when Activities.xlsx is uploaded with multiple symbols -->
-    <div id="other-symbols-row" class="sidebar-section" style="display:none">
-      <div class="section-label">Other tickers</div>
-      <div class="city-picker-hint" style="margin-bottom:6px">Append contacts from activities for these tickers</div>
-      <div class="city-grid" id="other-symbols-grid"></div>
-    </div>
-
-    <!-- Hedge funds -->
-    <div class="sidebar-section">
-      <div class="section-label">Hedge funds</div>
-      <div class="radio-stack">
-        <label class="radio-row"><input type="radio" name="hf_treatment" value="include"><span class="radio-custom"></span><span class="radio-label">Include in main results</span></label>
-        <label class="radio-row"><input type="radio" name="hf_treatment" value="separate" checked><span class="radio-custom"></span><span class="radio-label">Move to HFs sheet</span></label>
-        <label class="radio-row"><input type="radio" name="hf_treatment" value="low_turnover"><span class="radio-custom"></span><span class="radio-label">Low-turnover only in main</span></label>
+    <!-- Routing accordion -->
+    <div class="acc-section">
+      <div class="acc-header" onclick="toggleAcc('routing')">
+        <span class="acc-title">Routing</span>
+        <span class="acc-badge" id="acc-badge-routing">Virtual · Both</span>
+        <span class="acc-arrow" id="acc-arrow-routing">▾</span>
       </div>
-    </div>
-
-    <!-- NDR routing -->
-    <div class="sidebar-section">
-      <div class="section-label">NDR routing</div>
-      <div class="radio-stack">
-        <label class="radio-row"><input type="radio" name="city_mode" value="virtual" checked><span class="radio-custom"></span><span class="radio-label">Virtual (single sheet)</span></label>
-        <label class="radio-row"><input type="radio" name="city_mode" value="investment_center"><span class="radio-custom"></span><span class="radio-label">Investment Center</span></label>
-        <label class="radio-row"><input type="radio" name="city_mode" value="cities"><span class="radio-custom"></span><span class="radio-label">Split by city</span></label>
-        <label class="radio-row"><input type="radio" name="city_mode" value="state"><span class="radio-custom"></span><span class="radio-label">Split by state</span></label>
-      </div>
-
-      <!-- Investment Center picker -->
-      <div id="ic-inputs" class="city-picker" style="display:none; margin-top:8px">
-        <div class="city-picker-hint">Select investment centers (1–6)</div>
-        <input type="text" class="search-input" placeholder="Search…" id="ic-search" style="margin-bottom:6px">
-        <div class="city-grid" id="ic-grid"></div>
-      </div>
-
-      <!-- City picker -->
-      <div id="city-inputs" class="city-picker" style="display:none; margin-top:8px">
-        <div class="city-picker-hint">Select 1–4 cities</div>
-        <div class="city-grid">
-          {% for tab_name, ic_value in display_cities %}
-          <label class="city-opt">
-            <input type="checkbox" name="selected_cities" value="{{ tab_name.lower() }}" class="city-check">
-            <span>{{ tab_name }}</span>
-          </label>
-          {% endfor %}
+      <div class="acc-body" id="acc-body-routing">
+        <div class="seg-ctrl">
+          <button class="seg-btn active" onclick="setRoutingMode('virtual',this)">Virtual</button>
+          <button class="seg-btn" onclick="setRoutingMode('investment_center',this)">IC</button>
+          <button class="seg-btn" onclick="setRoutingMode('cities',this)">City</button>
+          <button class="seg-btn" onclick="setRoutingMode('state',this)">State</button>
         </div>
-      </div>
+        <input type="hidden" name="city_mode" id="city_mode_input" value="virtual">
 
-      <!-- State picker -->
-      <div id="state-inputs" class="city-picker" style="display:none; margin-top:8px">
-        <div class="city-picker-hint">Select states / provinces</div>
-        <div class="city-grid" id="state-grid"></div>
-      </div>
-    </div>
+        <div class="route-subpanel open" id="rp-virtual"></div>
 
-    <!-- Virtual scope — always visible, applies to Virtual tab in all routing modes -->
-    <div class="sidebar-section">
-      <div class="section-label">Virtual scope</div>
-      <div class="radio-stack">
-        <label class="radio-row"><input type="radio" name="virtual_scope" value="both" checked><span class="radio-custom"></span><span class="radio-label">Both (NAM + EUR)</span></label>
-        <label class="radio-row"><input type="radio" name="virtual_scope" value="nam"><span class="radio-custom"></span><span class="radio-label">NAM only</span></label>
-        <label class="radio-row"><input type="radio" name="virtual_scope" value="eur"><span class="radio-custom"></span><span class="radio-label">EUR only</span></label>
-      </div>
-    </div>
+        <div class="route-subpanel" id="rp-investment_center">
+          <div class="city-picker-hint">Select investment centers</div>
+          <input type="text" class="route-search" id="ic-search" placeholder="Search…">
+          <div class="route-list ic-list" id="ic-grid"></div>
+        </div>
 
-    <!-- Meeting history exclusion -->
-    <div class="sidebar-section">
-      <div class="section-label">Meeting history</div>
-      <div class="city-picker-hint" style="margin-bottom:6px">Requires Activities.xlsx</div>
-      <div class="radio-stack">
-        <label class="radio-row"><input type="radio" name="meeting_exclusion" value="include_all" checked><span class="radio-custom"></span><span class="radio-label">Include all</span></label>
-        <label class="radio-row"><input type="radio" name="meeting_exclusion" value="exclude_l12m"><span class="radio-custom"></span><span class="radio-label">Exclude last 12 months</span></label>
-        <label class="radio-row"><input type="radio" name="meeting_exclusion" value="exclude_l24m"><span class="radio-custom"></span><span class="radio-label">Exclude last 24 months</span></label>
-        <label class="radio-row"><input type="radio" name="meeting_exclusion" value="exclude_all"><span class="radio-custom"></span><span class="radio-label">Exclude all prior meetings</span></label>
-      </div>
-    </div>
+        <div class="route-subpanel" id="rp-cities">
+          <div class="city-picker-hint">Select cities</div>
+          <div class="route-list city-list">
+            {% for tab_name, ic_value in display_cities %}
+            <label class="route-opt">
+              <input type="checkbox" name="selected_cities" value="{{ tab_name.lower() }}" class="city-check">
+              <span>{{ tab_name }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
 
-    <!-- Shareholder exclusion -->
-    <div class="sidebar-section">
-      <div class="section-label">Shareholder exclusion</div>
-      <div class="city-picker-hint" style="margin-bottom:6px">Requires Ownership.xlsx</div>
-      <div class="radio-stack">
-        <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="include_all" checked><span class="radio-custom"></span><span class="radio-label">Include all</span></label>
-        <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="exclude_all"><span class="radio-custom"></span><span class="radio-label">Exclude all shareholders</span></label>
-        <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_001"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.01%</span></label>
-        <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_002"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.02%</span></label>
-        <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_003"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.03%</span></label>
-        <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_04"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.4%</span></label>
-        <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_05"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.5%</span></label>
+        <div class="route-subpanel" id="rp-state">
+          <div class="city-picker-hint">Select states / provinces</div>
+          <div class="route-list state-list" id="state-grid"></div>
+        </div>
+
+        <div class="scope-row">
+          <span class="scope-label">Virtual scope</span>
+          <div class="scope-seg">
+            <button class="scope-btn active" onclick="setScope('both',this)">Both</button>
+            <button class="scope-btn" onclick="setScope('nam',this)">NAM</button>
+            <button class="scope-btn" onclick="setScope('eur',this)">EUR</button>
+          </div>
+        </div>
+        <input type="hidden" name="virtual_scope" id="virtual_scope_input" value="both">
       </div>
     </div>
 
-    <!-- EAUM minimum -->
-    <div class="sidebar-section">
-      <div class="section-label">EAUM minimum ($mm)</div>
-      <div class="city-picker-hint" style="margin-bottom:6px">Contacts below this move to Too Small sheet</div>
-      <input type="number" id="eaum-min" class="text-input" placeholder="e.g. 100" min="0" step="1" style="width:100%">
+    <!-- Filters accordion -->
+    <div class="acc-section">
+      <div class="acc-header" onclick="toggleAcc('filters')">
+        <span class="acc-title">Filters</span>
+        <span class="acc-badge" id="acc-badge-filters">Defaults</span>
+        <span class="acc-arrow" id="acc-arrow-filters">▾</span>
+      </div>
+      <div class="acc-body" id="acc-body-filters">
+        <div class="filter-group-label">Hedge funds</div>
+        <div class="radio-stack">
+          <label class="radio-row"><input type="radio" name="hf_treatment" value="include"><span class="radio-custom"></span><span class="radio-label">Include in main results</span></label>
+          <label class="radio-row"><input type="radio" name="hf_treatment" value="separate" checked><span class="radio-custom"></span><span class="radio-label">Move to HFs sheet</span></label>
+          <label class="radio-row"><input type="radio" name="hf_treatment" value="low_turnover"><span class="radio-custom"></span><span class="radio-label">Low-turnover only in main</span></label>
+        </div>
+        <div class="filter-group-label">Meeting history</div>
+        <div class="city-picker-hint">Requires Activities.xlsx</div>
+        <div class="radio-stack">
+          <label class="radio-row"><input type="radio" name="meeting_exclusion" value="include_all" checked><span class="radio-custom"></span><span class="radio-label">Include all</span></label>
+          <label class="radio-row"><input type="radio" name="meeting_exclusion" value="exclude_l12m"><span class="radio-custom"></span><span class="radio-label">Exclude last 12 months</span></label>
+          <label class="radio-row"><input type="radio" name="meeting_exclusion" value="exclude_l24m"><span class="radio-custom"></span><span class="radio-label">Exclude last 24 months</span></label>
+          <label class="radio-row"><input type="radio" name="meeting_exclusion" value="exclude_all"><span class="radio-custom"></span><span class="radio-label">Exclude all prior meetings</span></label>
+        </div>
+        <div class="filter-group-label">Shareholder exclusion</div>
+        <div class="city-picker-hint">Requires Ownership.xlsx</div>
+        <div class="radio-stack">
+          <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="include_all" checked><span class="radio-custom"></span><span class="radio-label">Include all</span></label>
+          <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="exclude_all"><span class="radio-custom"></span><span class="radio-label">Exclude all shareholders</span></label>
+          <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_001"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.01%</span></label>
+          <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_002"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.02%</span></label>
+          <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_003"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.03%</span></label>
+          <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_04"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.4%</span></label>
+          <label class="radio-row"><input type="radio" name="shareholder_exclusion" value="gt_05"><span class="radio-custom"></span><span class="radio-label">% S/O &gt; 0.5%</span></label>
+        </div>
+        <div class="filter-group-label">EAUM minimum ($mm)</div>
+        <div class="city-picker-hint">Contacts below this → Too Small sheet</div>
+        <input type="number" id="eaum-min" class="text-input" placeholder="e.g. 100" min="0" step="1" style="width:100%;margin-top:4px">
+      </div>
     </div>
 
     <button class="run-button" id="run-btn" disabled>
@@ -200,41 +200,7 @@
       <div class="ai-loader" id="ai-loader"></div>
     </div>
 
-    <div class="cdf-grid">
-      <div class="cdf-card">
-        <div class="cdf-card-header">
-          <span class="cdf-card-title">Industry focus</span>
-          <span class="cdf-count" id="count-industry">0 selected</span>
-        </div>
-        <input type="text" class="search-input" placeholder="Search…" data-target="industry">
-        <div class="cdf-list" id="list-industry"></div>
-      </div>
-      <div class="cdf-card">
-        <div class="cdf-card-header">
-          <span class="cdf-card-title">Investment style</span>
-          <span class="cdf-count" id="count-style">0 selected</span>
-        </div>
-        <input type="text" class="search-input" placeholder="Search…" data-target="style">
-        <div class="cdf-list" id="list-style"></div>
-      </div>
-      <div class="cdf-card">
-        <div class="cdf-card-header">
-          <span class="cdf-card-title">Market cap</span>
-          <span class="cdf-count" id="count-mcap">0 selected</span>
-        </div>
-        <div class="cdf-list" id="list-mcap"></div>
-      </div>
-      <div class="cdf-card">
-        <div class="cdf-card-header">
-          <span class="cdf-card-title">Geography</span>
-          <span class="cdf-count" id="count-geo">0 selected</span>
-        </div>
-        <input type="text" class="search-input" placeholder="Search…" data-target="geo">
-        <div class="cdf-list" id="list-geo"></div>
-      </div>
-    </div>
-
-    <!-- Results -->
+    <!-- Results — above CDF grid -->
     <div id="results-panel" class="results-panel hidden">
       <div class="results-header">
         <h2 class="results-title">Results</h2>
@@ -254,6 +220,62 @@
       <span class="error-icon">!</span>
       <span id="error-text"></span>
     </div>
+
+    <!-- CDF grid -->
+    <div class="cdf-grid">
+      <div class="cdf-card">
+        <div class="cdf-card-header">
+          <span class="cdf-card-title">Industry focus</span>
+          <span class="cdf-count" id="count-industry">All (skip)</span>
+        </div>
+        <div class="cdf-select-row">
+          <button class="cdf-select-btn" onclick="selectAllDim('industry')">Select all</button>
+          <span class="cdf-select-sep">/</span>
+          <button class="cdf-select-btn" onclick="clearDim('industry')">Clear</button>
+        </div>
+        <input type="text" class="search-input" placeholder="Search…" data-target="industry">
+        <div class="cdf-list" id="list-industry"></div>
+      </div>
+      <div class="cdf-card">
+        <div class="cdf-card-header">
+          <span class="cdf-card-title">Investment style</span>
+          <span class="cdf-count" id="count-style">All (skip)</span>
+        </div>
+        <div class="cdf-select-row">
+          <button class="cdf-select-btn" onclick="selectAllDim('style')">Select all</button>
+          <span class="cdf-select-sep">/</span>
+          <button class="cdf-select-btn" onclick="clearDim('style')">Clear</button>
+        </div>
+        <input type="text" class="search-input" placeholder="Search…" data-target="style">
+        <div class="cdf-list" id="list-style"></div>
+      </div>
+      <div class="cdf-card">
+        <div class="cdf-card-header">
+          <span class="cdf-card-title">Market cap</span>
+          <span class="cdf-count" id="count-mcap">All (skip)</span>
+        </div>
+        <div class="cdf-select-row">
+          <button class="cdf-select-btn" onclick="selectAllDim('mcap')">Select all</button>
+          <span class="cdf-select-sep">/</span>
+          <button class="cdf-select-btn" onclick="clearDim('mcap')">Clear</button>
+        </div>
+        <div class="cdf-list" id="list-mcap"></div>
+      </div>
+      <div class="cdf-card">
+        <div class="cdf-card-header">
+          <span class="cdf-card-title">Geography</span>
+          <span class="cdf-count" id="count-geo">All (skip)</span>
+        </div>
+        <div class="cdf-select-row">
+          <button class="cdf-select-btn" onclick="selectAllDim('geo')">Select all</button>
+          <span class="cdf-select-sep">/</span>
+          <button class="cdf-select-btn" onclick="clearDim('geo')">Clear</button>
+        </div>
+        <input type="text" class="search-input" placeholder="Search…" data-target="geo">
+        <div class="cdf-list" id="list-geo"></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
