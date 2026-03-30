@@ -368,9 +368,10 @@ def run():
                 pass
     mining_df = pd.concat(mining_dfs, ignore_index=True) if mining_dfs else None
 
-    # Other symbols
+    # Other symbols — exclude any that are already subject symbols
     other_symbols_raw = request.form.getlist('other_symbols')
-    other_symbols = [s for s in other_symbols_raw if s and s != subject_symbol] or None
+    subject_set = set(subject_symbol) if isinstance(subject_symbol, list) else {subject_symbol}
+    other_symbols = [s for s in other_symbols_raw if s and s not in subject_set] or None
     if other_symbols and acts_df_raw is None:
         other_symbols = None
 
