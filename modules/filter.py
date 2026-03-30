@@ -276,55 +276,93 @@ def best_value(person_rows, col):
 
 
 def build_activity_only_contacts(acts_named, df_contact_keys, cutoff_l12m):
-    acts_sorted = acts_named.sort_values('Date', ascending=False)
-    acts_only   = acts_sorted[
-        acts_sorted.apply(lambda r: (r['_fname'], r['_lname']) not in df_contact_keys, axis=1)
+    acts_sorted = acts_named.sort_values('Date', ascending=False).reset_index(drop=True)
+
+    # Vectorized exclusion: build a key column and use isin instead of row-wise apply
+    acts_sorted['_key'] = list(zip(acts_sorted['_fname'], acts_sorted['_lname']))
+    acts_only = acts_sorted[~acts_sorted['_key'].isin(df_contact_keys)].copy()
+    acts_only = acts_only.drop(columns=['_key'])
+    acts_sorted = acts_sorted.drop(columns=['_key'])
+
+    if acts_only.empty:
+        return pd.DataFrame()
+
+    unique_people = acts_only.drop_duplicates(subset=['_fname', '_lname'])[['_fname', '_lname']].copy()
+
+    # Vectorized aggregation: group acts_sorted by (_fname, _lname) once
+    grp = acts_sorted.groupby(['_fname', '_lname'], sort=False)
+
+    def first_valid(series):
+        for v in series:
+            if v is not None and not (isinstance(v, float) and pd.isna(v)):
+                if not (isinstance(v, str) and v.strip() == ''):
+                    return v
+        return None
+
+    # Build per-person aggregated columns via groupby + first-valid
+    agg_cols = {
+        'External Participant First Name': 'first',
+        'External Participant Last Name':  'first',
+    }
+    text_cols = [
+        'External Participants (Institutions)', 'Email', 'CRM Phone', 'Job Function',
+        'City', 'State/Province', 'Country/Territory', 'CDF (Firm): Coverage',
+        'CDF (Contact): Investment Style', 'CDF (Contact): Industry Focus',
+        'CDF (Contact): Geography', 'CDF (Contact): Market Cap.',
+        'CDF (Contact): Do Not Call', 'CDF (Contact): Is Quant?',
+        'CDF (Contact): Invests in Credit/HY', 'CDF (Firm): Check before calling',
+        'Equity Assets Under Management', 'Reported Total Assets', 'Turnover',
     ]
-    unique_people = acts_only.drop_duplicates(subset=['_fname', '_lname'])
+    for col in text_cols:
+        if col in acts_sorted.columns:
+            agg_cols[col] = first_valid
+
+    agg = grp.agg(agg_cols).reset_index()
+
+    # Merge unique_people with aggregated data
+    result = unique_people.merge(agg, on=['_fname', '_lname'], how='left')
 
     rows = []
-    for _, ar in unique_people.iterrows():
-        fn, ln = ar['_fname'], ar['_lname']
-        person_rows = acts_sorted[(acts_sorted['_fname'] == fn) & (acts_sorted['_lname'] == ln)]
-
-        eaum_raw = best_value(person_rows, 'Equity Assets Under Management')
-        ata_raw  = best_value(person_rows, 'Reported Total Assets')
-        turnover = best_value(person_rows, 'Turnover')
+    for _, r in result.iterrows():
+        eaum_raw = r.get('Equity Assets Under Management')
+        ata_raw  = r.get('Reported Total Assets')
+        turnover = r.get('Turnover')
         eaum_mm  = round(float(eaum_raw) / 1_000_000) if eaum_raw and pd.notna(eaum_raw) else None
         ata_mm   = round(float(ata_raw)  / 1_000_000) if ata_raw  and pd.notna(ata_raw)  else None
         to_pct   = round(float(turnover) / 100, 6)    if turnover and pd.notna(turnover) else None
 
-        city    = best_value(person_rows, 'City')
-        state   = best_value(person_rows, 'State/Province')
-        country = best_value(person_rows, 'Country/Territory')
+        city    = r.get('City')
+        state   = r.get('State/Province')
+        country = r.get('Country/Territory')
+        style   = r.get('CDF (Contact): Investment Style')
+        inst    = r.get('External Participants (Institutions)')
 
-        style = best_value(person_rows, 'CDF (Contact): Investment Style')
         rows.append({
-            'First Name':       ar['External Participant First Name'],
-            'Last Name':        ar['External Participant Last Name'],
-            'CRM Account Name': best_value(person_rows, 'External Participants (Institutions)'),
-            'Email':            best_value(person_rows, 'Email'),
-            'Phone':            best_value(person_rows, 'CRM Phone'),
-            'Job Function':     best_value(person_rows, 'Job Function'),
+            'First Name':       r.get('External Participant First Name'),
+            'Last Name':        r.get('External Participant Last Name'),
+            'CRM Account Name': inst,
+            'Email':            r.get('Email'),
+            'Phone':            r.get('CRM Phone'),
+            'Job Function':     r.get('Job Function'),
             'City':             city,
             'State/Province':   state,
             'Country/Territory': country,
             'Contact Investment Center': build_inv_center(city, state, country),
-            'Coverage':         best_value(person_rows, 'CDF (Firm): Coverage'),
+            'Coverage':         r.get('CDF (Firm): Coverage'),
             'EAUM ($mm)':       eaum_mm,
             'AUM ($mm)':        ata_mm,
             'T/O %':            to_pct,
             'Primary Institution Type': 'Hedge Fund' if style == 'Alternative' else None,
-            'Industry':         best_value(person_rows, 'CDF (Contact): Industry Focus'),
-            'Geo':              best_value(person_rows, 'CDF (Contact): Geography'),
+            'Industry':         r.get('CDF (Contact): Industry Focus'),
+            'Geo':              r.get('CDF (Contact): Geography'),
             'Style':            style,
-            'Mkt. Cap':         best_value(person_rows, 'CDF (Contact): Market Cap.'),
-            'CDF (Contact): Do Not Call':         best_value(person_rows, 'CDF (Contact): Do Not Call'),
-            'CDF (Contact): Is Quant?':           best_value(person_rows, 'CDF (Contact): Is Quant?'),
-            'CDF (Contact): Invests in Credit/HY': best_value(person_rows, 'CDF (Contact): Invests in Credit/HY'),
-            'CDF (Firm): Check before calling':   best_value(person_rows, 'CDF (Firm): Check before calling'),
-            '_fname': fn, '_lname': ln,
-            '_inst': str(best_value(person_rows, 'External Participants (Institutions)') or '').strip().lower(),
+            'Mkt. Cap':         r.get('CDF (Contact): Market Cap.'),
+            'CDF (Contact): Do Not Call':         r.get('CDF (Contact): Do Not Call'),
+            'CDF (Contact): Is Quant?':           r.get('CDF (Contact): Is Quant?'),
+            'CDF (Contact): Invests in Credit/HY': r.get('CDF (Contact): Invests in Credit/HY'),
+            'CDF (Firm): Check before calling':   r.get('CDF (Firm): Check before calling'),
+            '_fname': r['_fname'], '_lname': r['_lname'],
+            '_inst': str(inst or '').strip().lower(),
             'Match Criteria': '', 'Match Count': None, 'Source': 'Meeting History',
         })
 
@@ -332,7 +370,7 @@ def build_activity_only_contacts(acts_named, df_contact_keys, cutoff_l12m):
         return pd.DataFrame()
 
     extra_df = pd.DataFrame(rows)
-    extra_df  = compute_activity_cols(extra_df, acts_named, cutoff_l12m)
+    extra_df = compute_activity_cols(extra_df, acts_named, cutoff_l12m)
     return extra_df
 
 
@@ -669,34 +707,54 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
 
     # Append other-company activity contacts
     if other_symbols and acts_df_raw is not None and len(acts_df_raw) > 0:
-        contact_tickers = {}
-        for sym in other_symbols:
-            sym_acts = load_activities(acts_df_raw, [sym])
-            for _, r in sym_acts.iterrows():
-                key = (r['_fname'], r['_lname'])
-                contact_tickers.setdefault(key, set()).add(sym)
+        # Vectorized: load all other-symbol activities at once, then build contact_tickers via groupby
+        other_acts_all = load_activities(acts_df_raw, other_symbols)
+        if not other_acts_all.empty:
+            # Map each (fname, lname) → set of tickers they were met under
+            sym_col = acts_df_raw.columns[acts_df_raw.columns.str.strip().str.lower() == 'symbols']
+            if len(sym_col) > 0:
+                sym_col_name = sym_col[0]
+            else:
+                sym_col_name = 'Symbols'
 
-        if contact_tickers:
-            all_keys = set()
-            for frame in [main_df, too_small_df, hf_df, fi_df, dnc_df, check_df, quant_df, activist_df, excluded_df]:
-                if frame is not None and len(frame) > 0:
-                    all_keys.update(zip(frame['_fname'], frame['_lname']))
-            all_keys.update(zip(df['_fname'], df['_lname']))
+            upper_other = {s.upper() for s in other_symbols}
+            raw_other = acts_df_raw[
+                acts_df_raw[sym_col_name].fillna('').str.strip().str.upper().isin(upper_other)
+            ].copy()
+            raw_other['_fname'] = raw_other['External Participant First Name'].fillna('').str.strip().str.lower()
+            raw_other['_lname'] = raw_other['External Participant Last Name'].fillna('').str.strip().str.lower()
+            raw_other['_sym']   = raw_other[sym_col_name].fillna('').str.strip().str.upper()
+            raw_other = raw_other[(raw_other['_fname'] != '') & (raw_other['_lname'] != '')]
 
-            other_acts = load_activities(acts_df_raw, other_symbols)
-            other_extra = build_activity_only_contacts(other_acts, all_keys, cutoff_l12m)
-            if not other_extra.empty:
-                other_extra.rename(columns=RENAME_MAP, inplace=True)
-                for col in ['Last Mtg btwn Contact & Co', 'Last Mtg btwn firm & Co', 'L12M', 'Total', '3rd Party', 'Rose & Co']:
-                    if col in other_extra.columns:
-                        other_extra[col] = None
-                other_extra['Source'] = other_extra.apply(
-                    lambda r: 'Other: ' + ', '.join(sorted(contact_tickers.get((r['_fname'], r['_lname']), set()))),
-                    axis=1)
-                other_new = other_extra[other_extra.apply(
-                    lambda r: (r['_fname'], r['_lname']) not in all_keys, axis=1)]
-                if len(other_new) > 0:
-                    main_df = pd.concat([main_df, other_new], ignore_index=True, sort=False)
+            contact_tickers = {}
+            for _, r in raw_other[['_fname', '_lname', '_sym']].itertuples(index=False):
+                contact_tickers.setdefault((r[0], r[1]), set()).add(r[2])
+
+            if contact_tickers:
+                all_keys = set()
+                for frame in [main_df, too_small_df, hf_df, fi_df, dnc_df, check_df, quant_df, activist_df, excluded_df]:
+                    if frame is not None and len(frame) > 0:
+                        all_keys.update(zip(frame['_fname'], frame['_lname']))
+                all_keys.update(zip(df['_fname'], df['_lname']))
+
+                other_extra = build_activity_only_contacts(other_acts_all, all_keys, cutoff_l12m)
+                if not other_extra.empty:
+                    other_extra.rename(columns=RENAME_MAP, inplace=True)
+                    for col in ['Last Mtg btwn Contact & Co', 'Last Mtg btwn firm & Co', 'L12M', 'Total', '3rd Party', 'Rose & Co']:
+                        if col in other_extra.columns:
+                            other_extra[col] = None
+                    other_extra['Source'] = other_extra.apply(
+                        lambda r: 'Other: ' + ', '.join(sorted(contact_tickers.get((r['_fname'], r['_lname']), set()))),
+                        axis=1)
+                    # Vectorized dedup: use merge instead of row-wise apply
+                    all_keys_df = pd.DataFrame(list(all_keys), columns=['_fname', '_lname'])
+                    other_new = other_extra.merge(
+                        all_keys_df.assign(_in_all=True),
+                        on=['_fname', '_lname'], how='left'
+                    )
+                    other_new = other_new[other_new['_in_all'].isna()].drop(columns=['_in_all'])
+                    if len(other_new) > 0:
+                        main_df = pd.concat([main_df, other_new], ignore_index=True, sort=False)
 
     # City routing — split virtual into NAM / EUR / Other sub-tabs
     city_dfs = {}
