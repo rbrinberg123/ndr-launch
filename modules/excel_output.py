@@ -31,8 +31,7 @@ NUMERIC_COLS = {
     'L12M', 'Total', '3rd Party', 'Rose & Co',
 }
 DATE_COLS  = {'Last Mtg btwn Contact & Co', 'Last Mtg btwn firm & Co', 'Last Mtg. w/ Any Co', 'As of'}
-SHRINK_COLS = {'Industry', 'Geo', 'Style', 'Mkt. Cap'}
-SHRINK_ALIGN = Alignment(horizontal='left', vertical='center', shrink_to_fit=True)
+FIXED_WIDTH_COLS = {'Industry', 'Geo', 'Style', 'Mkt. Cap'}
 
 
 def _format_sheet(ws):
@@ -64,14 +63,12 @@ def _format_sheet(ws):
             elif header in DATE_COLS:
                 cell.alignment    = CENTER
                 cell.number_format = 'mm/dd/yyyy'
-            elif header in SHRINK_COLS:
-                cell.alignment = SHRINK_ALIGN
             else:
                 cell.alignment = LEFT
 
     for col_idx, header in enumerate(headers, start=1):
         col_letter = get_column_letter(col_idx)
-        if header in SHRINK_COLS:
+        if header in FIXED_WIDTH_COLS:
             ws.column_dimensions[col_letter].width = 27
         else:
             max_len = len(str(header)) if header else 8
@@ -249,6 +246,14 @@ def generate_excel(results, company_name):
             n += 1
         used.add(safe)
         safe_names[key] = safe
+
+    # Coerce EAUM and AUM to numeric so Excel receives numbers, not strings
+    for df in frames.values():
+        if df is not None and len(df) > 0:
+            if 'EAUM ($mm)' in df.columns:
+                df['EAUM ($mm)'] = pd.to_numeric(df['EAUM ($mm)'], errors='coerce')
+            if 'AUM ($mm)' in df.columns:
+                df['AUM ($mm)'] = pd.to_numeric(df['AUM ($mm)'], errors='coerce')
 
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         for key in sheet_order:

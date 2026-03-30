@@ -524,17 +524,12 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         if col not in filtered.columns:
             filtered[col] = None
 
-    # Combine Notes and Contact Notes into CRM Notes
-    n_vals = filtered['Notes'].fillna('').values if 'Notes' in filtered.columns else [''] * len(filtered)
-    c_vals = filtered['Contact Notes'].fillna('').values if 'Contact Notes' in filtered.columns else [''] * len(filtered)
-    crm = []
-    for n, c in zip(n_vals, c_vals):
-        n, c = str(n).strip(), str(c).strip()
-        if n and c:
-            crm.append(f'{n} | {c}')
-        else:
-            crm.append(n or c or '')
-    filtered['CRM Notes'] = [v if v else None for v in crm]
+    # CRM Notes from Contact Notes only
+    if 'Contact Notes' in filtered.columns:
+        c_vals = filtered['Contact Notes'].fillna('').astype(str).str.strip()
+        filtered['CRM Notes'] = [v if v else None for v in c_vals]
+    else:
+        filtered['CRM Notes'] = None
 
     main_df = filtered.copy()
 
@@ -565,6 +560,15 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         if not hf_df.empty:
             hf_df['Exclusion Reason'] = 'Hedge Fund with T/O > 100%'
 
+    # Broker / Venture Capital / Private Equity split
+    excluded_df = pd.DataFrame()
+    _excl_types = {'broker', 'venture capital', 'private equity'}
+    inst_type_df, main_df = split_df(
+        main_df, lambda r: str(r.get('Type') or '').strip().lower() in _excl_types)
+    if not inst_type_df.empty:
+        inst_type_df['Exclusion Reason'] = 'Institution Type'
+        excluded_df = inst_type_df.copy()
+
     # DNC split
     dnc_df,      main_df = split_df(main_df, is_dnc)
     if not dnc_df.empty:
@@ -583,7 +587,6 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         credit_hy_df['Exclusion Reason'] = 'Fixed Income Investor'
 
     # Meeting history exclusion
-    excluded_df = pd.DataFrame()
     if meeting_exclusion != 'include_all' and 'Last Mtg btwn Contact & Co' in main_df.columns:
         if meeting_exclusion == 'exclude_l12m':
             cutoff = pd.Timestamp.today() - pd.DateOffset(months=12)
@@ -598,9 +601,10 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         else:  # exclude_all
             exc_mask = main_df['Last Mtg btwn Contact & Co'].apply(pd.notna)
             exc_reason = 'Prior meeting with company'
-        excluded_df = main_df[exc_mask].reset_index(drop=True).copy()
-        if not excluded_df.empty:
-            excluded_df['Exclusion Reason'] = exc_reason
+        meeting_exc = main_df[exc_mask].reset_index(drop=True).copy()
+        if not meeting_exc.empty:
+            meeting_exc['Exclusion Reason'] = exc_reason
+            excluded_df = pd.concat([excluded_df, meeting_exc], ignore_index=True, sort=False) if len(excluded_df) > 0 else meeting_exc.copy()
         main_df     = main_df[~exc_mask].reset_index(drop=True).copy()
 
     # Append other-company activity contacts (after all splits, before city routing)
