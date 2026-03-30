@@ -25,7 +25,6 @@ DATE_COLS  = {
     'Last Mtg btwn Contact & Co', 'Last Mtg btwn firm & Co', 'Last Mtg. w/ Any Co',
 }
 SHRINK_COLS = {'Industry', 'Geo', 'Style', 'Mkt. Cap'}
-SHRINK_ALIGN = Alignment(horizontal='left', vertical='center', shrink_to_fit=True)
 
 # Reverse mcap map for display (translated values → human-readable)
 MCAP_DISPLAY = {
@@ -58,7 +57,7 @@ def _format_sheet(ws):
             if header in NUMERIC_COLS:
                 cell.alignment = CENTER
                 if header == 'T/O %':
-                    cell.number_format = '#,##0.0'
+                    cell.number_format = '0.0%'
                 elif header in ('EAUM ($mm)', 'AUM ($mm)'):
                     cell.number_format = '#,##0'
                 else:
@@ -67,7 +66,7 @@ def _format_sheet(ws):
                 cell.alignment    = CENTER
                 cell.number_format = 'mm/dd/yyyy'
             elif header in SHRINK_COLS:
-                cell.alignment = SHRINK_ALIGN
+                cell.alignment = LEFT
             else:
                 cell.alignment = LEFT
 
@@ -285,6 +284,13 @@ def generate_excel(results, company_name):
         else:
             seen_names[safe] = 0
         safe_names[name] = safe
+
+    # Coerce EAUM and AUM to numeric across all frames before writing to Excel
+    for df in frames.values():
+        if df is not None and len(df) > 0:
+            for col in ('EAUM ($mm)', 'AUM ($mm)'):
+                if col in df.columns:
+                    df[col] = pd.to_numeric(df[col], errors='coerce')
 
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         for sheet_name in sheet_order:

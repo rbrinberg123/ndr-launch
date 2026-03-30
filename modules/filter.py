@@ -540,17 +540,13 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         if col not in filtered.columns:
             filtered[col] = None
 
-    # Combine Notes and Contact Notes into CRM Notes
-    n_vals = filtered['Notes'].fillna('').values if 'Notes' in filtered.columns else [''] * len(filtered)
-    c_vals = filtered['Contact Notes'].fillna('').values if 'Contact Notes' in filtered.columns else [''] * len(filtered)
-    crm = []
-    for n, c in zip(n_vals, c_vals):
-        n, c = str(n).strip(), str(c).strip()
-        if n and c:
-            crm.append(f'{n} | {c}')
-        else:
-            crm.append(n or c or '')
-    filtered['CRM Notes'] = [v if v else None for v in crm]
+    # CRM Notes: populated from Contact Notes column only
+    if 'Contact Notes' in filtered.columns:
+        filtered['CRM Notes'] = filtered['Contact Notes'].apply(
+            lambda v: str(v).strip() if pd.notna(v) and str(v).strip() != '' else None
+        )
+    else:
+        filtered['CRM Notes'] = None
 
     main_df = filtered.copy()
 
@@ -581,6 +577,15 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         if not hf_df.empty:
             hf_df['Exclusion Reason'] = 'Hedge Fund with T/O > 100%'
 
+    # Institution Type split — Broker, Venture Capital, Private Equity → Excluded
+    EXCL_TYPES = {'broker', 'venture capital', 'private equity'}
+    def is_excl_type(r):
+        v = r.get('Type', None)
+        return not pd.isna(v) and str(v).strip().lower() in EXCL_TYPES
+    inst_type_df, main_df = split_df(main_df, is_excl_type)
+    if not inst_type_df.empty:
+        inst_type_df['Exclusion Reason'] = 'Institution Type'
+
     # Fixed Income split — contacts with Invests in Credit/HY = Yes
     fi_df = pd.DataFrame()
     fi_df, main_df = split_df(main_df, is_fixed_income)
@@ -603,6 +608,8 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
 
     # Shareholder exclusion
     excluded_df = pd.DataFrame()
+    if not inst_type_df.empty:
+        excluded_df = pd.concat([excluded_df, inst_type_df], ignore_index=True, sort=False)
     if shareholder_exclusion != 'include_all' and so_lookup:
         thresholds = {
             'exclude_all': 0.0, 'gt_001': 0.0001, 'gt_002': 0.0002,
