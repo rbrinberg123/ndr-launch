@@ -727,8 +727,8 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             raw_other = raw_other[(raw_other['_fname'] != '') & (raw_other['_lname'] != '')]
 
             contact_tickers = {}
-            for _, r in raw_other[['_fname', '_lname', '_sym']].itertuples(index=False):
-                contact_tickers.setdefault((r[0], r[1]), set()).add(r[2])
+            for row in raw_other[['_fname', '_lname', '_sym']].itertuples(index=False):
+                contact_tickers.setdefault((row[0], row[1]), set()).add(row[2])
 
             if contact_tickers:
                 all_keys = set()
