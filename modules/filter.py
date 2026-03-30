@@ -292,7 +292,7 @@ def build_activity_only_contacts(acts_named, df_contact_keys, cutoff_l12m):
         turnover = best_value(person_rows, 'Turnover')
         eaum_mm  = round(float(eaum_raw) / 1_000_000) if eaum_raw and pd.notna(eaum_raw) else None
         ata_mm   = round(float(ata_raw)  / 1_000_000) if ata_raw  and pd.notna(ata_raw)  else None
-        to_pct   = round(float(turnover) * 100, 1)    if turnover and pd.notna(turnover) else None
+        to_pct   = round(float(turnover) / 100, 6)    if turnover and pd.notna(turnover) else None
 
         city    = best_value(person_rows, 'City')
         state   = best_value(person_rows, 'State/Province')
@@ -445,6 +445,11 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     # Rename columns
     df.rename(columns=RENAME_MAP, inplace=True)
 
+    # Divide EAUM and AUM by 1,000,000 (source file values are in raw dollars)
+    for col in ('EAUM ($mm)', 'AUM ($mm)'):
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce') / 1_000_000
+
     # Rename T/O % and convert from raw number to percentage
     for old in ['Account Equity % Portfolio Turnover', 'Account Equity % T/O']:
         if old in df.columns:
@@ -514,6 +519,12 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         mdf = mining_df.copy()
         mdf.rename(columns=RENAME_MAP, inplace=True)
         mdf = mdf.loc[:, ~mdf.columns.duplicated(keep='first')]
+
+        # Divide EAUM and AUM by 1,000,000 (source file values are in raw dollars)
+        for col in ('EAUM ($mm)', 'AUM ($mm)'):
+            if col in mdf.columns:
+                mdf[col] = pd.to_numeric(mdf[col], errors='coerce') / 1_000_000
+
         for old in ['Account Equity % Portfolio Turnover', 'Account Equity % T/O']:
             if old in mdf.columns:
                 mdf[old] = pd.to_numeric(mdf[old], errors='coerce') / 100
