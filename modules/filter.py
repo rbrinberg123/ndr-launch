@@ -522,13 +522,12 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
         # Override institution type to Hedge Fund for contacts whose Style is Alternative
         style_col = 'CDF (Contact): Investment Style'
         if style_col in acts_named.columns:
-            alt_keys = set()
-            for _, ar in acts_named.iterrows():
-                if str(ar.get(style_col, '') or '').strip() == 'Alternative':
-                    alt_keys.add((ar['_fname'], ar['_lname']))
+            alt_mask = acts_named[style_col].fillna('').str.strip() == 'Alternative'
+            alt_keys = set(zip(acts_named.loc[alt_mask, '_fname'], acts_named.loc[alt_mask, '_lname']))
             if alt_keys:
                 mask = df.apply(lambda r: (r['_fname'], r['_lname']) in alt_keys, axis=1)
                 df.loc[mask, 'Type'] = 'Hedge Fund'
+        del acts_named
 
     # Derive Investment Ctr for main contacts
     def build_ic_row(row):
@@ -556,11 +555,15 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     if acts_named is not None and len(acts_named) > 0:
         df_contact_keys = set(zip(df['_fname'], df['_lname']))
         extra_df = build_activity_only_contacts(acts_named, df_contact_keys, cutoff_l12m)
+        del df_contact_keys
         if not extra_df.empty:
             filtered_keys = set(zip(filtered['_fname'], filtered['_lname']))
-            extra_new = extra_df[extra_df.apply(
-                lambda r: (r['_fname'], r['_lname']) not in filtered_keys, axis=1)]
+            key_s = pd.Series(list(zip(extra_df['_fname'], extra_df['_lname'])))
+            extra_new = extra_df[~key_s.isin(filtered_keys).values]
+            del extra_df, key_s, filtered_keys
             filtered = pd.concat([filtered, extra_new], ignore_index=True, sort=False)
+            del extra_new
+    del df
 
     # Append additional list contacts (bypass CDF criteria, subject to other splits)
     if mining_df is not None and len(mining_df) > 0:
@@ -607,7 +610,8 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
     else:
         filtered['CRM Notes'] = None
 
-    main_df = filtered.copy()
+    main_df = filtered
+    del filtered
 
     # EAUM minimum filter
     too_small_df = pd.DataFrame()
@@ -759,6 +763,9 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                     other_new = other_extra[~key_s.isin(all_keys).values].copy()
                     if len(other_new) > 0:
                         main_df = pd.concat([main_df, other_new], ignore_index=True, sort=False)
+
+    if acts_df_raw is not None:
+        del acts_df_raw
 
     # City routing — split virtual into NAM / EUR / Other sub-tabs
     city_dfs = {}
