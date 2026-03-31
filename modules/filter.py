@@ -563,7 +563,6 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             filtered = pd.concat([filtered, extra_new], ignore_index=True, sort=False)
             del extra_new
     del acts_named  # no longer needed after activity enrichment + activity-only contacts
-    del df
 
     # Append additional list contacts (bypass CDF criteria, subject to other splits)
     if mining_df is not None and len(mining_df) > 0:
