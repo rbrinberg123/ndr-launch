@@ -527,7 +527,6 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             if alt_keys:
                 mask = df.apply(lambda r: (r['_fname'], r['_lname']) in alt_keys, axis=1)
                 df.loc[mask, 'Type'] = 'Hedge Fund'
-        del acts_named
 
     # Derive Investment Ctr for main contacts
     def build_ic_row(row):
@@ -563,6 +562,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             del extra_df, key_s, filtered_keys
             filtered = pd.concat([filtered, extra_new], ignore_index=True, sort=False)
             del extra_new
+    del acts_named  # no longer needed after activity enrichment + activity-only contacts
     del df
 
     # Append additional list contacts (bypass CDF criteria, subject to other splits)
