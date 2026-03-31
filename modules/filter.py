@@ -292,7 +292,9 @@ def build_activity_only_contacts(acts_named, df_contact_keys, cutoff_l12m):
 
     # Vectorized aggregation: group acts_sorted by (_fname, _lname) once
     grp = acts_sorted.groupby(['_fname', '_lname'], sort=False)
-    del acts_sorted
+    # Note: do NOT del acts_sorted here — grp holds a reference to it,
+    # so deletion doesn't free memory and causes UnboundLocalError in Python 3.12.
+    # Memory is freed correctly when del grp runs after aggregation.
 
     def first_valid(series):
         for v in series:
