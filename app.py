@@ -394,6 +394,12 @@ def run():
     results['routing_mode']  = routing_mode
     results['virtual_scope'] = virtual_scope
 
+    # Free large DataFrames before Excel generation
+    contacts_df = None
+    acts_df_raw = None
+    ownership_df = None
+    fund_df = None
+
     try:
         excel_bytes = generate_excel(results, company_name)
     except Exception as e:
