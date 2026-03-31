@@ -221,16 +221,16 @@ def classify_virtual_region(row):
 # ── Activities enrichment ─────────────────────────────────────────────────────
 
 def load_activities(acts_df, subject_symbols):
-    acts_df = acts_df.copy()
-    acts_df['Date'] = pd.to_datetime(acts_df['Date'], errors='coerce')
+    # Filter by symbol FIRST, then copy only the matching subset — avoids copying the full DataFrame
     upper_symbols = {s.upper() for s in subject_symbols} if isinstance(subject_symbols, list) else {subject_symbols.upper()}
-    acts = acts_df[
-        acts_df['Symbols'].fillna('').str.strip().str.upper().isin(upper_symbols)
-    ].copy()
+    sym_mask = acts_df['Symbols'].fillna('').str.strip().str.upper().isin(upper_symbols)
+    acts = acts_df[sym_mask].copy()  # copy only the filtered subset
+    acts['Date'] = pd.to_datetime(acts['Date'], errors='coerce')
     acts['_fname'] = acts['External Participant First Name'].fillna('').str.strip().str.lower()
     acts['_lname'] = acts['External Participant Last Name'].fillna('').str.strip().str.lower()
     acts['_inst']  = acts['External Participants (Institutions)'].fillna('').str.strip().str.lower()
     acts_named = acts[(acts['_fname'] != '') & (acts['_lname'] != '')].copy()
+    del acts
     return acts_named
 
 
@@ -288,9 +288,11 @@ def build_activity_only_contacts(acts_named, df_contact_keys, cutoff_l12m):
         return pd.DataFrame()
 
     unique_people = acts_only.drop_duplicates(subset=['_fname', '_lname'])[['_fname', '_lname']].copy()
+    del acts_only
 
     # Vectorized aggregation: group acts_sorted by (_fname, _lname) once
     grp = acts_sorted.groupby(['_fname', '_lname'], sort=False)
+    del acts_sorted
 
     def first_valid(series):
         for v in series:
@@ -318,9 +320,11 @@ def build_activity_only_contacts(acts_named, df_contact_keys, cutoff_l12m):
             agg_cols[col] = first_valid
 
     agg = grp.agg(agg_cols).reset_index()
+    del grp
 
     # Merge unique_people with aggregated data
     result = unique_people.merge(agg, on=['_fname', '_lname'], how='left')
+    del agg, unique_people
 
     rows = []
     for _, r in result.iterrows():
@@ -729,6 +733,7 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
             contact_tickers = {}
             for row in raw_other[['_fname', '_lname', '_sym']].itertuples(index=False):
                 contact_tickers.setdefault((row[0], row[1]), set()).add(row[2])
+            del raw_other
 
             if contact_tickers:
                 all_keys = set()
