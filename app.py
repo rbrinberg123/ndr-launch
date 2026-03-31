@@ -348,11 +348,11 @@ def run():
     if activities_file and activities_file.filename:
         try:
             acts_bytes  = activities_file.read()
-            acts_df     = pd.read_excel(io.BytesIO(acts_bytes), header=1)
-            acts_df_raw = acts_df.copy()
+            acts_df_raw = pd.read_excel(io.BytesIO(acts_bytes), header=1)
+            del acts_bytes  # free raw bytes immediately
             sym_arg = subject_symbol if subject_symbol != [''] else None
             if sym_arg:
-                acts_named = load_activities(acts_df, sym_arg)
+                acts_named = load_activities(acts_df_raw, sym_arg)
         except Exception:
             pass
 
