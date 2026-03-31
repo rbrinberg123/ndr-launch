@@ -275,7 +275,7 @@ def best_value(person_rows, col):
     return None
 
 
-def build_activity_only_contacts(acts_named, df_contact_keys, cutoff_l12m):
+def build_activity_only_contacts(acts_named, df_contact_keys, cutoff_l12m, compute_meetings=True):
     acts_sorted = acts_named.sort_values('Date', ascending=False).reset_index(drop=True)
 
     # Vectorized exclusion: build a key column and use isin instead of row-wise apply
@@ -328,55 +328,59 @@ def build_activity_only_contacts(acts_named, df_contact_keys, cutoff_l12m):
     result = unique_people.merge(agg, on=['_fname', '_lname'], how='left')
     del agg, unique_people
 
-    rows = []
-    for _, r in result.iterrows():
-        eaum_raw = r.get('Equity Assets Under Management')
-        ata_raw  = r.get('Reported Total Assets')
-        turnover = r.get('Turnover')
-        eaum_mm  = round(float(eaum_raw) / 1_000_000) if eaum_raw and pd.notna(eaum_raw) else None
-        ata_mm   = round(float(ata_raw)  / 1_000_000) if ata_raw  and pd.notna(ata_raw)  else None
-        to_pct   = round(float(turnover) / 100, 6)    if turnover and pd.notna(turnover) else None
+    # Vectorized construction — rename and derive columns directly on result DataFrame
+    result = result.rename(columns={
+        'External Participant First Name':  'First Name',
+        'External Participant Last Name':   'Last Name',
+        'External Participants (Institutions)': 'CRM Account Name',
+        'CRM Phone':                        'Phone',
+        'CDF (Contact): Industry Focus':    'Industry',
+        'CDF (Contact): Geography':         'Geo',
+        'CDF (Contact): Investment Style':  'Style',
+        'CDF (Contact): Market Cap.':       'Mkt. Cap',
+        'CDF (Firm): Coverage':             'Coverage',
+    })
 
-        city    = r.get('City')
-        state   = r.get('State/Province')
-        country = r.get('Country/Territory')
-        style   = r.get('CDF (Contact): Investment Style')
-        inst    = r.get('External Participants (Institutions)')
+    # Numeric conversions (vectorized)
+    for raw_col, out_col, divisor in [
+        ('Equity Assets Under Management', 'EAUM ($mm)', 1_000_000),
+        ('Reported Total Assets',          'AUM ($mm)',  1_000_000),
+        ('Turnover',                       'T/O %',      100),
+    ]:
+        if raw_col in result.columns:
+            result[out_col] = pd.to_numeric(result[raw_col], errors='coerce') / divisor
+            result = result.drop(columns=[raw_col])
+        else:
+            result[out_col] = None
 
-        rows.append({
-            'First Name':       r.get('External Participant First Name'),
-            'Last Name':        r.get('External Participant Last Name'),
-            'CRM Account Name': inst,
-            'Email':            r.get('Email'),
-            'Phone':            r.get('CRM Phone'),
-            'Job Function':     r.get('Job Function'),
-            'City':             city,
-            'State/Province':   state,
-            'Country/Territory': country,
-            'Contact Investment Center': build_inv_center(city, state, country),
-            'Coverage':         r.get('CDF (Firm): Coverage'),
-            'EAUM ($mm)':       eaum_mm,
-            'AUM ($mm)':        ata_mm,
-            'T/O %':            to_pct,
-            'Primary Institution Type': 'Hedge Fund' if style == 'Alternative' else None,
-            'Industry':         r.get('CDF (Contact): Industry Focus'),
-            'Geo':              r.get('CDF (Contact): Geography'),
-            'Style':            style,
-            'Mkt. Cap':         r.get('CDF (Contact): Market Cap.'),
-            'CDF (Contact): Do Not Call':         r.get('CDF (Contact): Do Not Call'),
-            'CDF (Contact): Is Quant?':           r.get('CDF (Contact): Is Quant?'),
-            'CDF (Contact): Invests in Credit/HY': r.get('CDF (Contact): Invests in Credit/HY'),
-            'CDF (Firm): Check before calling':   r.get('CDF (Firm): Check before calling'),
-            '_fname': r['_fname'], '_lname': r['_lname'],
-            '_inst': str(inst or '').strip().lower(),
-            'Match Criteria': '', 'Match Count': None, 'Source': 'Meeting History',
-        })
+    # Investment Center — must remain row-wise (complex lookup logic)
+    result['Contact Investment Center'] = result.apply(
+        lambda r: build_inv_center(r.get('City'), r.get('State/Province'), r.get('Country/Territory')),
+        axis=1
+    )
 
-    if not rows:
+    # Derived columns
+    style_s = result['Style'].fillna('') if 'Style' in result.columns else pd.Series([''] * len(result))
+    result['Primary Institution Type'] = style_s.apply(
+        lambda v: 'Hedge Fund' if str(v).strip() == 'Alternative' else None
+    )
+    inst_s = result['CRM Account Name'] if 'CRM Account Name' in result.columns else pd.Series([''] * len(result))
+    result['_inst'] = inst_s.fillna('').str.strip().str.lower()
+    result['Match Criteria'] = ''
+    result['Match Count']    = None
+    result['Source']         = 'Meeting History'
+
+    if result.empty:
         return pd.DataFrame()
 
-    extra_df = pd.DataFrame(rows)
-    extra_df = compute_activity_cols(extra_df, acts_named, cutoff_l12m)
+    if compute_meetings:
+        extra_df = compute_activity_cols(result, acts_named, cutoff_l12m)
+    else:
+        # Skip meeting history computation — caller will set meeting cols to None
+        for col in ['Last Mtg btwn Contact & Co', 'Last Mtg btwn firm & Co',
+                    'L12M', 'Total', '3rd Party', 'Rose & Co']:
+            result[col] = None
+        extra_df = result
     return extra_df
 
 
@@ -744,22 +748,15 @@ def run_filter(contacts_df, ownership_df, fund_df, acts_named,
                         all_keys.update(zip(frame['_fname'], frame['_lname']))
                 all_keys.update(zip(df['_fname'], df['_lname']))
 
-                other_extra = build_activity_only_contacts(other_acts_all, all_keys, cutoff_l12m)
+                other_extra = build_activity_only_contacts(other_acts_all, all_keys, cutoff_l12m, compute_meetings=False)
                 if not other_extra.empty:
                     other_extra.rename(columns=RENAME_MAP, inplace=True)
-                    for col in ['Last Mtg btwn Contact & Co', 'Last Mtg btwn firm & Co', 'L12M', 'Total', '3rd Party', 'Rose & Co']:
-                        if col in other_extra.columns:
-                            other_extra[col] = None
                     other_extra['Source'] = other_extra.apply(
                         lambda r: 'Other: ' + ', '.join(sorted(contact_tickers.get((r['_fname'], r['_lname']), set()))),
                         axis=1)
-                    # Vectorized dedup: use merge instead of row-wise apply
-                    all_keys_df = pd.DataFrame(list(all_keys), columns=['_fname', '_lname'])
-                    other_new = other_extra.merge(
-                        all_keys_df.assign(_in_all=True),
-                        on=['_fname', '_lname'], how='left'
-                    )
-                    other_new = other_new[other_new['_in_all'].isna()].drop(columns=['_in_all'])
+                    # Dedup: fast set-based filter (all_keys already built above)
+                    key_s = pd.Series(list(zip(other_extra['_fname'], other_extra['_lname'])))
+                    other_new = other_extra[~key_s.isin(all_keys).values].copy()
                     if len(other_new) > 0:
                         main_df = pd.concat([main_df, other_new], ignore_index=True, sort=False)
 
